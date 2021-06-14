@@ -1,0 +1,19 @@
+div#toolbar {
+    background-color: lightgray;
+    border: .1rem solid #787878;
+    /* border-bottom: none; */
+    border-radius: .25rem;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.text-editor-container {
+    margin-top: .2rem;
+    background-color: #fefefe;
+    color: #333;
+    border: .1rem solid #787878;
+    border-radius: .25rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    
+}

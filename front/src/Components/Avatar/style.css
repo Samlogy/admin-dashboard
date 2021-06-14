@@ -1,0 +1,96 @@
+:root{
+  --clr-gray100: #f9fbff;
+  --clr-gray600: #2a324b;
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid lightgray;
+  position: relative;
+  margin: .2rem
+}
+
+/* size: xs - sm - md - lg - xl */
+.avatar-xs { width: 2.5rem; height: 2.5rem }
+.avatar-sm { width: 4rem; height: 4rem; }
+.avatar-md { width: 5rem; height: 5rem; }
+.avatar-lg { width: 7.5rem; height: 7.5rem }
+.avatar-xl { width: 9.5rem; height: 9.5rem }
+
+/* shape: square - circle */
+.avatar-square { border-radius: .5rem; background-color: #e0e0e0; }
+.avatar-circle { border-radius: 50%; background-color: #e0e0e0; }
+
+.avatar__initials { font-weight: 300; text-align: center }
+.avatar-xs .avatar__initials, .avatar-xs svg { font-size: 1rem; }
+.avatar-sm .avatar__initials, .avatar-sm svg { font-size: 2rem; letter-spacing: 1px; }
+.avatar-md .avatar__initials, .avatar-md svg { font-size: 3rem; letter-spacing: 3px; }
+.avatar-lg .avatar__initials, .avatar-lg svg { font-size: 4rem; letter-spacing: 5px; }
+.avatar-xl .avatar__initials, .avatar-xl svg { font-size: 5rem; letter-spacing: 7px; }
+
+/* Icon */
+.avatar .icon-user{ color: #333 }
+
+/* Badge */
+.avatar .badge {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  z-index: 100;
+  border: 2px solid #fefefe;
+}
+.avatar-xs .badge{ top: 0; right: -15%; }
+.avatar-sm .badge{ top: 0; right: 5%; }
+.avatar-md .badge{ top: 0; right: 7%; }
+.avatar-lg .badge{ top: 0; right: 14%; }
+.avatar-xl .badge{ top: 0; right: 21%; }
+
+.avatar .badge.offline{ background-color: gray; }
+.avatar .badge.online{ background-color: var(--success-color); }
+.avatar .badge.absent{ background-color: var(--error-color); }
+.avatar .badge.busy{ background-color: var(--warning-color); }
+
+/* Multiple */
+.avatar-group-container { display: flex }
+
+.profiles { display: flex }
+.profiles__group { 
+  position: relative;
+  margin-left: -1.2rem;
+  cursor: pointer;
+}
+.profiles img {
+  width: 6rem;
+  height: 6rem;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 50%;
+  border: 4px solid var(--clr-gray100);
+  position: relative;
+  top: 0;
+  transition: 250ms top ease-in-out;
+}
+
+.profiles p {
+  position: absolute;
+  background-color: var(--clr-gray600);
+  color: white;
+  border-radius: $radius;
+  padding: 0.2rem 0.5rem;
+  top: 6rem;
+  text-align: center;
+  /* center aligns text under image */
+  left: 50%;
+  transform: translatex(-50%);
+  display: none;
+}
+
+.profiles__group:first-child { margin-left: 0 }
+.profiles__group img:hover {
+  top: -1rem;
+  z-index: 99;
+}
+.profiles__group p:hover { display: block }
