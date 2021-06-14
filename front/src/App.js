@@ -2,6 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import { useSelector } from "react-redux"
 
+import PrivateRoute from "./Components/PrivateRoute"
+
 import ManageUser from "./Pages/ManageUser/ManageUser.jsx";
 import WriteNewsletter from "./Pages/WriteNewsletter/WriteNewsletter.jsx";
 import Notifications from "./Pages/Notifications/Notifications.jsx"
@@ -20,20 +22,16 @@ export default function App() {
 
       <Router>
         <Switch>
-            { authStore.logged ? 
-                <>
-                  <Route path="/Home" component={Home} />
-                  <Route path="/ManageUser" component={ManageUser} />
-                  <Route path="/WriteNewsletter" component={WriteNewsletter} />
 
-                  <Route path='/Notifications' component={Notifications}/> 
-                  <Route path="/Products" component={Products} />
-                </>
-                :
-                <Route path="/" component={Login} />
-            }
+            <PrivateRoute path="/home" isLogged={authStore.logged && authStore.logged} component={Home}  />
+            <PrivateRoute path="/ManageUser" isLogged={authStore.logged && authStore.logged} component={ManageUser} />
+            <PrivateRoute path="/WriteNewsletter" isLogged={authStore.logged && authStore.logged} component={WriteNewsletter} />
+            <PrivateRoute path="/Notifications" isLogged={authStore.logged && authStore.logged} component={Notifications}/> 
+            <PrivateRoute path="/Products" isLogged={authStore.logged && authStore.logged} component={Products} />
 
-            {/* <Route path='*' component={Error404}/> */}
+            <Route path="/" component={Login} />
+
+            {/* <Route path="*" component={Error404}/> */}
         </Switch>
       </Router>
   );

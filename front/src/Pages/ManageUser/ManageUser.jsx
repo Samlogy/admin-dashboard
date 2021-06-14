@@ -5,53 +5,14 @@ import TopBar from "../../Components/TopBar/TopBar"
 import SideBar from "../../Components/SideBar/SideBar"
 import "./style.css";
 
-import { userRows } from "./data";
-
+let rows = [];
 const columns = [
-  { field: "id", headerName: "ID", width: 90 },
-  {
-    field: "user",
-    headerName: "User",
-    width: 200,
-    renderCell: (params) => {
-      return (
-        <div className="userListUser">
-          <img className="userListImg" src={params.row.avatar} alt="" />
-          {params.row.username}
-        </div>
-      );
-    },
-  },
-  { field: "email", headerName: "Email", width: 200 },
-  {
-    field: "status",
-    headerName: "Status",
-    width: 120,
-  },
-  {
-    field: "transaction",
-    headerName: "Transaction Volume",
-    width: 160,
-  },
-  {
-    field: "action",
-    headerName: "Action",
-    width: 150,
-    renderCell: (params) => {
-      return (
-        <>
-        action
-          {/* <Link to={"/user/" + params.row.id}>
-            <button className="userListEdit">Edit</button>
-          </Link>
-          <DeleteOutline
-            className="userListDelete"
-            onClick={() => handleDelete(params.row.id)}
-          /> */}
-        </>
-      );
-    },
-  },
+  { field: "id", hide: true },
+  { field: "email", headerName: "Email", width: 150 },
+  { field: "role", headerName: "Role", width: 150 },
+  { field: "password", headerName: "Password", width: 150 },
+  { field: "createdAt", headerName: "Created", width: 150 },
+  { field: "editedAt", headerName: "Last edit", width: 150 }
 ];
 
 const ManageUser = () => {
@@ -72,7 +33,13 @@ const ManageUser = () => {
       if (res.ok) {
         const result = await res.json();
         setLoading(false);
-        setUsers(result.data);
+        // setUsers(result.data);
+
+        rows = result.data.map((el, idx) => (
+          { ...el, id: el._id  }
+        ))
+        setUsers(rows)
+        
         console.log(result.message);
         return;
       }
@@ -238,7 +205,7 @@ const ManageUser = () => {
       <table>
         <thead>
           <th>email</th>
-          <th> password </th>
+          <th>password</th>
           <th>role</th>
           <th>actions</th>
           <th>created</th>
@@ -364,7 +331,7 @@ const ManageUser = () => {
     <>
     <TopBar />
     <div className="manage-user-container">
-      {/* <h2> Panel of Users Management </h2>
+      <h2> Panel of Users Management </h2>
       <div className="add-new-user">
         <h3> Add new User </h3>
         {displayAddUser()}
@@ -378,16 +345,18 @@ const ManageUser = () => {
           users.length > 0 ? displayUsersList(users) :
           <h3> There is not any User </h3>
         }
-      </div> */}
-      <DataGrid
-        rows={userRows}
-        disableSelectionOnClick
-        columns={columns}
-        pageSize={8}
-        checkboxSelection
-      />
+      </div>
+
+      <div style={{ height: '30rem', width: '100%'}}>
+        {/* <DataGrid   
+          columns={columns}
+          rows={users}
+          pageSize={10}
+          checkboxSelection
+        /> */}
+      </div>
     </div>
-    <SideBar />
+    {/* <SideBar /> */}
     </>
   );
 };

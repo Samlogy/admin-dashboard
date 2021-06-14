@@ -72,10 +72,8 @@ const Login = () => {
                     logged: true,
                     userData: result.data
                 })) 
-                console.log(result.data)
 
-                history.push('/home')
-                return;                
+                return history.push('/home')
             }
             // addToast('An Error Occured during the sending process !', { appearance: 'error', autoDismiss: false })
 
