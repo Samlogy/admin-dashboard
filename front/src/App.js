@@ -1,35 +1,40 @@
 import React from 'react'
-import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 import ManageUser from "./Pages/ManageUser/ManageUser.jsx";
 import WriteNewsletter from "./Pages/WriteNewsletter/WriteNewsletter.jsx";
 import Notifications from "./Pages/Notifications/Notifications.jsx"
 import Products from "./Pages/Products/Products.jsx"
+import Login from "./Pages/Auth/Login.jsx"
+import Home from "./Pages/Home/Home.jsx"
 // import ChatRooms from "./ChatRooms.jsx";
-
-import {createAuthStore} from "./_stores"
-import { saveState } from "./Components/localStorage";
 
 import './App.css';
 
 
-createAuthStore.subscribe(() => {
-  saveState("auth", {
-    logged: createAuthStore.getState().logged,
-    userData: createAuthStore.getState().userData,
-  });
-});
-
 export default function App() {
-
+  const authStore = useSelector(state => state.auth)
+  
   return (
-    <Provider store={createAuthStore}>
-        <div className="App">
-        {/* <ManageUser /> */}
-        {/* <WriteNewsletter /> */}
-        {/* <Notifications /> */}
-        <Products />
-      </div>
-    </Provider>
+
+      <Router>
+        <Switch>
+            { authStore.logged ? 
+                <>
+                  <Route path="/Home" component={Home} />
+                  <Route path="/ManageUser" component={ManageUser} />
+                  <Route path="/WriteNewsletter" component={WriteNewsletter} />
+
+                  <Route path='/Notifications' component={Notifications}/> 
+                  <Route path="/Products" component={Products} />
+                </>
+                :
+                <Route path="/" component={Login} />
+            }
+
+            {/* <Route path='*' component={Error404}/> */}
+        </Switch>
+      </Router>
   );
 }

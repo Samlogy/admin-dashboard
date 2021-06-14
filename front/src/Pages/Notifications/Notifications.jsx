@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
+import TopBar from "../../Components/TopBar/TopBar"
+import SideBar from "../../Components/SideBar/SideBar"
+
 import Avatar from "../../Components/Avatar/Avatar"
 import Accordion from "../../Components/Accordion/Accordion"
 // import proxy from "../../proxy"
@@ -87,7 +90,7 @@ const Notifications = () => {
       };
     
       const loadNotifications = async () => {
-        const userId = "60bbc4ed781e2232e4429473" //authStore.userData._id
+        const userId = authStore.userData._id
 
         setNotif({...notif, loading: true })
         const url = `${proxy}/admin/notifications/${userId}`
@@ -123,7 +126,6 @@ const Notifications = () => {
             // update state after delete op
             // addToast(result.message, { appearance: 'success', autoDismiss: false })
           }
-          // if (modal) setModal(false)
     
         } catch (err) {
           // addToast(err.message, { appearance: 'error', autoDismiss: false })
@@ -190,6 +192,8 @@ const Notifications = () => {
       };
   
     return (
+      <>
+      <TopBar />
         <div className="notifications-container">
             <h2> Notifications </h2>
 
@@ -211,6 +215,8 @@ const Notifications = () => {
             }
             </div>
         </div>
+        <SideBar />
+      </>
     )
 };
 

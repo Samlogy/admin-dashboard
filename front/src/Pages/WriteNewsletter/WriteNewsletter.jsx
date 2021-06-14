@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
+import TopBar from "../../Components/TopBar/TopBar"
+import SideBar from "../../Components/SideBar/SideBar"
 import MyEditor from "../../Components/Editor/MyEditor.jsx";
 import "./style.css";
 
@@ -8,6 +11,8 @@ const proxy = "http://localhost:5000/";
 const WriteNewsletter = () => {
   const [newsletter, setNewsletter] = useState({ subject: "", message: "" });
   const [files, setFiles] = useState([]);
+
+  const authStore = useSelector(state => state.auth)
 
   const onEditorChange = (value) => {
     setNewsletter({ ...newsletter, message: value });
@@ -25,7 +30,7 @@ const WriteNewsletter = () => {
     const variables = {
       newsletterData: newsletter,
       files: files,
-      authorID: "" // user.id
+      authorID: authStore.userData._id
     };
 
     try {
@@ -50,6 +55,8 @@ const WriteNewsletter = () => {
   };
 
   return (
+    <>
+    <TopBar />
     <div className="write-newsletter-container">
       <h2> Write Newsletter </h2>
 
@@ -86,6 +93,8 @@ const WriteNewsletter = () => {
         </button>
       </form>
     </div>
+    <SideBar />
+    </>
   );
 };
 

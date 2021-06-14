@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 
+import TopBar from "../../Components/TopBar/TopBar"
+import SideBar from "../../Components/SideBar/SideBar"
 import "./style.css";
+
 const proxy = "http://localhost:5000"
 
 const Products = () => {
@@ -345,6 +348,8 @@ const Products = () => {
   }, []);
     
     return (
+      <>
+      <TopBar />
         <div className="products-container">
             <h2 style={{"textAlign": "center"}}> Product Managment </h2>
 
@@ -380,6 +385,8 @@ const Products = () => {
                   </div> : ""
             }       
         </div>
+        <SideBar />
+      </>
     )
 };
 

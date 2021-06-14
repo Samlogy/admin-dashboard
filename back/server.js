@@ -1,9 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 
-// require('dotenv').config();
+require('dotenv').config();
 // const { roles } = require('./utils/constants');
 
 // Initialization
@@ -30,31 +29,24 @@ app.use(cors(corsControl));
 app.use(morgan('dev'));
 
 // Making a connection to MongoDB
-const MONGODB_URI = "mongodb://localhost:27017"
-const DB_NAME = "panel_admin"
-mongoose.connect(MONGODB_URI, {
-    dbName: DB_NAME,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-})
-.then(() => {
-  console.log('MongoDB ON');    
-})
-.catch((err) => console.log(err.message));
+require('./utils/init_db')
+
+// MongoDB Backup
+// require('./utils/mongoDB_backup')
 
 // add routes
 const manageUserRoutes = require('./routes/manageUser.route')
 const newsletterRoutes = require('./routes/newsletter.route')
 const notificatonsRoutes = require("./routes/notifications.route")
 const productsRoutes = require("./routes/products.route")
+const authRoutes = require("./routes/auth.route")
 
 app.use('/admin/manageUser', manageUserRoutes)
 app.use('/admin/newsletter', newsletterRoutes)
 app.use("/admin/notifications", notificatonsRoutes)
 app.use("/admin/products", productsRoutes)
+app.use("/admin/auth", authRoutes)
 
   // Setting the PORT
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server 🚀: ${PORT}`));

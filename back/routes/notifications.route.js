@@ -17,7 +17,7 @@ router.get("/:userId", async (req, res) => {
         })
 
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }        
 });
 
@@ -38,7 +38,7 @@ router.post("/filterByType/:userId", async (req, res) => {
         })
 
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }        
 });
 
@@ -55,7 +55,7 @@ router.put("/hide/:notificationId/:status", async (req, res) => {
         })
 
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }        
 });
 
@@ -71,7 +71,7 @@ router.delete("/delete/:notificationId", async (req, res) => {
         })
 
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }        
 });
 

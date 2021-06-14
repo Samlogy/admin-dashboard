@@ -12,7 +12,7 @@ router.get("/getUsers", async (req, res) => {
         })
         
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }
 });
 router.get("/filterUsers", async (req, res) => {
@@ -44,7 +44,7 @@ router.get("/filterUsers", async (req, res) => {
         })
         
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }
 });
 router.post("/createUser", async (req, res) => {
@@ -59,7 +59,7 @@ router.post("/createUser", async (req, res) => {
         })
         
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }
 });
 router.put("/editUser/:userId", async (req, res) => {
@@ -79,7 +79,7 @@ router.put("/editUser/:userId", async (req, res) => {
         })
         
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }
 });
 router.delete("/deleteUser/:userId", async (req, res) => {
@@ -92,7 +92,7 @@ router.delete("/deleteUser/:userId", async (req, res) => {
         })
         
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }
 });
 router.put("/blockUser/:userId", async (req, res) => {
@@ -112,7 +112,7 @@ router.put("/blockUser/:userId", async (req, res) => {
         })
         
     } catch (err) {
-        res.status(500).send({ error: err })
+        res.status(500).send({ error: err.message })
     }
 });
 

@@ -1,12 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+
+import { createAuthStore } from "./_stores"
+import { saveState } from "./Components/localStorage";
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+createAuthStore.subscribe(() => {
+  saveState("auth-admin", {
+    logged: createAuthStore.getState().logged,
+    userData: createAuthStore.getState().userData,
+  });
+});
+
 ReactDOM.render(
+  <Provider store={createAuthStore}>
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
+  </Provider>,
   document.getElementById('root')
 );
 

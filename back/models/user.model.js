@@ -6,13 +6,9 @@ const { roles } = require('../utils/roles');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    // required: true,
-    // lowercase: true,
-    // unique: true,
   },
   password: {
     type: String,
-    // required: true,
   },
   role: {
     type: String,
@@ -28,8 +24,7 @@ const userSchema = new mongoose.Schema({
       default: Date.now()
   },
   editedAt:{
-    type: Date,
-    default: null
+    type: Date
 },
 });
 

@@ -1,6 +1,58 @@
 import React, { useState, useEffect } from "react";
+import { DataGrid } from "@material-ui/data-grid";
+
+import TopBar from "../../Components/TopBar/TopBar"
+import SideBar from "../../Components/SideBar/SideBar"
 import "./style.css";
 
+import { userRows } from "./data";
+
+const columns = [
+  { field: "id", headerName: "ID", width: 90 },
+  {
+    field: "user",
+    headerName: "User",
+    width: 200,
+    renderCell: (params) => {
+      return (
+        <div className="userListUser">
+          <img className="userListImg" src={params.row.avatar} alt="" />
+          {params.row.username}
+        </div>
+      );
+    },
+  },
+  { field: "email", headerName: "Email", width: 200 },
+  {
+    field: "status",
+    headerName: "Status",
+    width: 120,
+  },
+  {
+    field: "transaction",
+    headerName: "Transaction Volume",
+    width: 160,
+  },
+  {
+    field: "action",
+    headerName: "Action",
+    width: 150,
+    renderCell: (params) => {
+      return (
+        <>
+        action
+          {/* <Link to={"/user/" + params.row.id}>
+            <button className="userListEdit">Edit</button>
+          </Link>
+          <DeleteOutline
+            className="userListDelete"
+            onClick={() => handleDelete(params.row.id)}
+          /> */}
+        </>
+      );
+    },
+  },
+];
 
 const ManageUser = () => {
   const [user, setUser] = useState({ email: "", password: "", role: "" });
@@ -14,7 +66,7 @@ const ManageUser = () => {
   const getUsers = async () => {
     setLoading(true);
     try {
-      const url = `${proxy}/admin/getUsers`;
+      const url = `${proxy}/admin/manageUser/getUsers`;
       const res = await fetch(url);
 
       if (res.ok) {
@@ -33,7 +85,7 @@ const ManageUser = () => {
     e.preventDefault();
     try {
       // data validation (yup)
-      const url = `${proxy}/admin/createUser`;
+      const url = `${proxy}/admin/manageUser/createUser`;
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
@@ -63,7 +115,7 @@ const ManageUser = () => {
         delete editedUser.password;
       }
 
-      const url = `${proxy}/admin/editUser/${userId}`;
+      const url = `${proxy}/admin/manageUser/editUser/${userId}`;
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
@@ -85,7 +137,7 @@ const ManageUser = () => {
   };
   const onDelete = async (userId) => {
     try {
-      const url = `${proxy}/admin/deleteUser/${userId}`;
+      const url = `${proxy}/admin/manageUser/deleteUser/${userId}`;
       const res = await fetch(url, {
         method: "DELETE"
       });
@@ -107,7 +159,7 @@ const ManageUser = () => {
   };
   const onBlock = async (userId, userIndex) => {
     try {
-      const url = `${proxy}/admin/blockUser/${userId}`;
+      const url = `${proxy}/admin/manageUser/blockUser/${userId}`;
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
@@ -144,7 +196,7 @@ const ManageUser = () => {
     setLoading(true);
 
     try {
-      const url = `${proxy}/admin/filterUsers?queryString=${value}&filterType=${filter.filterType}`;
+      const url = `${proxy}/admin/manageUser/filterUsers?queryString=${value}&filterType=${filter.filterType}`;
       const res = await fetch(url);
 
       if (res.ok) {
@@ -309,8 +361,10 @@ const ManageUser = () => {
   }, []);
 
   return (
+    <>
+    <TopBar />
     <div className="manage-user-container">
-      <h2> Panel of Users Management </h2>
+      {/* <h2> Panel of Users Management </h2>
       <div className="add-new-user">
         <h3> Add new User </h3>
         {displayAddUser()}
@@ -320,15 +374,21 @@ const ManageUser = () => {
         <h3> List of Users </h3>
         <div className="filter-users">{displayUsersFilter()}</div>
 
-        {loading ? (
-          "Loading... "
-        ) : users.length > 0 ? (
-          displayUsersList(users)
-        ) : (
+        { loading ? "Loading... " : 
+          users.length > 0 ? displayUsersList(users) :
           <h3> There is not any User </h3>
-        )}
-      </div>
+        }
+      </div> */}
+      <DataGrid
+        rows={userRows}
+        disableSelectionOnClick
+        columns={columns}
+        pageSize={8}
+        checkboxSelection
+      />
     </div>
+    <SideBar />
+    </>
   );
 };
 
