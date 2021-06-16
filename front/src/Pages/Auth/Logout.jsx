@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { IconButton, chakra } from "@chakra-ui/react"
+import { BiExit} from "react-icons/bi"
 // import { useToasts } from 'react-toast-notifications'
-import Button from '@material-ui/core/Button';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { notLogged } from '../../_actions/authActions';
 // import proxy from '../proxySetup'
@@ -18,6 +18,8 @@ const Logout = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   // const { addToast } = useToasts()
+
+  const CBiExit = chakra(BiExit)
 
   const onLogout = async () => {
     const url = `${proxy}/admin/auth/logout`
@@ -46,9 +48,9 @@ const Logout = () => {
   if ( loggedOut ) onLogout()
 
   return  <div className="logout-container">
-              <Button type="submit" variant="contained" color="primary" onClick={() => setLoggedOut(true)}>
-                <ExitToAppIcon />
-              </Button>
+              <IconButton colorScheme="blue" aria-label="logout" icon={<CBiExit />} 
+                          border="2px" borderSolid="solid" borderColor="white.400" borderRadius="md" mr=".5rem"
+                          onClick={() => setLoggedOut(true)} />
           </div>;
 };
 

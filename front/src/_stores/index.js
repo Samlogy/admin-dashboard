@@ -5,17 +5,10 @@ import rootReducer from "../_reducers"
 
 
 /* Store Login */
-const persistedState = loadState("auth-admin")
-let initAuthState;
-
-if (persistedState === undefined) {
-    initAuthState = {
-        logged: false,
-        userData: {}
-    }
-} else {
-    initAuthState = persistedState
-}
+// let initAuthState = {
+//     logged: false,
+//     userData: {}
+// }
 
 export const createAuthStore = createStore(
     rootReducer, 

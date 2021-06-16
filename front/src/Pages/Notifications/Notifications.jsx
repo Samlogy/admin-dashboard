@@ -7,7 +7,7 @@ import SideBar from "../../Components/SideBar/SideBar"
 import Avatar from "../../Components/Avatar/Avatar"
 import Accordion from "../../Components/Accordion/Accordion"
 // import proxy from "../../proxy"
-import "./style.css";
+// import "./style.css";
 const proxy = "http://localhost:5000"
 
 const Notifications = () => {

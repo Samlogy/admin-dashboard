@@ -1,58 +1,49 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
-// import { useToasts } from 'react-toast-notifications';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import { 
+  Flex, Heading, Input, Button, InputGroup, Stack, InputLeftElement, chakra, Box, Avatar, FormControl, InputRightElement,
+  useToast,
+} from "@chakra-ui/react";
+import { FaUserAlt, FaLock } from "react-icons/fa";
 
 // import proxy from '../../proxySetup'
 // import { loginSchema } from '../../data_validation/index'
 import { logged } from '../../_actions/authActions'
 
 
-// import './style.scss';
-
 const proxy = "http://localhost:5000";
 
-// add custom style
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
 
 const Login = () => {
   const [auth, setAuth] = useState({ email: "", password: "", checked: true })
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowClick = () => setShowPassword(!showPassword);
     
-    // const { addToast } = useToasts()
     const dispatch = useDispatch()
     const history = useHistory()
-    const classes = useStyles();
+    const toast = useToast();
+
+    const notifyUser = (data) => {
+      const { msg, status } = data
+      return toast({
+        title: msg,
+        status: status,
+        variant: "top-accent",
+        position: "bottom-right", // "top-right"
+        duration: 5000,
+        isClosable: true,
+      })
+    };
     
+    const CFaUserAlt = chakra(FaUserAlt);
+    const CFaLock = chakra(FaLock);
  
-    const onLogin = async e => {
-        e.preventDefault()
+    const onLogin = async () => {
         const url = `${proxy}/admin/auth/login`
+
+        if (auth.checked) delete auth.checked
 
         try {
             // const valid = await loginSchema.validate({ ...auth })
@@ -60,13 +51,13 @@ const Login = () => {
                 headers: { 
                     'Content-Type': 'application/json' 
                 },
-                method: 'POST', 
+                method: "POST", 
                 body: JSON.stringify(auth)
             })
            
             if (res.ok) {
                 const result = await res.json()
-                // addToast(result.message, { appearance: 'success', autoDismiss: false })
+                notifyUser({msg: result.message, status: "success"})
 
                 dispatch(logged({
                     logged: true,
@@ -75,47 +66,53 @@ const Login = () => {
 
                 return history.push('/home')
             }
-            // addToast('An Error Occured during the sending process !', { appearance: 'error', autoDismiss: false })
+            notifyUser({msg: "An Error Occured during the sending process !", status: "error"})
 
         } catch (err) {
-            // console.log(err.message)
+            notifyUser({msg: `Error: ${err.message}`, status: "error"})
         }
 
     };
 
   return  <div className="login-container">
-            <Container component="main" maxWidth="xs">
-              <CssBaseline />
-              <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                  <LockOutlinedIcon />
-                </Avatar>
+            <Flex flexDirection="column" width="100wh" height="100vh"
+                backgroundColor="gray.200" justifyContent="center" alignItems="center">
+                <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
+                  <Avatar bg="blue.500" />
+                  <Heading color="blue.400" my="auto"> Login </Heading>
 
-                <Typography component="h1" variant="h5">
-                  Sign in
-                </Typography>
+                  <Box minW={{ base: "90%", md: "500px" }}>
+                      <Stack borderRadius="md" spacing={4} p="2rem" backgroundColor="whiteAlpha.900" boxShadow="md">
+                        <FormControl>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none" children={<CFaUserAlt color="gray.300" />} />
+                            <Input type="email" placeholder="Email" value={auth.email} 
+                                  onChange={(e) => setAuth({...auth, email: e.target.value})} />
+                          </InputGroup>
+                        </FormControl>
 
-                <form className={classes.form} noValidate onSubmit={onLogin}>
-                  <TextField variant="outlined" margin="normal"
-                            required fullWidth id="email" label="Email Address"
-                            name="email" autoComplete="email" autoFocus
-                            value={auth.email}
-                            onChange={(e) => setAuth({...auth, email: e.target.value})}
-                  />
-                  <TextField variant="outlined" margin="normal" required
-                            fullWidth name="password" label="Password" type="password"
-                            id="password" autoComplete="current-password"
-                            value={auth.password}
-                            onChange={(e) => setAuth({...auth, password: e.target.value})}
-                  />
-                  <Button type="submit" variant="contained" color="primary" 
-                          className={classes.submit}>
-                    Sign In
-                  </Button>
-                </form>
+                        <FormControl>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none" color="gray.300" children={<CFaLock color="gray.300" />} />
+                            <Input type={showPassword ? "text" : "password"} placeholder="Password" value={auth.password} 
+                                  onChange={(e) => setAuth({...auth, password: e.target.value})} />
 
-              </div>
-            </Container>
+                            <InputRightElement width="4.5rem">
+                              <Button h="1.75rem" size="sm" onClick={handleShowClick}>
+                                {showPassword ? "Hide" : "Show"}
+                              </Button>
+                            </InputRightElement>
+                          </InputGroup>
+                        </FormControl>
+
+                        <Button borderRadius="md" type="submit" variant="solid" colorScheme="blue" onClick={() => onLogin()}>
+                          Login
+                        </Button>
+                      </Stack>
+                  </Box>
+                </Stack>
+
+              </Flex>
           </div>;
 };
 

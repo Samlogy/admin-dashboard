@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { FormControl, FormLabel, Input, Select, Checkbox, 
+  Spinner,
+  Table, Thead, Tbody, Tfoot, Tr, Th, Td,
+  useToast,
+  Flex, Stack, Box, Text, Button, ButtonGroup, Heading, Textarea
+   } from "@chakra-ui/react"
 
 import TopBar from "../../Components/TopBar/TopBar"
 import SideBar from "../../Components/SideBar/SideBar"
-import "./style.css";
+// import "./style.css";
 
 const proxy = "http://localhost:5000"
 
@@ -14,6 +20,20 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "name" });
   const [loading, setLoading] = useState(false);
+
+  const toast = useToast();
+
+  const notifyUser = (data) => {
+    const { msg, status } = data
+    return toast({
+      title: msg,
+      status: status,
+      variant: "top-accent",
+      position: "bottom-right", // "top-right"
+      duration: 5000,
+      isClosable: true,
+    })
+  };
   
   // API calls
   const getProducts = async () => {
@@ -34,8 +54,7 @@ const Products = () => {
       console.log("Error: ", err.message);
     }
   };
-  const onCreate = async (e) => {
-    e.preventDefault();
+  const onCreate = async () => {
     try {
       // data validation (yup)
       const url = `${proxy}/admin/products/createProduct`;
@@ -189,86 +208,66 @@ const Products = () => {
   const displayProductsFilter = () => {
     return (
       <>
-        <input
-          type="text"
-          placeholder={`Filter by ${filter.filterType}`}
+        <Flex flexDirection="row" border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="500px" my="2rem">
+        <Input type="text" placeholder={`Filter by ${filter.filterType}`}
           value={filter.queryString}
-          onChange={(e) => onFilter(e.target.value)}
-        />
+          onChange={(e) => onFilter(e.target.value)} />
 
-        <select
-          defaultValue={filter.filterType}
-          onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}
-        >
-          <option> Filter By </option>
+        <Select w="100px" value={filter.filterType}
+                onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}>
           <option value="name"> Name </option>
-        </select>
+        </Select>
+      </Flex>
       </>
     );
   };
   const displayAddProduct = () => {
     return (
-      <form action="POST" className="add-user-form" onSubmit={onCreate}>
-        <div className="form-input">
-          <label htmlFor="name"> Name </label>
-          <input
-            type="text"
-            placeholder="Name"
-            value={product.name}
-            name="name"
-            id="name"
-            onChange={(e) => setProduct({ ...product, name: e.target.value })}
-          />
-        </div>
+      <Stack border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="500px" my="2rem">
+          <FormControl id="name" mb="1rem">
+            <FormLabel> Name </FormLabel>
+            <Input type="text" placeholder="Name"
+                  value={product.name}
+                  name="name"
+                  id="name"
+                  onChange={(e) => setProduct({ ...product, name: e.target.value })} />
+          </FormControl>
 
-        <div className="form-input">
-          <label htmlFor="description"> Description </label>
-          <textarea name="description" id="description" placeholder="description" value={product.description} 
-                    onChange={e => setProduct({ ...product, description: e.target.value })}>
-          </textarea>
-        </div>
+          <FormControl id="email" mb="1rem">
+            <FormLabel> Email </FormLabel>
+            <Textarea tname="description" id="description" placeholder="description" value={product.description} 
+                      onChange={e => setProduct({ ...product, description: e.target.value })} />
+          </FormControl>
+          
+          <FormControl id="price" mb="1rem">
+            <FormLabel> Price </FormLabel>
+            <Input type="number"
+                    placeholder="Price"
+                    value={product.price}
+                    name="price"
+                    id="price"
+                    onChange={(e) => setProduct({ ...product, price: e.target.value })} />
+          </FormControl>
 
-        <div className="form-input">
-          <label htmlFor="price"> Price </label>
-          <input
-            type="number"
-            placeholder="Price"
-            value={product.price}
-            name="price"
-            id="price"
-            onChange={(e) => setProduct({ ...product, price: e.target.value })}
-          />
-        </div>
+          <FormControl id="email" mb="1rem">
+            <FormLabel> Feature </FormLabel>
+            <Input type="text"
+                  placeholder="Add feature"
+                  value={product.features}
+                  name="features"
+                  id="features"
+                  onChange={(e) => setProduct({ ...product, features: e.target.value })} />
+          </FormControl>
 
-        <div className="form-input">
-          <label htmlFor="features"> Features </label>
-          <div className="features-list">
-            {/* { feature.length > 0 && displayFeaturesList() } */}
-          </div>
-
-          <input
-            type="text"
-            placeholder="Add feature"
-            value={product.features}
-            name="features"
-            id="features"
-            onChange={(e) => setProduct({ ...product, features: e.target.value })}
-          />
-
-          <div className='btn-box'>
-              {/* <button className="btn btn-accent" onClick={() => displayAddFeature()}> + </button> */}
-          </div>
-        </div>
-
-        <div className="groupe-btn">
-          <button type="submit" className="btn btn-accent">
+        <ButtonGroup mt="1rem">
+          <Button colorScheme="blue" variant="solid" onClick={() => onCreate()}>
             Add New Product
-          </button>
-          <button type="submit" className="btn btn-outline-accent" onClick={() => backToProduct()}>
+          </Button>
+          <Button colorScheme="blue" variant="outline" onClick={() => backToProduct()}>
             Back to Products
-          </button>
-        </div>
-      </form>
+          </Button>
+        </ButtonGroup>
+      </Stack>
     );
   };
   const displayEditProduct = (data) => {
@@ -334,12 +333,12 @@ const Products = () => {
   };
   const displayRemoveProduct = () => {
     return  <div className="remove-product">
-              <p> Are you sure you want to delete this Product ? </p>
+              <Text> Are you sure you want to delete this Product ? </Text>
 
-              <div className="group-btn">
-                <button className="btn btn-accent" onClick={() => onDelete(action.data && action.data)}> Delete </button>
-                <button className="btn btn-outline-accent" onClick={() => setAction({value: "products"})}> Cancel </button>
-              </div>
+                <ButtonGroup variant="outline" spacing="6">
+                  <Button variant="out" onClick={() => onDelete(action.data && action.data)}> Delete </Button>
+                  <Button onClick={() => setAction({value: "products"})}> Cancel </Button>
+                </ButtonGroup>
             </div> 
   };
 
@@ -351,26 +350,26 @@ const Products = () => {
       <>
       <TopBar />
         <div className="products-container">
-            <h2 style={{"textAlign": "center"}}> Product Managment </h2>
+            <Heading as="h2" size="md" textAlign="right"> Product Managment </Heading>
 
             {
               action.value === "create" ? 
                   <div className="add-new-user">
-                    <h3> Create a New Product </h3>
+                    <Heading as="h2" size="md" textAlign="right"> Create a New Product </Heading>
                     {displayAddProduct()}
                   </div>  :
 
               action.value === "edit" ? 
                   <div className="add-new-user">
-                    <h3> Edit a Product </h3>
+                    <Heading as="h2" size="md" textAlign="right"> Edit a Product </Heading>
                     { Object.keys(product).length > 0 && displayEditProduct(product) }
                   </div>  :
               action.value === "delete" ?  displayRemoveProduct() :
 
               action.value === "products" ? 
                   <div className="display-users">
-                    <h3> List of Products </h3>
-                    <button className="btn btn-accent" onClick={() => setAction({value: "create"})}> Create </button>
+                    <Heading as="h2" size="md" textAlign="right"> List of Products </Heading>
+                    <Button colorScheme="blue" onClick={() => setAction({value: "create"})}> Create </Button>
 
                     <div className="filter-users">
                       {displayProductsFilter()}
@@ -380,12 +379,12 @@ const Products = () => {
                     {   loading ? "Loading... " : 
                         products.length > 0 ?
                         displayProductsList(products) : 
-                        <h4> There is not any Product </h4>
+                        <Heading as="h4" size="md" textAlign="right"> There is not any Product </Heading>
                     }
                   </div> : ""
             }       
         </div>
-        <SideBar />
+        {/* <SideBar /> */}
       </>
     )
 };

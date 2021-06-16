@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { Heading, 
+  FormControl, FormLabel, Input, Button,
+  Flex,
+ } from "@chakra-ui/react"
 
 import TopBar from "../../Components/TopBar/TopBar"
 import SideBar from "../../Components/SideBar/SideBar"
 import MyEditor from "../../Components/Editor/MyEditor.jsx";
+
 import "./style.css";
 
 const proxy = "http://localhost:5000/";
@@ -22,8 +27,7 @@ const WriteNewsletter = () => {
     setFiles(files);
   };
 
-  const writeNewsltter = async (e) => {
-    e.preventDefault();
+  const writeNewsltter = async () => {
     const url = `${proxy}/admin/writeNewsletter`;
 
     // newsletter data validation --> schema
@@ -57,43 +61,34 @@ const WriteNewsletter = () => {
   return (
     <>
     <TopBar />
-    <div className="write-newsletter-container">
-      <h2> Write Newsletter </h2>
+ 
+      <Heading as="h2" size="lg" my="1rem">
+        Write Newsletter
+      </Heading>
 
-      <form
-        method="POST"
-        className="write-newsletter-form"
-        onSubmit={writeNewsltter}
-      >
-        <div className="form-input">
-          <label htmlFor="subject"> Subject </label>
-          <input
-            type="text"
-            id="subject"
-            placeholder="Subject"
-            name="subject"
-            value={newsletter.subject}
-            onChange={(e) =>
-              setNewsletter({ ...newsletter, subject: e.target.value })
-            }
-          />
-        </div>
+      <Flex border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="500px" my="2rem" mx="auto"
+            flexDirection="column" justifyContent="center" alignItems="center">
+        <FormControl id="email" mb="1rem">
+          <FormLabel> Subject </FormLabel>
+          <Input type="text" id="subject"  placeholder="Subject" name="subject" value={newsletter.subject}
+                  onChange={(e) => setNewsletter({ ...newsletter, subject: e.target.value }) } />
+        </FormControl>
 
-        <div className="form-input">
-          <label htmlFor="newsletter"> Newsletter Content </label>
+        <FormControl id="newsletter" mb="1rem">
+          <FormLabel> Newsletter Content </FormLabel>
           <MyEditor
             placeholder="Newsletter Content"
             onEditorChange={onEditorChange}
             onFilesChange={onFilesChange}
           />
-        </div>
+        </FormControl>
 
-        <button className="btn btn-accent" type="submit">
+        <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => writeNewsltter()}>
           Send
-        </button>
-      </form>
-    </div>
-    <SideBar />
+        </Button> 
+      </Flex>
+
+    {/* <SideBar /> */}
     </>
   );
 };

@@ -1,12 +1,3 @@
-import {
-  LineStyle, Timeline, TrendingUp,
-  PermIdentity, Storefront,  AttachMoney, BarChart,
-  // MailOutline,
-  // DynamicFeed,
-  // ChatBubbleOutline,
-  // WorkOutline,
-  // Report,
-} from "@material-ui/icons";
 import { Link } from "react-router-dom";
 
 import "./sidebar.css";
@@ -20,16 +11,16 @@ function SideBar() {
           <ul className="sidebarList">
             <Link to="/home" className="link">
             <li className="sidebarListItem active">
-              <LineStyle className="sidebarIcon" />
+              {/* <LineStyle className="sidebarIcon" /> */}
               Home
             </li>
             </Link>
             <li className="sidebarListItem">
-              <Timeline className="sidebarIcon" />
+              {/* <Timeline className="sidebarIcon" /> */}
               Analytics
             </li>
             <li className="sidebarListItem">
-              <TrendingUp className="sidebarIcon" />
+              {/* <TrendingUp className="sidebarIcon" /> */}
               Sales
             </li>
           </ul>
@@ -40,22 +31,22 @@ function SideBar() {
           <ul className="sidebarList">
             <Link to="/ManageUser" className="link">
               <li className="sidebarListItem">
-                <PermIdentity className="sidebarIcon" />
+                {/* <PermIdentity className="sidebarIcon" /> */}
                 Users
               </li>
             </Link>
             <Link to="/products" className="link">
               <li className="sidebarListItem">
-                <Storefront className="sidebarIcon" />
+                {/* <Storefront className="sidebarIcon" /> */}
                 Products
               </li>
             </Link>
             <li className="sidebarListItem">
-              <AttachMoney className="sidebarIcon" />
+              {/* <AttachMoney className="sidebarIcon" /> */}
               Transactions
             </li>
             <li className="sidebarListItem">
-              <BarChart className="sidebarIcon" />
+              {/* <BarChart className="sidebarIcon" /> */}
               Reports
             </li>
           </ul>
@@ -66,56 +57,21 @@ function SideBar() {
           <ul className="sidebarList">
             <Link to="/WriteNewsletter" className="link">
               <li className="sidebarListItem">
-                <PermIdentity className="sidebarIcon" />
+                {/* <PermIdentity className="sidebarIcon" /> */}
                 Write a Newsletter
               </li>
             </Link>
             <li className="sidebarListItem">
-              <AttachMoney className="sidebarIcon" />
+              {/* <AttachMoney className="sidebarIcon" /> */}
               Transactions
             </li>
             <li className="sidebarListItem">
-              <BarChart className="sidebarIcon" />
+              {/* <BarChart className="sidebarIcon" /> */}
               Reports
             </li>
           </ul>
         </div>
 
-        {/* <div className="sidebarMenu">
-          <h3 className="sidebarTitle">Notifications</h3>
-          <ul className="sidebarList">
-            <li className="sidebarListItem">
-              <MailOutline className="sidebarIcon" />
-              Mail
-            </li>
-            <li className="sidebarListItem">
-              <DynamicFeed className="sidebarIcon" />
-              Feedback
-            </li>
-            <li className="sidebarListItem">
-              <ChatBubbleOutline className="sidebarIcon" />
-              Messages
-            </li>
-          </ul>
-        </div> */}
-
-        {/* <div className="sidebarMenu">
-          <h3 className="sidebarTitle">Staff</h3>
-          <ul className="sidebarList">
-            <li className="sidebarListItem">
-              <WorkOutline className="sidebarIcon" />
-              Manage
-            </li>
-            <li className="sidebarListItem">
-              <Timeline className="sidebarIcon" />
-              Analytics
-            </li>
-            <li className="sidebarListItem">
-              <Report className="sidebarIcon" />
-              Reports
-            </li>
-          </ul>
-        </div> */}
       </div>
     </div>
   );
