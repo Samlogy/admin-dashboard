@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-import TopBar from "../../Components/TopBar/TopBar"
-import SideBar from "../../Components/SideBar/SideBar"
+import NavBar from "../../Components/NavBar/NavBar.jsx"
 
 import Avatar from "../../Components/Avatar/Avatar"
 import Accordion from "../../Components/Accordion/Accordion"
@@ -193,7 +192,7 @@ const Notifications = () => {
   
     return (
       <>
-      <TopBar />
+      <NavBar />
         <div className="notifications-container">
             <h2> Notifications </h2>
 
@@ -215,7 +214,6 @@ const Notifications = () => {
             }
             </div>
         </div>
-        <SideBar />
       </>
     )
 };

@@ -9,51 +9,19 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading,
   Avatar,
   Button, ButtonGroup, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure,
-  Link 
+  Link,
    } from "@chakra-ui/react"
 
 
-// import TopBar from "../../Components/TopBar/TopBar"
-// import SideBar from "../../Components/SideBar/SideBar"
+import NavBar from "../../Components/NavBar/NavBar.jsx"
 
-const SideBar = () => {
-
-  return  <>
-            <Flex flexDirection="column" justifyContent="center">
-              <>
-                <Link href="/home" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-                      mb=".5rem" p="1rem" borderRadius="md" w="200px" bg="gray.300"> 
-                  <AiOutlineUserAdd size="18" />
-                  App Statistics
-                </Link>
-                <Link to="/manageUser" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-                      mb=".5rem" p="1rem" borderRadius="md" w="200px" bg="gray.300"> 
-                  <AiOutlineUserAdd size="18" />
-                  User Manamgement 
-                </Link>
-
-                <Link to="/products" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-                      mb=".5rem" p="1rem" borderRadius="md" w="200px" bg="gray.300"> 
-                < AiOutlineUserAdd size="18" />
-                  Product Manamgement
-                </Link>
-
-                <Link to="/writeNewsletter" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-                      mb=".5rem" p="1rem" borderRadius="md" w="200px" bg="gray.300"> 
-                  <AiOutlineUserAdd size="18" />
-                  Write Newsletter
-                </Link>
-              </>
-            </Flex>
-          </>
-}
 
 const ManageUser = () => {
   const [user, setUser] = useState({ fullName: "", username: "", email: "", password: "", role: "" });
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState({ value: "users", data: null })
+  const [action, setAction] = useState({ value: "details", data: null })
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -87,10 +55,10 @@ const ManageUser = () => {
 
         return;
       }
-      dsiplayToast({msg: "an Error occured while loading users !", status: "error"})
+      displayToast({msg: "an Error occured while loading users !", status: "error"})
 
     } catch (err) {
-      dsiplayToast({msg: `Error: ${err.message}`, status: "error"})
+      displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
   const onCreate = async () => {
@@ -110,13 +78,13 @@ const ManageUser = () => {
 
       if (res.ok) {
         const result = await res.json();
-        dsiplayToast({msg: result.message, status: "success"})
+        displayToast({msg: result.message, status: "success"})
         return;
       }
-      dsiplayToast({msg: "an Error occured while adding a user !", status: "error"})
+      displayToast({msg: "an Error occured while adding a user !", status: "error"})
 
     } catch (err) {
-      dsiplayToast({msg: `Error: ${err.message}`, status: "error"})
+      displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
   const onEdit = async (userId, userIndex) => {
@@ -139,12 +107,12 @@ const ManageUser = () => {
 
       if (res.ok) {
         const result = await res.json();
-        dsiplayToast({msg: result.message, status: "success"})
+        displayToast({msg: result.message, status: "success"})
         return;
       }
-      dsiplayToast({msg: "an Error occured during user edition !", status: "error"})
+      displayToast({msg: "an Error occured during user edition !", status: "error"})
     } catch (err) {
-      dsiplayToast({msg: `Error: ${err.message}`, status: "error"})
+      displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
   const onDelete = async (userId) => {
@@ -161,13 +129,13 @@ const ManageUser = () => {
         const new_users_list = users.filter((el) => el._id !== userId);
         setUsers(new_users_list);
 
-        dsiplayToast({msg: result.message, status: "success"})
+        displayToast({msg: result.message, status: "success"})
         return;
       }
-      dsiplayToast({msg: "an Error occured while deleting user !", status: "error"})
+      displayToast({msg: "an Error occured while deleting user !", status: "error"})
 
     } catch (err) {
-      dsiplayToast({msg: `Error: ${err.message}`, status: "error"})
+      displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
   const onBlock = async (userId, userIndex) => {
@@ -194,13 +162,13 @@ const ManageUser = () => {
           });
           return newState;
         })
-        dsiplayToast({msg: result.message, status: "succes"})
+        displayToast({msg: result.message, status: "succes"})
         return;
       }
-      dsiplayToast({msg: "an Error occured while blocking user !", status: "error"})
+      displayToast({msg: "an Error occured while blocking user !", status: "error"})
 
     } catch (err) {
-      dsiplayToast({msg: `Error: ${err.message}`, status: "error"})
+      displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
   const onFilter = async (value) => {
@@ -241,7 +209,7 @@ const ManageUser = () => {
   };
 
   // Componenents
-  const dsiplayToast = (data) => {
+  const displayToast = (data) => {
     const { msg, status } = data
     return toast({
       title: msg,
@@ -404,65 +372,64 @@ const ManageUser = () => {
     );
   };
   const displayEditUser = (data) => {
-    const { name, description, price, features } = data;
+    const { fullName, email, username, password, role } = data;
 
     return (
-      <form action="POST" className="add-user-form">
-        <div className="form-input">
-          <label htmlFor="name"> Name </label>
-          <input
-            type="text"
-            placeholder="Name"
-            value={name ? name : user.name}
-            name="name"
-            id="name"
-            onChange={(e) => setUser({ ...user, name: e.target.value })}
-          />
-        </div>
+      <>
+        <Box display="flex" flexDirection="row" justifyContent="center" >
+        {displayUserDetails()}
 
-        <div className="form-input">
-          <label htmlFor="description"> Description </label>
-          <textarea name="description" id="description" placeholder="description" 
-                    value={description ? description : user.description} 
-                    onChange={e => setUser({ ...user, description: e.target.value })}>
-          </textarea>
-        </div>
+        <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
+          <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
 
-        <div className="form-input">
-          <label htmlFor="price"> Price </label>
-          <input
-            type="number"
-            placeholder="Price"
-            value={price ? price : user.price}
-            name="price"
-            id="price"
-            onChange={(e) => setUser({ ...user, price: e.target.value })}
-          />
-        </div>
+          <Stack>
+            <FormControl id="fullName" mb="1rem">
+              <FormLabel> Full Name </FormLabel>
+              <Input type="text" placeholder="Full Name" name="fullName"
+                  id="fullName" value={fullName ? fullName : user.fullName} onChange={(e) => setUser({ ...user, fullName: e.target.value })} />
+            </FormControl>
 
-        <div className="form-input">
-          <label htmlFor="features"> Features </label>
-          <input
-            type="text"
-            placeholder="Add feature"
-            value={features && features.length > 0 ? features : user.features}
-            name="features"
-            id="features"
-            onChange={(e) => setUser({ ...user, features: e.target.value })}
-          />
-        </div>
+            <FormControl id="username" mb="1rem">
+              <FormLabel> Username </FormLabel>
+              <Input type="text" placeholder="Username" name="username"
+                  id="username" value={username ? username : user.username} onChange={(e) => setUser({ ...user, username: e.target.value })} />
+            </FormControl>
 
-        <div className="group-btn">
-          <button type="submit" className="btn btn-accent" onClick={e => onEdit(e, action.data && action.data)}>
+            <FormControl id="email" mb="1rem">
+              <FormLabel> Email </FormLabel>
+              <Input type="email" placeholder="Email" name="email"
+                  id="email" value={email ? email : user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="password" mb="1rem">
+              <FormLabel> Password </FormLabel>
+              <Input type="password" placeholder="Password" name="password"
+                  id="password" value={password ? password : user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="role" mb="1rem">
+              <FormLabel> Role </FormLabel>
+              <Select name="role" id="role" value={role ? role :user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
+                <option value="moderator"> Moderator </option>
+                <option value="admin"> Admin </option>
+              </Select>
+            </FormControl>
+          </Stack>
+        </Box>
+
+        </Box>
+
+        <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
+          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" 
+                  onClick={() => onEdit(action.data && action.data)}>
             Edit User
-          </button>
-          <button type="submit" className="btn btn-outline-accent" onClick={() => backToUsers()}>
-            Back to Users
-        </button>
-        </div>
-      </form>
+          </Button>
+          <Button colorScheme="blue" variant="outline" onClick={() => backToUsers()}>
+            Back to Products
+          </Button>
+        </ButtonGroup>
+      </>
     );
-
   };
   const displayUsersFilter = () => {
     return (
@@ -486,58 +453,66 @@ const ManageUser = () => {
   const displayUserDetails = () => {
     //  const { avatar, fullName, username, email, role, password } = data;
 
-    return <Box display="flex" flexDirection="row" mr="1rem">
-            <Flex flexDirection="column" p="1rem" w="20rem"
-                border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
+    return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
+            <Box display="flex" flexDirection="row" mr="1rem" mb="3rem" justifyContent="center">
+              <Flex flexDirection="column" p="1rem" w="20rem" mr="1rem"
+                  border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
 
-              <Heading as="h3" size="md" textAlign="left" my="1rem">
-                User Details
-              </Heading>
+                <Heading as="h3" size="md" textAlign="left" my="1rem">
+                  User Details
+                </Heading>
 
-              <Avatar name="Dan Abrahmov" src={user.avatar} mb="1.25rem" />
-              <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> full name : {user.fullName} </Text>
-              { action.value !== "create" && 
-                <Text display="flex" flexDirection="row" my="1.25rem"><BiUser size="20" /> username : {user.username} </Text> 
-              }
-              <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> email: {user.email} </Text>
-              <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> password: {hidePassword(user.password)} </Text>
-              <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> role: {user.role} </Text>
-            </Flex>
-
-            <Heading as="h4" size="md" textAlign="center" my="1rem">
-                All Users Actions
-            </Heading>
+                <Avatar name="Dan Abrahmov" src={user.avatar} mb="1.25rem" />
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> full name : {user.fullName} </Text>
+                { action.value !== "create" && 
+                  <Text display="flex" flexDirection="row" my="1.25rem"><BiUser size="20" /> username : {user.username} </Text> 
+                }
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> email: {user.email} </Text>
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> password: {hidePassword(user.password)} </Text>
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> role: {user.role} </Text>
+              </Flex>
             
-            { action.value === "details" &&
-              <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
-                          justifyContent="center" alignItems="center" >
-                {/* <Button colorScheme="blue" my=".25rem"
-                        onClick={() =>  {setAction({ value: "edit", data: {userId: el._id, userIndex: idx}}); setUser(el)}}>
-                        Edit
-                </Button>
+              { action.value === "details" &&
+                <Stack display="flex" flexDirection="column" p="1rem" w="20rem" ml="1rem"
+                      border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
 
-                <Button colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
-                        onClick={() => { 
-                            setAction({ data: { text: "Are you sure to delete this user ?", action: () => onDelete(el._id, idx), label: "Delete" } }); 
-                            onOpen()}
-                            }>
-                            Delete
-                </Button>
-                            
-                <Button colorScheme="blue" aria-label="block user" my=".25rem" icon={<BiBlock />} 
-                        onClick={() => { 
-                          setAction({ data: { text: "Are you sure to delete this user ?", action: () => onBlock(el._id, idx), label: "Block" }}); 
-                          onOpen()}
-                          }>
-                        Block
-                </Button> */}
-              </ButtonGroup>
-            }
+                    <Heading as="h4" size="md" textAlign="left" my="1rem">
+                        USER ACTIONS
+                    </Heading>
+              
+                  <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
+                              justifyContent="center" alignItems="center" >
+                    {/* <Button colorScheme="blue" my=".25rem"
+                            onClick={() =>  {setAction({ value: "edit", data: {userId: el._id, userIndex: idx}}); setUser(el)}}>
+                            Edit
+                    </Button>
 
-              <Button colorScheme="blue" variant="outline" aria-label="details user" my=".25rem" onClick={() => { backToUsers() }}>
+                    <Button colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
+                            onClick={() => { 
+                                setAction({ data: { text: "Are you sure to delete this user ?", action: () => onDelete(el._id, idx), label: "Delete" } }); 
+                                onOpen()}
+                                }>
+                                Delete
+                    </Button>
+                                
+                    <Button colorScheme="blue" aria-label="block user" my=".25rem" icon={<BiBlock />} 
+                            onClick={() => { 
+                              setAction({ data: { text: "Are you sure to delete this user ?", action: () => onBlock(el._id, idx), label: "Block" }}); 
+                              onOpen()}
+                              }>
+                            Block
+                    </Button> */}
+                  </ButtonGroup>
+                </Stack>
+                }  
+            </Box>
+
+          { action.value === "details" && 
+            <Button colorScheme="blue" variant="outline" w="120px" mx="auto" onClick={() =>  backToUsers()}>
                 Back to Users
-              </Button>            
-          </Box>
+            </Button>
+          }
+          </Flex>
   };
   
   useEffect(() => {
@@ -546,7 +521,7 @@ const ManageUser = () => {
 
   return (
     <>
-    {/* <TopBar /> */}
+    <NavBar />
     <Box p="1rem">
       <Flex flexDirection="column" width="100wh">
             <Heading as="h2" size="md" textAlign="left" my="2rem"> User Managment </Heading>
@@ -574,7 +549,6 @@ const ManageUser = () => {
              { action.data && displayModal(action.data && action.data) }         
       </Flex>      
     </Box>
-    <SideBar />
     </>
   );
 };

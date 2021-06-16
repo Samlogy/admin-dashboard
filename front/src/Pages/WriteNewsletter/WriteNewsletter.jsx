@@ -5,8 +5,7 @@ import { Heading,
   Flex,
  } from "@chakra-ui/react"
 
-import TopBar from "../../Components/TopBar/TopBar"
-import SideBar from "../../Components/SideBar/SideBar"
+ import NavBar from "../../Components/NavBar/NavBar.jsx"
 import MyEditor from "../../Components/Editor/MyEditor.jsx";
 
 import "./style.css";
@@ -60,7 +59,7 @@ const WriteNewsletter = () => {
 
   return (
     <>
-    <TopBar />
+    <NavBar />
  
       <Heading as="h2" size="lg" my="1rem">
         Write Newsletter
@@ -87,8 +86,6 @@ const WriteNewsletter = () => {
           Send
         </Button> 
       </Flex>
-
-    {/* <SideBar /> */}
     </>
   );
 };

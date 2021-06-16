@@ -6,9 +6,7 @@ import { FormControl, FormLabel, Input, Select, Checkbox,
   Flex, Stack, Box, Text, Button, ButtonGroup, Heading, Textarea
    } from "@chakra-ui/react"
 
-import TopBar from "../../Components/TopBar/TopBar"
-import SideBar from "../../Components/SideBar/SideBar"
-// import "./style.css";
+import NavBar from "../../Components/NavBar/NavBar.jsx"
 
 const proxy = "http://localhost:5000"
 
@@ -23,7 +21,7 @@ const Products = () => {
 
   const toast = useToast();
 
-  const notifyUser = (data) => {
+  const displayToast = (data) => {
     const { msg, status } = data
     return toast({
       title: msg,
@@ -348,7 +346,7 @@ const Products = () => {
     
     return (
       <>
-      <TopBar />
+      <NavBar />
         <div className="products-container">
             <Heading as="h2" size="md" textAlign="right"> Product Managment </Heading>
 
@@ -384,7 +382,6 @@ const Products = () => {
                   </div> : ""
             }       
         </div>
-        {/* <SideBar /> */}
       </>
     )
 };
