@@ -4,6 +4,12 @@ const mongoose = require('mongoose');
 const { roles } = require('../utils/roles');
 
 const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+  },
+  fullName: {
+    type: String,
+  },
   email: {
     type: String,
   },

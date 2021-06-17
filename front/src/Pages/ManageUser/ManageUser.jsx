@@ -10,10 +10,18 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading,
   Button, ButtonGroup, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure,
   Link,
+  Menu,
+  MenuItem,
+  MenuDivider,
+  MenuGroup,
+  MenuList,
+  MenuButton, Container, Image, Icon
    } from "@chakra-ui/react"
+import { FaCog, FaChevronDown } from "react-icons/fa";
 
 
 import NavBar from "../../Components/NavBar/NavBar.jsx"
+
 
 
 const ManageUser = () => {
@@ -21,7 +29,7 @@ const ManageUser = () => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState({ value: "details", data: null })
+  const [action, setAction] = useState({ value: "users", data: null })
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -476,7 +484,7 @@ const ManageUser = () => {
                 <Stack display="flex" flexDirection="column" p="1rem" w="20rem" ml="1rem"
                       border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
 
-                    <Heading as="h4" size="md" textAlign="left" my="1rem">
+                    <Heading as="h4" size="md" textAlign="center" my="1rem">
                         USER ACTIONS
                     </Heading>
               
@@ -521,7 +529,7 @@ const ManageUser = () => {
 
   return (
     <>
-    <NavBar />
+    {/* <NavBar /> */}
     <Box p="1rem">
       <Flex flexDirection="column" width="100wh">
             <Heading as="h2" size="md" textAlign="left" my="2rem"> User Managment </Heading>

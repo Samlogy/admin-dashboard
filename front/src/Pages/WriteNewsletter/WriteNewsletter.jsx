@@ -75,11 +75,8 @@ const WriteNewsletter = () => {
 
         <FormControl id="newsletter" mb="1rem">
           <FormLabel> Newsletter Content </FormLabel>
-          <MyEditor
-            placeholder="Newsletter Content"
-            onEditorChange={onEditorChange}
-            onFilesChange={onFilesChange}
-          />
+          <MyEditor placeholder="Newsletter Content"
+                    onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
         </FormControl>
 
         <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => writeNewsltter()}>

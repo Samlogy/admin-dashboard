@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { 
-  Flex, Heading, Input, Button, InputGroup, Stack, InputLeftElement, chakra, Box, Avatar, FormControl, InputRightElement,
+  Flex, Heading, Input, Button, FormControl, Stack, Box, chakra, InputRightElement, InputGroup,
   useToast,
+  FormLabel, useColorModeValue, 
 } from "@chakra-ui/react";
-import { FaUserAlt, FaLock } from "react-icons/fa";
+
 
 // import proxy from '../../proxySetup'
 // import { loginSchema } from '../../data_validation/index'
@@ -25,7 +26,7 @@ const Login = () => {
     const history = useHistory()
     const toast = useToast();
 
-    const notifyUser = (data) => {
+    const displayToast = (data) => {
       const { msg, status } = data
       return toast({
         title: msg,
@@ -36,9 +37,6 @@ const Login = () => {
         isClosable: true,
       })
     };
-    
-    const CFaUserAlt = chakra(FaUserAlt);
-    const CFaLock = chakra(FaLock);
  
     const onLogin = async () => {
         const url = `${proxy}/admin/auth/login`
@@ -57,7 +55,7 @@ const Login = () => {
            
             if (res.ok) {
                 const result = await res.json()
-                notifyUser({msg: result.message, status: "success"})
+                displayToast({msg: result.message, status: "success"})
 
                 dispatch(logged({
                     logged: true,
@@ -66,54 +64,52 @@ const Login = () => {
 
                 return history.push('/home')
             }
-            notifyUser({msg: "An Error Occured during the sending process !", status: "error"})
+            displayToast({msg: "An Error Occured during the sending process !", status: "error"})
 
         } catch (err) {
-            notifyUser({msg: `Error: ${err.message}`, status: "error"})
+            displayToast({msg: `Error: ${err.message}`, status: "error"})
         }
 
     };
 
-  return  <div className="login-container">
-            <Flex flexDirection="column" width="100wh" height="100vh"
-                backgroundColor="gray.200" justifyContent="center" alignItems="center">
-                <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
-                  <Avatar bg="blue.500" />
-                  <Heading color="blue.400" my="auto"> Login </Heading>
-
-                  <Box minW={{ base: "90%", md: "500px" }}>
-                      <Stack borderRadius="md" spacing={4} p="2rem" backgroundColor="whiteAlpha.900" boxShadow="md">
-                        <FormControl>
-                          <InputGroup>
-                            <InputLeftElement pointerEvents="none" children={<CFaUserAlt color="gray.300" />} />
-                            <Input type="email" placeholder="Email" value={auth.email} 
-                                  onChange={(e) => setAuth({...auth, email: e.target.value})} />
-                          </InputGroup>
-                        </FormControl>
-
-                        <FormControl>
-                          <InputGroup>
-                            <InputLeftElement pointerEvents="none" color="gray.300" children={<CFaLock color="gray.300" />} />
-                            <Input type={showPassword ? "text" : "password"} placeholder="Password" value={auth.password} 
-                                  onChange={(e) => setAuth({...auth, password: e.target.value})} />
-
-                            <InputRightElement width="4.5rem">
-                              <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                                {showPassword ? "Hide" : "Show"}
-                              </Button>
-                            </InputRightElement>
-                          </InputGroup>
-                        </FormControl>
-
-                        <Button borderRadius="md" type="submit" variant="solid" colorScheme="blue" onClick={() => onLogin()}>
-                          Login
-                        </Button>
-                      </Stack>
-                  </Box>
+  return    <Flex minH={'100vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
+              <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                <Stack align={'center'}>
+                  <Heading fontSize={'4xl'}> Sign In </Heading>
                 </Stack>
 
-              </Flex>
-          </div>;
+                <Box rounded={'lg'}  bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} w="500px">
+                  <Stack spacing={4}>
+                    <FormControl id="email">
+                      <FormLabel> Email </FormLabel>
+                      <Input type="email" placeholder="Email" value={auth.email} bg="gray.100"
+                                  onChange={(e) => setAuth({...auth, email: e.target.value})} />
+                    </FormControl>
+
+                    <FormControl id="password">
+                    <FormLabel> Password </FormLabel>
+                      <InputGroup>
+                        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={auth.password} bg="gray.100"
+                                    onChange={(e) => setAuth({...auth, password: e.target.value})} />
+                        <InputRightElement width="4.5rem">
+
+                          <Button h="1.75rem" size="sm" onClick={handleShowClick}>
+                            {showPassword ? "Hide" : "Show"}
+                          </Button>
+                        </InputRightElement>
+                      </InputGroup>
+                    </FormControl>
+                    
+
+                    <Stack spacing={10}>
+                      <Button bg={'blue.400'} borderRadius="md" color={'white'} _hover={{ bg: 'blue.500', }} onClick={() => onLogin()}>
+                        Sign In
+                      </Button>
+                    </Stack>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Flex>
 };
 
 export default Login;

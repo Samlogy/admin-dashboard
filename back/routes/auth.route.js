@@ -15,8 +15,7 @@ const { signAccessToken, verifyAccessToken,
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
 
-// Functions
-
+// Functionss
 
 router.post('/login', async (req, res) => {
     try {

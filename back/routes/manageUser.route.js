@@ -2,6 +2,11 @@ const router = require('express').Router()
 
 const User = require('../models/user.model');
 
+// Functions
+const generateUsername = (email) => { //generate username from user's email
+    return email.substr(0, email.indexOf('@'))
+};
+
 /* Manage User */
 router.get("/getUsers", async (req, res) => {
     try {
@@ -49,7 +54,10 @@ router.get("/filterUsers", async (req, res) => {
 });
 router.post("/createUser", async (req, res) => {
     try {
-        const newUser = new User({ ...req.body })
+        const newUser = new User({ 
+            ...req.body,
+            username: generateUsername(req.body.email) 
+        })
 
         const result = await newUser.save()
 

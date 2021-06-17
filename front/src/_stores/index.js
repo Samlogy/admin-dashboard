@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 
-import { loadState } from "../Components/localStorage";
+
 import rootReducer from "../_reducers"
 
 
