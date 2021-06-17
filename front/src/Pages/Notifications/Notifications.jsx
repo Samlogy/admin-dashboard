@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { Button, Flex, Heading, Select, Box, Spinner, VStack, Avatar, Text, IconButton,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
+  useDisclosure, useToast, 
+  Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
+  } from "@chakra-ui/react"
+import { BsTrash, BsFillEyeSlashFill  } from "react-icons/bs";
 
 import NavBar from "../../Components/NavBar/NavBar.jsx"
-
-import Avatar from "../../Components/Avatar/Avatar"
-import Accordion from "../../Components/Accordion/Accordion"
+// import Accordion from "../../Components/Accordion/Accordion"
 // import proxy from "../../proxy"
-// import "./style.css";
+
 const proxy = "http://localhost:5000"
 
 const Notifications = () => {
     const [notif, setNotif] = useState({
         response: [], contacts: [], posts: [], comments: [], appNews: [], type: "all", loading: false
       })
+    const {action, setAction} = useState({ value: "", data: null })
     
-    //   const { addToast } = useToasts()
       const authStore = useSelector(state => state.auth)
+      const toast = useToast();
+      const { isOpen, onOpen, onClose } = useDisclosure()
     
-      /* API Calls */
-      // sort notifs arr into arrs according to types retrieved
+      /* Functions */
       const sortNotifs = (data) => {
+        // sort notifs arr into arrs according to types retrieved
         data.forEach(el => { 
           switch (el.type) {
             case "contact": {
@@ -87,7 +93,26 @@ const Notifications = () => {
           }
         }
       };
-    
+      const convertDate = (date) => {
+        const new_date = new Date(date).toLocaleDateString("en-US").split(/:| /)[0]
+        return new_date
+      };
+      const deleteNotif = (notifId, notifIndex) => {
+        setAction({ 
+          data: { text: "Are you sure to delete this Notification ?", 
+          action: () => onDelete(notifId, notifIndex), label: "Delete" } 
+        }); 
+        onOpen()
+      };
+      const hideNotif = (notifId, notifIndex) => {
+        setAction({ 
+          data: { text: "Are you sure to Hide this Notification ?", 
+          action: () => onHide(notifId, notifIndex), label: "Hide" } 
+        }); 
+        onOpen()
+      };
+
+      /* API Calls */
       const loadNotifications = async () => {
         const userId = authStore.userData._id
 
@@ -107,13 +132,12 @@ const Notifications = () => {
             sortNotifs(result.data)
             return;
           }
-        //   addToast('Error occured while loading User Notification !', { appearance: 'error', autoDismiss: false })
+          displayToast({ msg: "Error occured while loading User Notification !", status: "error" })
     
         } catch (err) {
-            // addToast(err.message, { appearance: 'error', autoDismiss: false })
+          displayToast({ msg: err.message, status: "error" })
         }
       };
-
       const onDelete = async (notificationId) => {
         const url = `${proxy}/admin/notifications/delete/${notificationId}`
     
@@ -123,15 +147,12 @@ const Notifications = () => {
           if (res.ok) {
             const result = await res.json()
             // update state after delete op
-            // addToast(result.message, { appearance: 'success', autoDismiss: false })
+            displayToast({ msg: result.message, status: "error" })
           }
     
         } catch (err) {
-          // addToast(err.message, { appearance: 'error', autoDismiss: false })
+          displayToast({ msg: err.message, status: "error" })
         }
-      };
-      const onCancel = () => { // cancel remove post action
-        // hide modal box --> delete
       };
       const onHide = async (notificationId) => {
         const url = `${proxy}/admin/notifications/hide/${notificationId}/${'hidden'}`
@@ -149,71 +170,125 @@ const Notifications = () => {
             const result = await res.json()
             console.log(result.data)
             // update state after edit op
-            // addToast(result.message, { appearance: 'success', autoDismiss: false })
+            displayToast({ msg: result.message, status: "error" })
           }
     
         } catch (err) {
-          // addToast(err.message, { appearance: 'error', autoDismiss: false })
+          displayToast({ msg: err.message, status: "error" })
         }
       };
-    
-      useEffect(() => {
-        loadNotifications() // Load notifs from bdd
-      }, [])
-      
-      // Functions
-      const convertDate = (date) => {
-        const new_date = new Date(date).toLocaleDateString("en-US").split(/:| /)[0]
-        return new_date
-      };
 
-      // Components
+      
+
+      // Componenents
+      const displayToast = (data) => {
+        const { msg, status } = data
+        return toast({
+          title: msg,
+          status: status,
+          variant: "top-accent",
+          position: "bottom-right", // "top-right"
+          duration: 5000,
+          isClosable: true,
+        })
+      };
+      const displayModal = (data) => {
+        const { text, action, label } = data
+        return  <Modal isOpen={isOpen} onClose={onClose}>
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader> { label && label } </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody> { text && text } </ModalBody>
+
+                    <ModalFooter>
+                      <Button colorScheme="blue" mr={3} onClick={action && action}>
+                        { label && label }
+                      </Button>
+                      {/* <Button variant="outiline" colorScheme="blue" onClick={() => { backToUsers(); onClose()}}> Cancel </Button> */}
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
+      };
       const displayNotifs = (label, data) => {
         return  <>
-                  <h4> {label} </h4>
+                  <Heading as="h3" size="md" my="1rem"> {label} </Heading>
     
                   {  data.length > 0 ?
                      data.map((el, idx) => 
-                          <Accordion key={idx} hiddenData={ el.content && el.content }>
-                            { el.avatar ? <Avatar imgUrl={el.avatar} size='xs' shape='circle' /> : 
-                                        <Avatar icon size='xs' shape='circle' /> 
-                            }
-                            <p> { el.type && el.type } </p>
-                            <span> 
-                                { el.createdAt && convertDate(el.createdAt) } 
-                            </span>
-                            <span onClick={() => onDelete(el._id)}> del </span>
-                            <span onClick={() => onHide(el._id)}> hide </span>
+                          // <Accordion key={idx} hiddenData={ el.content && el.content }>
+                          //   { el.avatar && <Avatar name={el.username} src={el.avatar} /> }
+
+                          //   <Text> { el.type && el.type } </Text>
+
+                          //   <Box> { el.createdAt && convertDate(el.createdAt) }  </Box>
+
+                            
+                          //   <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
+                          //               onClick={() => deleteNotif(el._id, idx) } />
+                          //   <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
+                          //               onClick={() => hideNotif(el._id, idx)} />
+                          // </Accordion>
+                          <Accordion index={idx} defaultIndex={[0]} allowMultiple>
+                            <AccordionItem>
+                                <AccordionButton>
+                                  <Box flex="1" textAlign="left">
+                                    { el.avatar && <Avatar name={el.username && el.username} src={el.avatar} /> }
+
+                                    <Text> { el.type && el.type } </Text>
+
+                                    <Box> { el.createdAt && convertDate(el.createdAt) }  </Box>
+                                  </Box>
+
+                                  <AccordionIcon />
+                                </AccordionButton>
+                              
+                              <AccordionPanel pb={4}>
+                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
+                                            onClick={() => deleteNotif(el._id, idx) } />
+                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
+                                            onClick={() => hideNotif(el._id, idx)} />
+                              </AccordionPanel>
+                            </AccordionItem>
                           </Accordion>
                         )
-                    : `No ${label}`}
+                    : `No ${label}`
+                  }
                 </>
       };
+        
+      useEffect(() => {
+        loadNotifications()
+      }, [])     
   
     return (
       <>
       <NavBar />
-        <div className="notifications-container">
-            <h2> Notifications </h2>
+        <Flex flexDirection="column" justifyContent="center" alignItems="center" width="100wh" p="2rem">
+            <Heading as="h2" size="lg" my="2rem"> Notifications </Heading>
 
-            <select name="notif-type" onChange={e => setNotif({...notif, type: e.target.value})}>
+            <Select name="notif-type" w="200px" mb="2rem"
+                    value={notif.type} onChange={e => setNotif({...notif, type: e.target.value})}>
               <option value="all"> All </option>
               <option value="contacts"> My Contacts </option>
               <option value="comments"> My Comments </option>
               <option value="posts"> My Posts </option>
               <option value="appNews"> App News </option>
-            </select>
+            </Select>
             
-            <div className="notifications-container">
-            {   notif.loading ? "Loading ..." :
-                notif.response ?
-                    <div className="all-notifications">
-                      { notif.type && checkType(notif.type) }
-                    </div> :
-                <h3> There is not any new Notification </h3>
-            }
-            </div>
-        </div>
+            <Box>
+              {   notif.loading ? 
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> :
+                  notif.response ?
+                      <VStack>
+                        { notif.type && checkType(notif.type) }
+                      </VStack> :
+                  <h3> There is not any new Notification </h3>
+              }
+            </Box>
+
+            {/* { action.data && displayModal(action.data && action.data)  }    */}
+        </Flex>
       </>
     )
 };

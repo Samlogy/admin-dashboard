@@ -8,21 +8,14 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading,
   Flex, Stack, Box, 
   Avatar,
   Button, ButtonGroup, IconButton,
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
+  useDisclosure,
   Link,
-  Menu,
-  MenuItem,
-  MenuDivider,
-  MenuGroup,
-  MenuList,
-  MenuButton, Container, Image, Icon
    } from "@chakra-ui/react"
 import { FaCog, FaChevronDown } from "react-icons/fa";
 
 
 import NavBar from "../../Components/NavBar/NavBar.jsx"
-
-
 
 const ManageUser = () => {
   const [user, setUser] = useState({ fullName: "", username: "", email: "", password: "", role: "" });
@@ -47,6 +40,29 @@ const ManageUser = () => {
   const backToUsers = () => {
     setAction({ value: "users" })
     setUser({ fullName: "", username: "", email: "", password: "", role: "" })
+  };
+
+  const deleteUser = (userId, userIndex) => {
+    setAction({ 
+      data: { text: "Are you sure to delete this user ?", 
+      action: () => onDelete(userId, userIndex), label: "Delete" } 
+    }); 
+    onOpen()
+  };
+  const editUser = (userId, userIndex, userData) => {
+    setAction({ value: "edit", data: {userId, userIndex}}); 
+    setUser(userData)
+  };
+  const blockUser = (userId, userIndex) => {
+    setAction({ 
+      data: { text: "Are you sure to delete this user ?", 
+      action: () => onBlock(userId, userIndex), label: "Block" }
+    }); 
+    onOpen()
+  };
+  const detailsUser = (userData) => {
+    setAction({ value: "details" }); 
+    setUser(userData)
   };
 
   // API calls
@@ -284,25 +300,19 @@ const ManageUser = () => {
                   </Select>
               </Td>
               <Td>
-                <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
+                <ButtonGroup variant="outline" colorScheme="blue" ml="0" spacing="6" display={"flex"} flexDirection="column" 
                             justifyContent="center" alignItems="center" >
                   <IconButton colorScheme="blue" aria-label="edit user" my=".25rem" icon={<BiPencil />} 
-                          onClick={() =>  {setAction({ value: "edit", data: {userId: el._id, userIndex: idx}}); setUser(el)}} />
+                          onClick={() =>  editUser(el._id, idx, el)} />
 
-                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
-                          onClick={() => { 
-                              setAction({ data: { text: "Are you sure to delete this user ?", action: () => onDelete(el._id, idx), label: "Delete" } }); 
-                              onOpen()}
-                              } />
+                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem"  icon={<BiTrash />}
+                          onClick={() => deleteUser(el._id, idx)} />
                               
                   <IconButton colorScheme="blue" aria-label="block user" my=".25rem" icon={<BiBlock />} 
-                        onClick={() => { 
-                          setAction({ data: { text: "Are you sure to delete this user ?", action: () => onBlock(el._id, idx), label: "Block" }}); 
-                          onOpen()}
-                          } />
+                        onClick={() => blockUser(el._id, idx)} />
 
                   <IconButton colorScheme="blue" aria-label="details user" my=".25rem" icon={<BiDetail />}
-                          onClick={() => { setAction({ value: "details" }); setUser(el) }} />
+                          onClick={() => detailsUser(el)} />
                 </ButtonGroup>
               </Td>
               <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
@@ -529,7 +539,7 @@ const ManageUser = () => {
 
   return (
     <>
-    {/* <NavBar /> */}
+    <NavBar />
     <Box p="1rem">
       <Flex flexDirection="column" width="100wh">
             <Heading as="h2" size="md" textAlign="left" my="2rem"> User Managment </Heading>
@@ -553,8 +563,9 @@ const ManageUser = () => {
                       <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
                     }
                   </Box> : ""
-            }    
-             { action.data && displayModal(action.data && action.data) }         
+            }
+                
+            { action.data && displayModal(action.data && action.data) }         
       </Flex>      
     </Box>
     </>

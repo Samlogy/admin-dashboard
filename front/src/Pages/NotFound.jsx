@@ -8,7 +8,7 @@ function NotFound() {
   return (
       <Flex flexDirection="column" justifyContent="center" alignItems="center"
             p="2rem">
-          <Heading as="h2" size="lg" my="2rem">
+          <Heading as="h1" size="2xl" my="2rem">
             404 not Found
           </Heading>
 

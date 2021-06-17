@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import { FormControl, FormLabel, Input, Select, Checkbox, 
   Spinner,
   Table, Thead, Tbody, Tfoot, Tr, Th, Td,
-  useToast,
-  Flex, Stack, Box, Text, Button, ButtonGroup, Heading, Textarea
+  useToast, useDisclosure,
+  Flex, Stack, Box, Text, Button, ButtonGroup, Heading, Textarea, IconButton,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
    } from "@chakra-ui/react"
-
+   import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
+   import { AiOutlineUserAdd } from "react-icons/ai"
+   
 import NavBar from "../../Components/NavBar/NavBar.jsx"
 
 const proxy = "http://localhost:5000"
@@ -20,18 +23,7 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
 
   const toast = useToast();
-
-  const displayToast = (data) => {
-    const { msg, status } = data
-    return toast({
-      title: msg,
-      status: status,
-      variant: "top-accent",
-      position: "bottom-right", // "top-right"
-      duration: 5000,
-      isClosable: true,
-    })
-  };
+  const { isOpen, onOpen, onClose } = useDisclosure()
   
   // API calls
   const getProducts = async () => {
@@ -68,7 +60,7 @@ const Products = () => {
 
       if (res.ok) {
         const result = await res.json();
-        console.log(result.message);
+        displayToast({ msg: result.message, status: "success" })
         // update state
         // setProducts((prevState) => {
         //   return [result.data, ...prevState]
@@ -77,9 +69,10 @@ const Products = () => {
         setAction({value: "products"})
         return;
       }
-      console.log("an Error occured while adding a product !");
+      displayToast({ msg: "an Error occured while adding a product !", status: "error" })
+
     } catch (err) {
-      console.log("Error: ", err.message);
+      displayToast({ msg: err.message, status: "error" })
     }
   };
   const onEdit = async (e, data) => {
@@ -100,13 +93,13 @@ const Products = () => {
         const result = await res.json();
         console.log("edited product data: ", result.data);
         // update products state
-        console.log(result.message);
+        displayToast({ msg: result.message, status: "success" })
         setAction({ value: "products" })
         return;
       }
-      console.log("an Error occured while editing product !");
+      displayToast({ msg: "an Error occured while editing product !", status: "error" })
     } catch (err) {
-      console.log("Error: ", err.message);
+      displayToast({ msg: err.message, status: "error" })
     }
   };
   const onDelete = async (data) => {
@@ -123,13 +116,14 @@ const Products = () => {
         // const new_products_list = products.filter((el) => el._id !== product);
         // setProducts(new_products_list);
 
-        console.log(result.message);
+        displayToast({ msg: result.message, status: "success" })
         setAction({ value: "products" })
         return;
       }
-      console.log("an Error occured while deleting product !");
+      displayToast({ msg: "an Error occured while deleting product !", status: "error" })
+
     } catch (err) {
-      console.log("Error: ", err.message);
+      displayToast({ msg: err.message, status: "error" })
     }
   };
   const onFilter = async (value) => {
@@ -144,12 +138,12 @@ const Products = () => {
         const result = await res.json();
         setProducts(result.data);
         setLoading(false);
-        console.log(result.message);
         return;
       }
-      console.log("an Error occured while filtering users !");
+      displayToast({ msg: "an Error occured while filtering users !", status: "error" })
+
     } catch (err) {
-      console.log("Error: ", err.message);
+      displayToast({ msg: err.message, status: "error" })
     }
   };
 
@@ -158,49 +152,228 @@ const Products = () => {
     const new_date = new Date(date).toLocaleDateString("en-US").split(/:| /)[0];
     return new_date;
   };
-  const backToProduct = () => {
+  const backToProducts = () => {
     setAction({value: "products"})
     setProduct({ name: "", description: "", price: "", amount: "", features: [] })
   };
 
+  const deleteproduct = (userId, userIndex) => {
+    setAction({ 
+      data: { text: "Are you sure to delete this user ?", 
+      action: () => onDelete(userId, userIndex), label: "Delete" } 
+    }); 
+    onOpen()
+  };
+  const editProduct = (userId, userIndex, userData) => {
+    setAction({ value: "edit", data: {userId, userIndex}}); 
+    setProduct(userData)
+  };
+  const detailsProduct = (userData) => {
+    setAction({ value: "details" }); 
+    setProduct(userData)
+  };
+
   /* Components */
+  const displayToast = (data) => {
+    const { msg, status } = data
+    return toast({
+      title: msg,
+      status: status,
+      variant: "top-accent",
+      position: "bottom-right", // "top-right"
+      duration: 5000,
+      isClosable: true,
+    })
+  };
+  const displayModal = (data) => {
+    const { text, action, label } = data
+    return  <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader> { label && label } </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody> { text && text } </ModalBody>
+
+                <ModalFooter>
+                  <Button colorScheme="blue" mr={3} onClick={action && action}>
+                    { label && label }
+                  </Button>
+                  <Button variant="outiline" colorScheme="blue" onClick={() => { backToProducts(); onClose()}}> Cancel </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+  };
   const displayProductsList = (products) => {
+       
     return (
-      <table>
-        <thead>
-          <th> Name </th>
-          <th> Price </th>
-          <th> Amount </th>
-          <th> Features </th>
-          <th>actions</th>
-          <th>created</th>
-          <th>last edit</th>
-        </thead>
+      <>
+      <Table variant="simple" border="1px" borderWidth="solid" borderColor="gray.200" colorScheme="blue" size="sm" w="95%" mx="auto">
+        <Thead>
+          <Tr>
+            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
+            <Th p="1rem"> Name </Th>
+            <Th p="1rem"> Amount </Th>
+            <Th p="1rem"> Features </Th>
+            <Th p="1rem"> Actions </Th>
+            <Th p="1rem"> Created </Th>
+            <Th p="1rem"> Last Edit </Th>
+          </Tr>
+        </Thead>
+        
+        <Tbody>
+          { products.map((el, idx) => 
+            <Tr index={idx}>
+              <Td>
+                <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox>
+              </Td>
+              <Td> {el.name} </Td>
+              <Td> {el.amount} </Td>
+              <Td> {el.features && el.features > 0 && el.features.map(item => item) } </Td>
+              <Td>
+              <ButtonGroup variant="outline" colorScheme="blue" ml="0" spacing="6" display={"flex"} flexDirection="column" 
+                          justifyContent="center" alignItems="center" >
+                <IconButton colorScheme="blue" aria-label="edit user" my=".25rem" icon={<BiPencil />} 
+                        onClick={() =>  editProduct(el._id, idx, el)} />
 
-        <tbody>
-          {products.map((el, idx) => (
-            <tr key={el._id}>
-              <td>  {el.name} </td>
-              <td>  {el.price} </td>
-              <td>  {el.amount} </td>
-              <td>  {el.features} </td>
-              <td>
-                <button type="submit" className="btn btn-outline-accent" 
-                        onClick={() => {setAction({ value: "edit", data: {productId: el._id, productIndex: idx}}); setProduct(el)}}>
-                  Edit
-                </button>
+                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem"  icon={<BiTrash />}
+                        onClick={() => deleteproduct(el._id, idx)} />
 
-                <button type="submit" className="btn btn-outline-accent" 
-                        onClick={() => setAction({value: "delete", data: {productId: el._id}})}>
-                  Delete
-                </button>
-              </td>
-              <td className="display-date"> { el.createdAt && convertDate(el.createdAt)} </td>
-              <td className="display-date"> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <IconButton colorScheme="blue" aria-label="details user" my=".25rem" icon={<BiDetail />}
+                        onClick={() => detailsProduct(el)} />
+              </ButtonGroup>
+            </Td>
+              <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
+              <Td> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
+            </Tr>
+          )
+        }
+        </Tbody>
+
+        <Tfoot>
+          <Tr>
+            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
+            <Th p="1rem"> Name </Th>
+            <Th p="1rem"> Amount </Th>
+            <Th p="1rem"> Features </Th>
+            <Th p="1rem"> Actions </Th>
+            <Th p="1rem"> Created </Th>
+            <Th p="1rem"> Last Edit </Th>
+          </Tr>
+        </Tfoot>
+      </Table>
+     
+      </>
+    )
+  };
+  const displayProductDetails = () => {
+    //  const { name, description, price, amount, features } = data;
+
+    return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
+            <Box display="flex" flexDirection="row" mr="1rem" mb="3rem" justifyContent="center">
+              <Flex flexDirection="column" p="1rem" w="20rem" mr="1rem"
+                  border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
+
+                <Heading as="h3" size="md" textAlign="left" my="1rem">
+                  Product Details
+                </Heading>
+
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> name : {product.name} </Text>
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> description : {product.description} </Text>
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> price : {product.price} </Text>
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> amount : {product.amount} </Text>
+                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> features : 
+                  {(product.features && product.features.length > 0) && product.features.map(item => item)} 
+                </Text>
+              </Flex>
+            
+              { action.value === "details" &&
+                <Stack display="flex" flexDirection="column" p="1rem" w="20rem" ml="1rem"
+                      border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
+
+                    <Heading as="h4" size="md" textAlign="center" my="1rem">
+                      Product ACTIONS
+                    </Heading>
+              
+                  <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
+                              justifyContent="center" alignItems="center" >
+                    {/* <Button colorScheme="blue" my=".25rem"
+                            onClick={() =>  {setAction({ value: "edit", data: {userId: el._id, userIndex: idx}}); setProduct(el)}}>
+                            Edit
+                    </Button>
+
+                    <Button colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
+                            onClick={() => { 
+                                setAction({ data: { text: "Are you sure to delete this user ?", action: () => onDelete(el._id, idx), label: "Delete" } }); 
+                                onOpen()}
+                                }>
+                                Delete
+                    </Button>
+                    */}
+                  </ButtonGroup>
+                </Stack>
+                }  
+            </Box>
+
+          { action.value === "details" && 
+            <Button colorScheme="blue" variant="outline" w="120px" mx="auto" onClick={() =>  backToProducts()}>
+                Back to Users
+            </Button>
+          }
+          </Flex>
+  };
+  const displayAddProduct = () => {
+    return (
+      <>
+        <Box display="flex" flexDirection="row" justifyContent="center" >
+        {displayProductDetails()}
+
+        <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
+          <Heading as="h3" size="md" my="1rem" textAlign="left"> Add new Product </Heading>
+
+          <Stack>
+            <FormControl id="fullName" mb="1rem">
+              <FormLabel> Product Name </FormLabel>
+              <Input type="text" placeholder="Product Name" name="Name" id="name"
+                    value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="description" mb="1rem">
+              <FormLabel> Description </FormLabel>
+              <Textarea placeholder="Description" name="description" id="description" 
+                        value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="price" mb="1rem">
+              <FormLabel> Price </FormLabel>
+              <Input type="number" placeholder="Price" name="price" id="price" 
+                      value={product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="amount" mb="1rem">
+              <FormLabel> Amount </FormLabel>
+              <Input type="number" placeholder="Amount" name="amount" id="amount" 
+                    value={product.amount} onChange={(e) => setProduct({ ...product, amount: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="features" mb="1rem">
+              <FormLabel> Features </FormLabel>
+              <Input type="text" name="features" id="features" placeholder="Feature..."
+                    value={product.features} onChange={(e) => setProduct({ ...product, features: e.target.value })}/>
+            </FormControl>
+          </Stack>
+        </Box>
+
+        </Box>
+
+        <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
+          {/* <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
+            New User
+          </Button> */}
+          <Button colorScheme="blue" variant="outline" onClick={() => backToProducts()}>
+            Back to Products
+          </Button>
+        </ButtonGroup>
+      </>
     );
   };
   const displayProductsFilter = () => {
@@ -219,125 +392,65 @@ const Products = () => {
       </>
     );
   };
-  const displayAddProduct = () => {
+  const displayEditProduct = (data) => {
+    const { name, description, price, amount, features } = data;
+
     return (
-      <Stack border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="500px" my="2rem">
-          <FormControl id="name" mb="1rem">
-            <FormLabel> Name </FormLabel>
-            <Input type="text" placeholder="Name"
-                  value={product.name}
-                  name="name"
-                  id="name"
-                  onChange={(e) => setProduct({ ...product, name: e.target.value })} />
-          </FormControl>
+      <>
+        <Box display="flex" flexDirection="row" justifyContent="center" >
+        {displayProductDetails()}
 
-          <FormControl id="email" mb="1rem">
-            <FormLabel> Email </FormLabel>
-            <Textarea tname="description" id="description" placeholder="description" value={product.description} 
-                      onChange={e => setProduct({ ...product, description: e.target.value })} />
-          </FormControl>
-          
-          <FormControl id="price" mb="1rem">
-            <FormLabel> Price </FormLabel>
-            <Input type="number"
-                    placeholder="Price"
-                    value={product.price}
-                    name="price"
-                    id="price"
-                    onChange={(e) => setProduct({ ...product, price: e.target.value })} />
-          </FormControl>
+        <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
+          <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
 
-          <FormControl id="email" mb="1rem">
-            <FormLabel> Feature </FormLabel>
-            <Input type="text"
-                  placeholder="Add feature"
-                  value={product.features}
-                  name="features"
-                  id="features"
-                  onChange={(e) => setProduct({ ...product, features: e.target.value })} />
-          </FormControl>
+          <Stack>
+            <FormControl id="name" mb="1rem">
+              <FormLabel> Product Name </FormLabel>
+              <Input type="text" placeholder="Product Name" name="name"
+                  id="name" value={name ? name : product.fullName} onChange={(e) => setProduct({ ...product, name: e.target.value })} />
+            </FormControl>
 
-        <ButtonGroup mt="1rem">
-          <Button colorScheme="blue" variant="solid" onClick={() => onCreate()}>
-            Add New Product
+            <FormControl id="description" mb="1rem">
+              <FormLabel> Description </FormLabel>
+              <Textarea type="text" placeholder="Description" name="description" id="description" 
+                    value={description ? description : product.description} 
+                    onChange={(e) => setProduct({ ...product, description: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="email" mb="1rem">
+              <FormLabel> Price </FormLabel>
+              <Input type="number" placeholder="Price" name="price"
+                  id="price" value={price ? price : product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="password" mb="1rem">
+              <FormLabel> Amount </FormLabel>
+              <Input type="number" placeholder="Amount" name="amount"
+                  id="amount" value={amount ? amount : product.amount} onChange={(e) => setProduct({ ...product, amount: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="Features" mb="1rem">
+              <FormLabel> Features </FormLabel>
+              <Textarea type="text" placeholder="Features" name="Features" id="Features" 
+                    value={features ? features : product.features} 
+                    onChange={(e) => setProduct({ ...product, features: e.target.value })} />
+            </FormControl>
+          </Stack>
+        </Box>
+
+        </Box>
+
+        <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
+          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" 
+                  onClick={() => onEdit(action.data && action.data)}>
+            Edit User
           </Button>
-          <Button colorScheme="blue" variant="outline" onClick={() => backToProduct()}>
+          <Button colorScheme="blue" variant="outline" onClick={() => backToProducts()}>
             Back to Products
           </Button>
         </ButtonGroup>
-      </Stack>
+      </>
     );
-  };
-  const displayEditProduct = (data) => {
-    const { name, description, price, features } = data;
-
-    return (
-      <form action="POST" className="add-user-form">
-        <div className="form-input">
-          <label htmlFor="name"> Name </label>
-          <input
-            type="text"
-            placeholder="Name"
-            value={name ? name : product.name}
-            name="name"
-            id="name"
-            onChange={(e) => setProduct({ ...product, name: e.target.value })}
-          />
-        </div>
-
-        <div className="form-input">
-          <label htmlFor="description"> Description </label>
-          <textarea name="description" id="description" placeholder="description" 
-                    value={description ? description : product.description} 
-                    onChange={e => setProduct({ ...product, description: e.target.value })}>
-          </textarea>
-        </div>
-
-        <div className="form-input">
-          <label htmlFor="price"> Price </label>
-          <input
-            type="number"
-            placeholder="Price"
-            value={price ? price : product.price}
-            name="price"
-            id="price"
-            onChange={(e) => setProduct({ ...product, price: e.target.value })}
-          />
-        </div>
-
-        <div className="form-input">
-          <label htmlFor="features"> Features </label>
-          <input
-            type="text"
-            placeholder="Add feature"
-            value={features && features.length > 0 ? features : product.features}
-            name="features"
-            id="features"
-            onChange={(e) => setProduct({ ...product, features: e.target.value })}
-          />
-        </div>
-
-        <div className="group-btn">
-          <button type="submit" className="btn btn-accent" onClick={e => onEdit(e, action.data && action.data)}>
-            Edit Product
-          </button>
-          <button type="submit" className="btn btn-outline-accent" onClick={() => backToProduct()}>
-            Back to Products
-        </button>
-        </div>
-      </form>
-    );
-
-  };
-  const displayRemoveProduct = () => {
-    return  <div className="remove-product">
-              <Text> Are you sure you want to delete this Product ? </Text>
-
-                <ButtonGroup variant="outline" spacing="6">
-                  <Button variant="out" onClick={() => onDelete(action.data && action.data)}> Delete </Button>
-                  <Button onClick={() => setAction({value: "products"})}> Cancel </Button>
-                </ButtonGroup>
-            </div> 
   };
 
   useEffect(() => {
@@ -347,41 +460,32 @@ const Products = () => {
     return (
       <>
       <NavBar />
-        <div className="products-container">
-            <Heading as="h2" size="md" textAlign="right"> Product Managment </Heading>
+        <Flex flexDirection="column" width="100wh" p="1rem">
+            <Heading as="h2" size="md" textAlign="left" my="2rem"> Product Managment </Heading>
 
             {
-              action.value === "create" ? 
-                  <div className="add-new-user">
-                    <Heading as="h2" size="md" textAlign="right"> Create a New Product </Heading>
-                    {displayAddProduct()}
-                  </div>  :
+              action.value === "create" ? displayAddProduct() :
 
-              action.value === "edit" ? 
-                  <div className="add-new-user">
-                    <Heading as="h2" size="md" textAlign="right"> Edit a Product </Heading>
-                    { Object.keys(product).length > 0 && displayEditProduct(product) }
-                  </div>  :
-              action.value === "delete" ?  displayRemoveProduct() :
+              action.value === "edit" ? Object.keys(product).length > 0 && displayEditProduct(product)  :
+
+              action.value === "details" ? displayProductDetails() :
 
               action.value === "products" ? 
-                  <div className="display-users">
-                    <Heading as="h2" size="md" textAlign="right"> List of Products </Heading>
-                    <Button colorScheme="blue" onClick={() => setAction({value: "create"})}> Create </Button>
+                  <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+                    <Button colorScheme="blue" onClick={() => setAction({ value: "create" })} w="100px"> Create </Button>
 
-                    <div className="filter-users">
-                      {displayProductsFilter()}
-                    </div>
+                    {displayProductsFilter()}
                     
-
-                    {   loading ? "Loading... " : 
-                        products.length > 0 ?
-                        displayProductsList(products) : 
-                        <Heading as="h4" size="md" textAlign="right"> There is not any Product </Heading>
+                    { loading ? 
+                      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
+                      products.length > 0 ? displayProductsList(products) :
+                      <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
                     }
-                  </div> : ""
-            }       
-        </div>
+                  </Box> : ""
+            }   
+
+            { action.data && displayModal(action.data && action.data) }
+        </Flex>
       </>
     )
 };

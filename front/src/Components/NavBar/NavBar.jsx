@@ -1,79 +1,77 @@
 import React, { useRef } from "react";
-// import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
 import { AiOutlineUserAdd } from "react-icons/ai"
-import { Box,  Link,
-  Button, useDisclosure,
+import { Box,  Link, Button,
   Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent,  DrawerCloseButton,
-  Menu,
-  MenuItem,
-  MenuDivider,
-  MenuGroup,
-  MenuList,
-  MenuButton, Container, Image, Icon, Flex, Stack, Text, Avatar, Badge 
+  Menu, MenuItem, MenuDivider, MenuGroup, MenuList, MenuButton, 
+  Image, Icon, Flex, Stack, Text, Avatar, Badge,
+  useDisclosure, useColorMode
    } from "@chakra-ui/react"
 
-import { FaCog, FaChevronDown } from "react-icons/fa";
+import { FaCog } from "react-icons/fa";
 import { MdNotificationsActive, MdHome, MdKeyboardArrowLeft } from "react-icons/md"
+import { BiMoon, BiSun } from "react-icons/bi"
 
 import Logout from "../../Pages/Auth/Logout"
 
-// const tt = () => {
-//     const { isOpen, onOpen, onClose } = useDisclosure()
-  
-//     const firstField = useRef()
-  
-//     return <> 
-//             <Box bg="gray.300" h={16}>
-//               <Button colorScheme="blue" onClick={onOpen}> Open </Button>
-//             </Box>
-  
-//             <Drawer placement="left" onClose={onClose} isOpen={isOpen} initialFocusRef={firstField} 
-//                     size="xs" p=".5rem"> 
-//               <DrawerOverlay />
-//               <DrawerContent>
-//                 <DrawerCloseButton />
-//                 <DrawerHeader borderBottomWidth="1px"> ADMIN PANEL </DrawerHeader>
-  
-//                 <DrawerBody display="flex" flexDirection="column" justifyContent="left" size="md">
-//                   <Link href="/home" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-//                         mb=".5rem" p=".5rem" borderRadius="md" bg="gray.300"> 
-//                     <AiOutlineUserAdd size="18" />
-//                     App Statistics
-//                   </Link>
-  
-//                   <Link href="/users" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-//                         mb=".5rem" p="1rem" borderRadius="md" bg="gray.300"> 
-//                     <AiOutlineUserAdd size="18" />
-//                     User Manamgement 
-//                   </Link>
-  
-//                   <Link href="/products" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-//                         mb=".5rem" p="1rem" borderRadius="md" bg="gray.300"> 
-//                   < AiOutlineUserAdd size="18" />
-//                     Product Manamgement
-//                   </Link>
-  
-//                   <Link href="/newsletter" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
-//                         mb=".5rem" p="1rem" borderRadius="md" bg="gray.300"> 
-//                     <AiOutlineUserAdd size="18" />
-//                     Write Newsletter
-//                   </Link>
-//                 </DrawerBody>
 
-//                 <DrawerFooter display="flex" flexDirection="column" justifyContent="center">
-//                   <Logout />
-//                 </DrawerFooter>
-//               </DrawerContent>
-//             </Drawer>
-//           </>
-//   };
-  const NavBar = (props) =>  {
-     const { avatar, notifs, logo } = props;
+const SideBar = (props) => {
+  const { onClose, isOpen } = props;
+
+  // console.log(isOpen)
+
+  return <Drawer placement="left" onClose={onClose && onClose} isOpen={isOpen && isOpen}  
+                size="xs" p=".5rem"> 
+            <DrawerOverlay />
+
+            <DrawerContent>
+              <DrawerCloseButton />
+
+              <DrawerHeader borderBottomWidth="1px"> ADMIN PANEL </DrawerHeader>
+
+              <DrawerBody display="flex" flexDirection="column" justifyContent="left" size="md">
+                <Link href="/home" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
+                      mb=".5rem" p=".5rem" borderRadius="md" bg="gray.300"> 
+                  <AiOutlineUserAdd size="18" />
+                  App Statistics
+                </Link>
+
+                <Link href="/users" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
+                      mb=".5rem" p="1rem" borderRadius="md" bg="gray.300"> 
+                  <AiOutlineUserAdd size="18" />
+                  User Manamgement 
+                </Link>
+
+                <Link href="/products" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
+                      mb=".5rem" p="1rem" borderRadius="md" bg="gray.300"> 
+                < AiOutlineUserAdd size="18" />
+                  Product Manamgement
+                </Link>
+
+                <Link href="/newsletter" display="flex" flexDirection="row" fontSize="15" justifyContent="center"
+                      mb=".5rem" p="1rem" borderRadius="md" bg="gray.300"> 
+                  <AiOutlineUserAdd size="18" />
+                  Write Newsletter
+                </Link>
+              </DrawerBody>
+
+              <DrawerFooter display="flex" flexDirection="column" justifyContent="center">
+                <Logout />
+              </DrawerFooter>
+            </DrawerContent>
+            </Drawer>
+};
+
+const NavBar = (props) =>  {
+    const { avatar, notifs, logo } = props;
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { colorMode, toggleColorMode } = useColorMode()
 
     return (
+      <>
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" bg="gray.200" p=".5rem">
           <Button colorScheme="navItem" variant="outline" colorScheme="blue">
-            <MdKeyboardArrowLeft size="24" />
+            <MdKeyboardArrowLeft size="24" onClick={onOpen} />
           </Button>
 
           <Stack display="flex" flexDirection="row" alignItems="center">
@@ -87,6 +85,10 @@ import Logout from "../../Pages/Auth/Logout"
           <Stack direction={["column", "row"]} alignItems={["flex-end", "center"]}>
               <Button colorScheme="navItem" variant="ghost">
                 <MdHome size="24" />
+              </Button>
+
+              <Button colorScheme="navItem" variant="ghost">
+                { colorMode === "light" ? <BiMoon size="24" onClick={toggleColorMode} /> : <BiSun size="24" onClick={toggleColorMode} /> }
               </Button>
 
               <Button colorScheme="navItem" variant="ghost">
@@ -123,7 +125,9 @@ import Logout from "../../Pages/Auth/Logout"
               <Logout />
           </Stack>
         </Box>
+      <SideBar onClose={onClose} isOpen={isOpen} />
+      </>
     );
-  }
+};
 
 export default NavBar

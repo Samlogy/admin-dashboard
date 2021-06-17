@@ -1,21 +1,4 @@
-.write-newsletter-container {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    margin: 1rem auto;
-    width: 80%;
-}
-h3, h2 { 
-    text-transform: uppercase
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-.form-input {
-    margin: 1rem 0;
-}
-.btn {
-    margin-top: 1rem
+.ql-editor {
+    height: 10rem;
+    background-color: #edf2f7;
 }
