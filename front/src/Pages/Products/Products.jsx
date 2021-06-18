@@ -8,7 +8,6 @@ import { FormControl, FormLabel, Input, Select, Checkbox,
   Tag, TagLabel,
    } from "@chakra-ui/react"
    import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
-   import { AiOutlineUserAdd } from "react-icons/ai"
    import { FaProductHunt, FaSortAmountUp } from "react-icons/fa";
    import { ImPriceTags } from "react-icons/im";
    import { BsCardChecklist } from "react-icons/bs"
@@ -21,7 +20,7 @@ const proxy = "http://localhost:5000"
 
 const Products = () => {
   const [product, setProduct] = useState({ 
-        name: "", description: "", price: "", amount: "", features: ["qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq",]  
+        name: "", description: "", price: "", amount: "", features: []  
         });
   const [action, setAction] = useState({ value: "products", data: null })
   const [products, setProducts] = useState([]);
@@ -30,6 +29,24 @@ const Products = () => {
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  // Table logic (checkbox)
+  // const selectable = true;
+  // const [selected, setSelected] = useState([])
+  // let itemsIds = products.map((item) => item.id);
+  // let [localSelected, setLocalSelected] = useState(selected);
+
+  // const setCheckedItems = (isChecked) => {
+  //   setLocalSelected([]);
+  //   if (isChecked === true) {
+  //     setLocalSelected(itemsIds);
+  //   }
+  //   // console.log(isChecked)
+  // };
+  // const setCheckedItem = (item, isChecked) => {
+  //   isChecked ? setLocalSelected((prevState) => [...prevState, item])
+  //             : setLocalSelected((prevState) => prevState.filter((i) => i !== item));
+  // };
   
   // API calls
   const getProducts = async () => {
@@ -81,9 +98,7 @@ const Products = () => {
       displayToast({ msg: err.message, status: "error" })
     }
   };
-  const onEdit = async (e, data) => {
-    e.preventDefault()
-
+  const onEdit = async (data) => {
     try {
       // data validation
       const url = `${proxy}/admin/products/editProduct/${data.productId}`;
@@ -163,20 +178,20 @@ const Products = () => {
     setProduct({ name: "", description: "", price: "", amount: "", features: [] })
   };
 
-  const deleteproduct = (userId, userIndex) => {
+  const deleteproduct = (productId, productIndex) => {
     setAction({ 
       data: { text: "Are you sure to delete this user ?", 
-      action: () => onDelete(userId, userIndex), label: "Delete" } 
+      action: () => onDelete(productId, productIndex), label: "Delete" } 
     }); 
     onOpen()
   };
-  const editProduct = (userId, userIndex, userData) => {
-    setAction({ value: "edit", data: {userId, userIndex}}); 
-    setProduct(userData)
+  const editProduct = (productId, productIndex, productData) => {
+    setAction({ value: "edit", data: {productId, productIndex}}); 
+    setProduct(productData)
   };
-  const detailsProduct = (userData) => {
-    setAction({ value: "details" }); 
-    setProduct(userData)
+  const detailsProduct = (productData, productIndex) => {
+    setAction({ value: "details", data:{ productIndex: productIndex } }); 
+    setProduct(productData)
   };
 
   /* Components */
@@ -216,7 +231,12 @@ const Products = () => {
       <Table variant="simple" border="1px" borderWidth="solid" borderColor="gray.200" colorScheme="blue" size="sm" w="95%" mx="auto">
         <Thead>
           <Tr>
-            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
+            {/* { selectable &&
+              <Th p="1rem"> 
+                <Checkbox isChecked={localSelected.length === itemsIds.length}
+                          onChange={(e) => setCheckedItems(e.target.checked)} />
+              </Th>
+            } */}
             <Th p="1rem"> Name </Th>
             <Th p="1rem"> Amount </Th>
             <Th p="1rem"> Features </Th>
@@ -230,7 +250,9 @@ const Products = () => {
           { products.map((el, idx) => 
             <Tr index={idx}>
               <Td>
-                <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox>
+                {/* <Checkbox defaultIsChecked={selected.includes(el._id)}
+                          isChecked={localSelected.includes(el._id)}
+                          onChange={(e) => setCheckedItem(el._id, e.target.checked)} /> */}
               </Td>
               <Td> {el.name} </Td>
               <Td> {el.amount} </Td>
@@ -245,7 +267,7 @@ const Products = () => {
                         onClick={() => deleteproduct(el._id, idx)} />
 
                 <IconButton colorScheme="blue" aria-label="details user" my=".25rem" icon={<BiDetail />}
-                        onClick={() => detailsProduct(el)} />
+                        onClick={() => detailsProduct(el, idx)} />
               </ButtonGroup>
             </Td>
               <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
@@ -257,7 +279,13 @@ const Products = () => {
 
         <Tfoot>
           <Tr>
-            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
+          {/* { selectable &&
+              <Th p="1rem"> 
+                <Checkbox isChecked={localSelected.length === itemsIds.length}
+                          onChange={(e) => setCheckedItems(e.target.checked)}
+                        />
+              </Th>
+            } */}
             <Th p="1rem"> Name </Th>
             <Th p="1rem"> Amount </Th>
             <Th p="1rem"> Features </Th>
@@ -273,7 +301,7 @@ const Products = () => {
   };
   const displayProductDetails = () => {
     //  const { name, description, price, amount, features } = data;
-
+    
     return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
             <Box display="flex" flexDirection="row" mr="1rem" mb="3rem" justifyContent="center">
               <Flex flexDirection="column" p="1rem" w="20rem" mr="1rem"
@@ -334,19 +362,26 @@ const Products = () => {
               
                   <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
                               justifyContent="center" alignItems="center" >
-                    {/* <Button colorScheme="blue" my=".25rem"
-                            onClick={() =>  {setAction({ value: "edit", data: {userId: el._id, userIndex: idx}}); setProduct(el)}}>
+                    <Button colorScheme="blue" my=".25rem"
+                            onClick={() =>  setAction({ value: "edit", 
+                                                          data: {productId: product._id, productIndex: action.data}
+                                                        }) }>
                             Edit
                     </Button>
 
                     <Button colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
                             onClick={() => { 
-                                setAction({ data: { text: "Are you sure to delete this user ?", action: () => onDelete(el._id, idx), label: "Delete" } }); 
-                                onOpen()}
+                                setAction({ 
+                                      data: { text: "Are you sure to delete this product ?", 
+                                      action: () => onDelete(product._id, action.data), 
+                                      label: "Delete" } 
+                                      }); 
+                                onOpen()
+                                }
                                 }>
                                 Delete
                     </Button>
-                    */}
+                   
                   </ButtonGroup>
                 </Stack>
                 }  
@@ -404,8 +439,8 @@ const Products = () => {
         </Box>
 
         <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
-          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
-            New User
+          <Button leftIcon={<FaProductHunt size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
+            New Product
           </Button>
           <Button colorScheme="blue" variant="outline" onClick={() => backToProducts()}>
             Back to Products
@@ -467,11 +502,10 @@ const Products = () => {
                   id="amount" value={amount ? amount : product.amount} onChange={(e) => setProduct({ ...product, amount: e.target.value })} />
             </FormControl>
 
-            <FormControl id="Features" mb="1rem">
+            <FormControl id="features" mb="1rem">
               <FormLabel> Features </FormLabel>
-              <Textarea type="text" placeholder="Features" name="Features" id="Features" 
-                    value={features ? features : product.features} 
-                    onChange={(e) => setProduct({ ...product, features: e.target.value })} />
+              <Features value={features && features}
+                        onChange={(e) => setProduct({ ...product, features: e.target.value })} />
             </FormControl>
           </Stack>
         </Box>
@@ -479,7 +513,7 @@ const Products = () => {
         </Box>
 
         <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
-          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" 
+          <Button leftIcon={<FaProductHunt size="20" />} w="150px" colorScheme="blue" variant="solid" 
                   onClick={() => onEdit(action.data && action.data)}>
             Edit User
           </Button>

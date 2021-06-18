@@ -6,7 +6,7 @@ import { Home, Notifications, Login, WriteNewsletter, ManageUser, Products, NotF
 
 import PrivateRoute from "./utils/PrivateRoute"
 import { saveState } from "./utils/localStorage";
-import { createAuthStore } from "./_stores"
+import { Store } from "./_stores"
 
 import './App.css';
 
@@ -14,10 +14,9 @@ import './App.css';
 export default function App() {
   const authStore = useSelector(state => state.auth)
 
-  createAuthStore.subscribe(() => {
+  Store.subscribe(() => {
     saveState("auth-admin", {
-      logged: createAuthStore.getState().logged,
-      userData: createAuthStore.getState().userData,
+      auth: Store.getState().auth,
     });
   });
   

@@ -60,8 +60,8 @@ const ManageUser = () => {
     }); 
     onOpen()
   };
-  const detailsUser = (userData) => {
-    setAction({ value: "details" }); 
+  const detailsUser = (userData, userIndex) => {
+    setAction({ value: "details", data:{ productIndex: userIndex } })
     setUser(userData)
   };
 
@@ -500,26 +500,38 @@ const ManageUser = () => {
               
                   <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
                               justifyContent="center" alignItems="center" >
-                    {/* <Button colorScheme="blue" my=".25rem"
-                            onClick={() =>  {setAction({ value: "edit", data: {userId: el._id, userIndex: idx}}); setUser(el)}}>
+                    <Button colorScheme="blue" my=".25rem"
+                            onClick={() =>  setAction({ value: "edit", 
+                                                          data: {userId: user._id, userIndex: action.data}
+                                                        })}>
                             Edit
                     </Button>
 
                     <Button colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
                             onClick={() => { 
-                                setAction({ data: { text: "Are you sure to delete this user ?", action: () => onDelete(el._id, idx), label: "Delete" } }); 
-                                onOpen()}
-                                }>
+                              setAction({ 
+                                    data: { text: "Are you sure to delete this User ?", 
+                                    action: () => onDelete(user._id, action.data), 
+                                    label: "Delete" } 
+                                    }); 
+                              onOpen()
+                              }
+                              }>
                                 Delete
                     </Button>
                                 
                     <Button colorScheme="blue" aria-label="block user" my=".25rem" icon={<BiBlock />} 
                             onClick={() => { 
-                              setAction({ data: { text: "Are you sure to delete this user ?", action: () => onBlock(el._id, idx), label: "Block" }}); 
-                              onOpen()}
+                              setAction({ 
+                                    data: { text: "Are you sure to block this user ?", 
+                                    action: () => onDelete(user._id, action.data), 
+                                    label: "Block" } 
+                                    }); 
+                              onOpen()
+                              }
                               }>
                             Block
-                    </Button> */}
+                    </Button>
                   </ButtonGroup>
                 </Stack>
                 }  

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Flex, Heading, Select, Box, Spinner, VStack, Avatar, Text, IconButton,
+import { Button, Flex, Heading, Select, Box, Spinner, VStack, Avatar, Text, IconButton, ButtonGroup,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
   useDisclosure, useToast, 
   Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
@@ -17,7 +17,7 @@ const Notifications = () => {
     const [notif, setNotif] = useState({
         response: [], contacts: [], posts: [], comments: [], appNews: [], type: "all", loading: false
       })
-    const {action, setAction} = useState({ value: "", data: null })
+    const [action, setAction] = useState({ value: "", data: null })
     
       const authStore = useSelector(state => state.auth)
       const toast = useToast();
@@ -99,24 +99,23 @@ const Notifications = () => {
       };
       const deleteNotif = (notifId, notifIndex) => {
         setAction({ 
-          data: { text: "Are you sure to delete this Notification ?", 
-          action: () => onDelete(notifId, notifIndex), label: "Delete" } 
+          data: { text: "Are you sure to Delete this Notification ?", 
+                  action: () => onDelete(notifId, notifIndex), label: "Delete" } 
         }); 
         onOpen()
       };
       const hideNotif = (notifId, notifIndex) => {
         setAction({ 
           data: { text: "Are you sure to Hide this Notification ?", 
-          action: () => onHide(notifId, notifIndex), label: "Hide" } 
+                  action: () => onHide(notifId, notifIndex), label: "Hide" } 
         }); 
         onOpen()
       };
 
       /* API Calls */
       const loadNotifications = async () => {
-        const userId = authStore.userData._id
-
         setNotif({...notif, loading: true })
+        const userId = "60bbc4ed781e2232e4429473" // authStore.userData._id
         const url = `${proxy}/admin/notifications/${userId}`
     
         try {
@@ -205,56 +204,51 @@ const Notifications = () => {
                       <Button colorScheme="blue" mr={3} onClick={action && action}>
                         { label && label }
                       </Button>
-                      {/* <Button variant="outiline" colorScheme="blue" onClick={() => { backToUsers(); onClose()}}> Cancel </Button> */}
+                      <Button variant="outiline" colorScheme="blue" onClick={() => onClose()}> Cancel </Button>
                     </ModalFooter>
                   </ModalContent>
                 </Modal>
       };
       const displayNotifs = (label, data) => {
-        return  <>
-                  <Heading as="h3" size="md" my="1rem"> {label} </Heading>
+        return  <Box w="45rem" p="1rem" mb="1rem" border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
+                      boxShadow="md">
+                  <Heading as="h3" size="md" mt="0" mb="1rem"> {label} </Heading>
     
                   {  data.length > 0 ?
-                     data.map((el, idx) => 
-                          // <Accordion key={idx} hiddenData={ el.content && el.content }>
-                          //   { el.avatar && <Avatar name={el.username} src={el.avatar} /> }
-
-                          //   <Text> { el.type && el.type } </Text>
-
-                          //   <Box> { el.createdAt && convertDate(el.createdAt) }  </Box>
-
-                            
-                          //   <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
-                          //               onClick={() => deleteNotif(el._id, idx) } />
-                          //   <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
-                          //               onClick={() => hideNotif(el._id, idx)} />
-                          // </Accordion>
-                          <Accordion index={idx} defaultIndex={[0]} allowMultiple>
+                     data.map((el, idx) =>
+                          <Accordion allowToggle allowMultiple>
                             <AccordionItem>
                                 <AccordionButton>
-                                  <Box flex="1" textAlign="left">
-                                    { el.avatar && <Avatar name={el.username && el.username} src={el.avatar} /> }
+                                  <Box display="flex" flexDirection="row" justifyContent="space-between" flex="1">
+                                    { el.avatar ? 
+                                        <Avatar name={el.username && el.username} src={el.avatar} size="sm" /> :
+                                        <Avatar name={el.username && el.username} src={el.avatar} size="md" /> 
+                                    }
 
-                                    <Text> { el.type && el.type } </Text>
+                                    <Text my="auto"> { el.type && el.type } </Text>
 
-                                    <Box> { el.createdAt && convertDate(el.createdAt) }  </Box>
+                                    <Text my="auto" mr="1rem"> { el.createdAt && convertDate(el.createdAt) }  </Text>
                                   </Box>
 
                                   <AccordionIcon />
                                 </AccordionButton>
                               
                               <AccordionPanel pb={4}>
-                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
-                                            onClick={() => deleteNotif(el._id, idx) } />
-                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
-                                            onClick={() => hideNotif(el._id, idx)} />
+                                <Text my="1rem"> { el.content && el.content } </Text>
+
+                                <ButtonGroup display="flex" flexDirection="row" justifyContent="flex-end">
+                                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
+                                              onClick={() => deleteNotif(el._id, idx)} />
+                                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
+                                              onClick={() => hideNotif(el._id, idx)} />
+                                </ButtonGroup>
                               </AccordionPanel>
                             </AccordionItem>
                           </Accordion>
                         )
                     : `No ${label}`
                   }
-                </>
+                </Box>
       };
         
       useEffect(() => {
@@ -287,7 +281,7 @@ const Notifications = () => {
               }
             </Box>
 
-            {/* { action.data && displayModal(action.data && action.data)  }    */}
+            { action.data && displayModal(action.data && action.data)  }   
         </Flex>
       </>
     )

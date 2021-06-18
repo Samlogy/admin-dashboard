@@ -6,13 +6,8 @@ import { Box,  Link, Button,
   Image, Icon, Flex, Stack, Text, Avatar, Badge,
   useDisclosure, useColorMode
    } from "@chakra-ui/react"
-
-import { FaCog } from "react-icons/fa";
 import { MdNotificationsActive, MdHome, MdKeyboardArrowLeft } from "react-icons/md"
 import { BiMoon, BiSun } from "react-icons/bi"
-
-import { FaUsers, FaProductHunt, FaRegNewspaper } from "react-icons/fa"
-import { ImStatsDots } from "react-icons/im"
 
 import SideBar from "./SideBar.jsx"
 import SubMenu from "./SubMenu.jsx"
@@ -45,7 +40,10 @@ const NavBar = (props) =>  {
               </Button>
 
               <Button colorScheme="navItem" variant="ghost">
-                { colorMode === "light" ? <BiMoon size="24" onClick={toggleColorMode} /> : <BiSun size="24" onClick={toggleColorMode} /> }
+                { colorMode === "light" ? 
+                  <BiMoon size="24" onClick={toggleColorMode} /> : 
+                  <BiSun size="24" onClick={toggleColorMode} /> 
+                }
               </Button>
 
               <Button as="a" colorScheme="navItem" variant="ghost" href="/notifications">
@@ -65,7 +63,8 @@ const NavBar = (props) =>  {
               <Logout />
           </Stack>
         </Box>
-      <SideBar onClose={onClose} isOpen={isOpen} />
+
+        <SideBar onClose={onClose} isOpen={isOpen} />
       </>
     );
 };

@@ -2,7 +2,6 @@ import React from "react";
 import { Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent,  DrawerCloseButton,
   Text, Link,
    } from "@chakra-ui/react"
-
 import { FaUsers, FaProductHunt, FaRegNewspaper } from "react-icons/fa"
 import { ImStatsDots } from "react-icons/im"
 
