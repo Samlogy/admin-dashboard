@@ -28,7 +28,7 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState({ value: "users", data: null })
+  const [action, setAction] = useState({ value: "edit", data: null })
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -461,7 +461,7 @@ const Users = () => {
     );
   };
   const displayEditUser = (data) => {
-    const { fullName, email, username, password, role } = data;
+    const { fullName, email, username, password, role, address, active, gender, phone } = data;
 
     return (
       <>
@@ -490,10 +490,65 @@ const Users = () => {
                   id="email" value={email ? email : user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
             </FormControl>
 
-            <FormControl id="password" mb="1rem">
+            <FormControl id="phone" mb="1rem">
+              <FormLabel> Phone </FormLabel>
+              <Input type="text" placeholder="Phone" name="phone"
+                  id="phone" value={phone ? phone : user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="phone" mb="1rem">
+              <FormLabel> gender </FormLabel> 
+              <RadioGroup id="gender" name="gender" value={gender ? gender :user.gender}
+                          onChange={(e) => setUser({ ...user, gender: e })}>
+                <Stack direction="row">
+                  <Radio value="male"> Male </Radio>
+                  <Radio value="female"> Female </Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl id="active" mb="1rem">
+              <FormLabel> Active </FormLabel>
+              <RadioGroup id="active" name="active" value={active ? active : user.active}
+                          onChange={(e) => setUser({ ...user, active: e })}>
+                <Stack direction="row">
+                  <Radio value="false"> No </Radio>
+                  <Radio value="true"> Yes </Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl id="address" mb="1rem">
+              <FormLabel> Address </FormLabel>
+              <Textarea placeholder="Address" name="address" id="address"
+                        value={address ? address : user.address} onChange={(e) => setUser({ ...user, address: e.target.value })} />
+            </FormControl>
+
+            <FormControl FormControl id="password" mb="1rem">
               <FormLabel> Password </FormLabel>
-              <Input type="password" placeholder="Password" name="password"
-                  id="password" value={password ? password : user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+              <InputGroup>
+                <Input type={showPwd.pass ? "text" : "password"} placeholder="Password" name="password" id="password"
+                        value={password ? password :user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+                <InputRightElement width="4.5rem">
+                    <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, pass: !showPwd.pass })}>
+                      {showPwd.pass ? "Hide" : "Show"}
+                    </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <FormControl id="confirmPassword" mb="1rem">
+              <FormLabel> Confirm Password </FormLabel>
+                <InputGroup>
+                  <Input type={showPwd.confirmPass ? "text" : "password"} 
+                          placeholder="Confirm Password" name="confirmPassword" id="confirmPassword"
+                          value={user.confirmPassword} onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })} />
+                  <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, confirmPass: !showPwd.confirmPass })}>
+                        {showPwd.confirmPass ? "Hide" : "Show"}
+                      </Button>
+                  </InputRightElement>
+                </InputGroup>
             </FormControl>
 
             <FormControl id="role" mb="1rem">
