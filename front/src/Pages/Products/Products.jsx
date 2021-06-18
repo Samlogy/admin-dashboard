@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormControl, FormLabel, Input, Select, Checkbox, 
+import { FormControl, FormLabel, Input, Select, Checkbox, Image,
   Spinner,
   Table, Thead, Tbody, Tfoot, Tr, Th, Td,
   useToast, useDisclosure,
@@ -312,6 +312,11 @@ const Products = () => {
                 </Heading>
 
                 <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <Image borderRadius="md" boxSize="150px"
+                          src={product.avatar} alt={product.name} />
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
                     <FaProductHunt size="20" />  
                     <Text ml=".5rem" fontStyle="italic"> name : </Text>
                     <Text ml=".5rem" fontWeight="bold"> {product.name} </Text>
@@ -404,6 +409,10 @@ const Products = () => {
           <Heading as="h3" size="md" my="1rem" textAlign="left"> Add new Product </Heading>
 
           <Stack>
+            <Box display="flex" flexDirection="row" my="1.25rem"> 
+                <Image borderRadius="md" boxSize="150px"
+                      src={product.avatar} alt={product.name} />
+             </Box>
             <FormControl id="fullName" mb="1rem">
               <FormLabel> Product Name </FormLabel>
               <Input type="text" placeholder="Product Name" name="Name" id="fullName"
@@ -466,7 +475,7 @@ const Products = () => {
     );
   };
   const displayEditProduct = (data) => {
-    const { name, description, price, amount, features } = data;
+    const { name, description, price, amount, features, avatar } = data;
 
     return (
       <>
@@ -477,6 +486,10 @@ const Products = () => {
           <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
 
           <Stack>
+            <Box display="flex" flexDirection="row" my="1.25rem"> 
+                <Image borderRadius="md" boxSize="150px"
+                      src={avatar ? avatar : product.avatar} alt={name ? name : product.name} />
+             </Box>
             <FormControl id="name" mb="1rem">
               <FormLabel> Product Name </FormLabel>
               <Input type="text" placeholder="Product Name" name="name"

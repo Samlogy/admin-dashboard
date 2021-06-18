@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
 import { AiOutlineUserAdd } from "react-icons/ai"
-import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading,
+import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, RadioGroup, Textarea,
   Spinner,
   Table, Thead, Tbody, Tfoot, Tr, Th, Td,
   useToast,
@@ -10,15 +10,21 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading,
   Button, ButtonGroup, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
   useDisclosure,
-  Link,
+  Link, Image,
+  InputRightElement, InputGroup,
    } from "@chakra-ui/react"
-import { FaCog, FaChevronDown } from "react-icons/fa";
-
+import { FaCog, FaChevronDown, FaTransgender, FaUserLock, FaEnvelope } from "react-icons/fa";
+import { MdLocationOn, MdPhoneIphone } from "react-icons/md"
+import { GoPrimitiveDot } from "react-icons/go" 
+import { GiRank3 } from "react-icons/gi"
 
 import NavBar from "../../Components/NavBar/NavBar.jsx"
 
-const ManageUser = () => {
-  const [user, setUser] = useState({ fullName: "", username: "", email: "", password: "", role: "" });
+const Users = () => {
+  const [user, setUser] = useState({ 
+      fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", confirmPassword: "", role: "" 
+    });
+  const [showPwd, setShowPwd] = useState({ pass: false, confirmPass: false })
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
@@ -86,7 +92,11 @@ const ManageUser = () => {
     }
   };
   const onCreate = async () => {
-    // e.preventDefault();
+    if (user.password !== user.confirmPassword) {
+      displayToast({msg: "password & confirm password do not match !", status: "error"})
+    }
+    delete user.confirmPassword
+
     try {
       // data validation (yup)
       const url = `${proxy}/admin/manageUser/createUser`;
@@ -348,6 +358,11 @@ const ManageUser = () => {
           <Heading as="h3" size="md" my="1rem" textAlign="left"> Add new User </Heading>
 
           <Stack>
+            <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={user.username} fallbackSrc="https://via.placeholder.com/150"
+                    src={user.avatar} />
+            <Input type="file" id="file" 
+                    value={user.avatar} onChange={(e) => setUser({ ...user, avatar: e.target.value })} />
+
             <FormControl id="fullName" mb="1rem">
               <FormLabel> Full Name </FormLabel>
               <Input type="text" placeholder="Full Name" name="fullName"
@@ -360,15 +375,71 @@ const ManageUser = () => {
                   id="email" value={user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
             </FormControl>
 
+            <FormControl id="phone" mb="1rem">
+              <FormLabel> Phone </FormLabel>
+              <Input type="text" placeholder="Phone" name="phone"
+                  id="phone" value={user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="phone" mb="1rem">
+              <FormLabel> gender </FormLabel> 
+              <RadioGroup id="gender" name="gender" value={user.gender}
+                          onChange={(e) => setUser({ ...user, gender: e })}>
+                <Stack direction="row">
+                  <Radio value="male"> Male </Radio>
+                  <Radio value="female"> Female </Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl id="active" mb="1rem">
+              <FormLabel> Active </FormLabel>
+              <RadioGroup id="active" name="active" value={user.active}
+                          onChange={(e) => setUser({ ...user, active: e })}>
+                <Stack direction="row">
+                  <Radio value="false"> No </Radio>
+                  <Radio value="true"> Yes </Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl id="address" mb="1rem">
+              <FormLabel> Address </FormLabel>
+              <Textarea placeholder="Address" name="address" id="address"
+                        value={user.address} onChange={(e) => setUser({ ...user, address: e.target.value })} />
+            </FormControl>
+
             <FormControl id="password" mb="1rem">
               <FormLabel> Password </FormLabel>
-              <Input type="password" placeholder="Password" name="password"
-                  id="password" value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+              <InputGroup>
+                <Input type={showPwd.pass ? "text" : "password"} placeholder="Password" name="password" id="password"
+                        value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+                <InputRightElement width="4.5rem">
+                    <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, pass: !showPwd.pass })}>
+                      {showPwd.pass ? "Hide" : "Show"}
+                    </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <FormControl id="confirmPassword" mb="1rem">
+              <FormLabel> Confirm Password </FormLabel>
+                <InputGroup>
+                  <Input type={showPwd.confirmPass ? "text" : "password"} 
+                          placeholder="Confirm Password" name="confirmPassword" id="confirmPassword"
+                          value={user.confirmPassword} onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })} />
+                  <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, confirmPass: !showPwd.confirmPass })}>
+                        {showPwd.confirmPass ? "Hide" : "Show"}
+                      </Button>
+                  </InputRightElement>
+                </InputGroup>
             </FormControl>
 
             <FormControl id="role" mb="1rem">
               <FormLabel> Role </FormLabel>
-              <Select name="role" id="role" value={user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
+              <Select name="role" id="role" 
+                      value={user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
                 <option value="moderator"> Moderator </option>
                 <option value="admin"> Admin </option>
               </Select>
@@ -479,15 +550,61 @@ const ManageUser = () => {
                 <Heading as="h3" size="md" textAlign="left" my="1rem">
                   User Details
                 </Heading>
-
+                
                 <Avatar name="Dan Abrahmov" src={user.avatar} mb="1.25rem" />
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> full name : {user.fullName} </Text>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <BiUser size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> fullName : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.fullName} </Text>
+                </Box>
                 { action.value !== "create" && 
-                  <Text display="flex" flexDirection="row" my="1.25rem"><BiUser size="20" /> username : {user.username} </Text> 
+                  <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <BiUser size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> username : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.username} </Text>
+                  </Box>
                 }
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> email: {user.email} </Text>
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> password: {hidePassword(user.password)} </Text>
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> role: {user.role} </Text>
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <FaEnvelope size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> email : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.email} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <MdPhoneIphone size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> phone : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.phone} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <FaTransgender size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> gender : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.gender} </Text>
+                </Box>
+
+                <Text display="flex" flexDirection="row" my="1.25rem"> 
+                  <GoPrimitiveDot size="20" color={user.active ? "green" : "red"} /> active: 
+                    <Text ml=".5rem" fontWeight="bold"> {user.active === "true" ? "active" : "inavtive"} </Text>
+                </Text>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <MdLocationOn size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> address : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.address} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <FaUserLock size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> password : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {hidePassword(user.password)} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <GiRank3 size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> role : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {user.role} </Text>
+                </Box>
               </Flex>
             
               { action.value === "details" &&
@@ -584,4 +701,4 @@ const ManageUser = () => {
   );
 };
 
-export default ManageUser;
+export default Users;

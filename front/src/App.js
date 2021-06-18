@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import { useSelector } from "react-redux"
 
-import { Home, Notifications, Login, WriteNewsletter, ManageUser, Products, NotFound } from "./Pages"
+import { Home, Notifications, Login, WriteNewsletter, Users, Products, NotFound } from "./Pages"
 
 import PrivateRoute from "./utils/PrivateRoute"
 import { saveState } from "./utils/localStorage";
@@ -36,7 +36,7 @@ export default function App() {
             <Route path="/newsletter" component={WriteNewsletter} />
             <Route path="/notifications" component={Notifications}/> 
             <Route path="/products" component={Products} />
-            <Route path="/users" component={ManageUser} />
+            <Route path="/users" component={Users} />
 
             <Route path="*" component={NotFound}/>
         </Switch>
