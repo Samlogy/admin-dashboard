@@ -36,7 +36,7 @@ const Logout = () => {
         }))
 
         // addToast(result.message, { appearance: 'success', autoDismiss: false })
-        return history.push('/login')
+        return history.push('/')
       }
       // addToast('An error occured during logging out !', { appearance: 'error', autoDismiss: false })
 

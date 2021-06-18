@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Heading, Link, Text } from "@chakra-ui/react"
+import { Flex, Heading, Button, Text, ButtonGroup } from "@chakra-ui/react"
 
 
 function NotFound() {
@@ -14,9 +14,16 @@ function NotFound() {
 
           <Text my="2rem"> Sorry this web Page do not exist please click in the button bellow to login </Text>
 
-          <Link href="/" p=".5rem" borderRadius="md" bg="blue.500" textColor="whiteAlpha.900"> 
-            Back to Login 
-          </Link>
+          <ButtonGroup>
+            <Button as="a" href="/" variant="solid"
+                    p=".5rem" borderRadius="md" colorScheme="blue"> 
+              Back to Login 
+            </Button>
+            <Button as="a" href="/home" variant="outline"
+                    p=".5rem" borderRadius="md" colorScheme="blue"> 
+              Back to Dashboard 
+            </Button>
+          </ButtonGroup>
       </Flex>
   );
 }

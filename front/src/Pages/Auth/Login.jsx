@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { 
-  Flex, Heading, Input, Button, FormControl, Stack, Box, chakra, InputRightElement, InputGroup,
+  Flex, Heading, Input, Button, FormControl, Stack, Box, InputRightElement, InputGroup,
   useToast,
   FormLabel, useColorModeValue, 
 } from "@chakra-ui/react";
@@ -72,24 +72,24 @@ const Login = () => {
 
     };
 
-  return    <Flex minH={'100vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
+  return    <Flex minH={'100vh'} align={'center'} justify={'center'} >
               <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>
                   <Heading fontSize={'4xl'}> Sign In </Heading>
                 </Stack>
-
-                <Box rounded={'lg'}  bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} w="500px">
+                {/* bg={useColorModeValue('gray.50', 'gray.800')} */}
+                <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} w="500px">
                   <Stack spacing={4}>
                     <FormControl id="email">
                       <FormLabel> Email </FormLabel>
-                      <Input type="email" placeholder="Email" value={auth.email} bg="gray.100"
+                      <Input type="email" placeholder="Email" value={auth.email}
                                   onChange={(e) => setAuth({...auth, email: e.target.value})} />
                     </FormControl>
 
                     <FormControl id="password">
                     <FormLabel> Password </FormLabel>
                       <InputGroup>
-                        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={auth.password} bg="gray.100"
+                        <Input type={showPassword ? "text" : "password"} placeholder="Password" value={auth.password} 
                                     onChange={(e) => setAuth({...auth, password: e.target.value})} />
                         <InputRightElement width="4.5rem">
 

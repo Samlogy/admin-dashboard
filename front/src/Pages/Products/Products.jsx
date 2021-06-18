@@ -5,17 +5,23 @@ import { FormControl, FormLabel, Input, Select, Checkbox,
   useToast, useDisclosure,
   Flex, Stack, Box, Text, Button, ButtonGroup, Heading, Textarea, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
+  Tag, TagLabel,
    } from "@chakra-ui/react"
    import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
    import { AiOutlineUserAdd } from "react-icons/ai"
-   
+   import { FaProductHunt, FaSortAmountUp } from "react-icons/fa";
+   import { ImPriceTags } from "react-icons/im";
+   import { BsCardChecklist } from "react-icons/bs"
+   import { MdDescription } from "react-icons/md";
+
 import NavBar from "../../Components/NavBar/NavBar.jsx"
+import Features from "./Features.jsx"
 
 const proxy = "http://localhost:5000"
 
 const Products = () => {
   const [product, setProduct] = useState({ 
-        name: "", description: "", price: "", amount: "", features: []  
+        name: "", description: "", price: "", amount: "", features: ["qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq","qsdqs", "sqdsq",]  
         });
   const [action, setAction] = useState({ value: "products", data: null })
   const [products, setProducts] = useState([]);
@@ -277,13 +283,45 @@ const Products = () => {
                   Product Details
                 </Heading>
 
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> name : {product.name} </Text>
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> description : {product.description} </Text>
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> price : {product.price} </Text>
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> amount : {product.amount} </Text>
-                <Text display="flex" flexDirection="row" my="1.25rem"> <BiUser size="20" /> features : 
-                  {(product.features && product.features.length > 0) && product.features.map(item => item)} 
-                </Text>
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <FaProductHunt size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> name : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {product.name} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <MdDescription size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> Description : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {product.description} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <ImPriceTags size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> Price : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {product.price} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <FaSortAmountUp size="20" />  
+                    <Text ml=".5rem" fontStyle="italic"> Amount : </Text>
+                    <Text ml=".5rem" fontWeight="bold"> {product.amount} </Text>
+                </Box>
+
+                <Box display="flex" flexDirection="row" my="1.25rem"> 
+                    <BsCardChecklist size="20" />  
+                    <Text ml=".25rem" fontStyle="italic"> Features : </Text>
+                    <Box display="flex" flexDirection="row" flexWrap="wrap" ml=".5rem">
+                      { (product.features && product.features.length > 0) &&
+                          product.features.map((item, idx) => 
+                            <Tag size="md" key={idx} borderRadius="full" variant="solid" mr=".2rem" mb=".25rem"
+                                textColor="blue.700" bg="white" border="1px" borderColor="blue">
+                              <TagLabel> {item} </TagLabel>
+                            </Tag>
+                            )
+                      }
+                    </Box>
+                </Box>
+                
               </Flex>
             
               { action.value === "details" &&
@@ -333,7 +371,7 @@ const Products = () => {
           <Stack>
             <FormControl id="fullName" mb="1rem">
               <FormLabel> Product Name </FormLabel>
-              <Input type="text" placeholder="Product Name" name="Name" id="name"
+              <Input type="text" placeholder="Product Name" name="Name" id="fullName"
                     value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} />
             </FormControl>
 
@@ -357,8 +395,8 @@ const Products = () => {
 
             <FormControl id="features" mb="1rem">
               <FormLabel> Features </FormLabel>
-              <Input type="text" name="features" id="features" placeholder="Feature..."
-                    value={product.features} onChange={(e) => setProduct({ ...product, features: e.target.value })}/>
+              <Features value={product.features && product.features}
+                        onChange={(e) => setProduct({ ...product, features: e.target.value })} />
             </FormControl>
           </Stack>
         </Box>
@@ -366,9 +404,9 @@ const Products = () => {
         </Box>
 
         <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
-          {/* <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
+          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
             New User
-          </Button> */}
+          </Button>
           <Button colorScheme="blue" variant="outline" onClick={() => backToProducts()}>
             Back to Products
           </Button>
