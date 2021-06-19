@@ -1,7 +1,7 @@
 import React from "react";
 import { Box,  Link, Button,
   Image, Icon, Flex, Stack, Text, Avatar, Badge,
-  useDisclosure, useColorMode
+  useDisclosure, useColorMode, useColorModeValue
    } from "@chakra-ui/react"
 import { MdNotificationsActive, MdHome, MdKeyboardArrowLeft } from "react-icons/md"
 import { BiMoon, BiSun } from "react-icons/bi"
@@ -10,28 +10,46 @@ import SideBar from "./SideBar.jsx"
 import SubMenu from "./SubMenu.jsx"
 import Logout from "../../Pages/Auth/Logout"
 
+// sub-menu data
+const menuData = [
+  {
+    title: "profile",
+    items: ["My Profile"]
+  },
+  {
+    title: "help",
+    items: ["Tech Support"]
+  }
+];
+
+const THEMES = {
+  light: {
+    color: "black",
+    bg: "white",
+    colorHover: "black",
+    bgHover: "gray.100"
+  },
+  dark: {
+    color: "white",
+    bg: "gray.700",
+    colorHover: "white",
+    bgHover: "gray.600"
+  },
+};
+
 const NavBar = (props) =>  {
     const { avatar, notifs, logo } = props;
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { colorMode, toggleColorMode } = useColorMode()
 
-
-    // sub-menu data
-    const menuData = [
-      {
-        title: "profile",
-        items: ["My Profile"]
-      },
-      {
-        title: "help",
-        items: ["Tech Support"]
-      }
-    ];
+    // const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
+    const bgClr = useColorModeValue(THEMES.light.bg, THEMES.dark.bg);
 
     return (
       <>
-        <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" bg="gray.200" p=".5rem">
+        <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" 
+            p=".5rem" bg={bgClr} boxShadow="md" width="100%">
           <Button colorScheme="blue" variant="outline">
             <MdKeyboardArrowLeft size="24" onClick={onOpen} />
           </Button>

@@ -4,15 +4,15 @@ import { AiOutlineUserAdd } from "react-icons/ai"
 import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, RadioGroup, Textarea,
   Spinner,
   Table, Thead, Tbody, Tfoot, Tr, Th, Td,
-  useToast,
+  useToast, useDisclosure,
   Flex, Stack, Box, 
   Avatar,
   Button, ButtonGroup, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
-  useDisclosure,
-  Link, Image,
+  Image,
   InputRightElement, InputGroup,
   Menu, MenuList, MenuItem, MenuButton,
+  Portal,
    } from "@chakra-ui/react"
 import { FaCog, FaChevronDown, FaTransgender, FaUserLock, FaEnvelope } from "react-icons/fa";
 import { MdLocationOn, MdPhoneIphone } from "react-icons/md"
@@ -475,7 +475,7 @@ const Users = () => {
             New User
           </Button>
           <Button colorScheme="blue" variant="outline" w="10rem" onClick={() => backToUsers()}>
-            Back to Products
+            Back to Users
           </Button>
         </ButtonGroup>
       </>
@@ -595,7 +595,7 @@ const Users = () => {
             Edit User
           </Button>
           <Button colorScheme="blue" variant="outline" onClick={() => backToUsers()}>
-            Back to Products
+            Back to Users
           </Button>
         </ButtonGroup>
       </>
@@ -757,7 +757,7 @@ const Users = () => {
     <NavBar />
     <Box p="1rem">
       <Flex flexDirection="column" width="100wh">
-            <Heading as="h2" size="md" textAlign="left" my="2rem"> User Managment </Heading>
+            <Heading as="h2" size="lg" textAlign="left" my="2rem"> User Managment </Heading>
 
             {
               action.value === "create" ? displayAddUser() :
@@ -781,7 +781,10 @@ const Users = () => {
                   </Box> : ""
             }
                 
-            { action.data && displayModal(action.data && action.data) }         
+              
+            <Portal> 
+              { action.data && displayModal(action.data && action.data) } 
+            </Portal>      
       </Flex>      
     </Box>
     </>

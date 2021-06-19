@@ -18,8 +18,6 @@ const SubMenu = (props) => {
           { menuData && menuData.map((el, idx) => 
               <MenuGroup title={menuData.title}>
                { el.items.map((e, subIdx) => <MenuItem> {e} </MenuItem>) }
-
-               <MenuDivider />
               </MenuGroup>
             )
           }

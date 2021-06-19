@@ -77,7 +77,7 @@ const Login = () => {
                 <Stack align={'center'}>
                   <Heading fontSize={'4xl'}> Sign In </Heading>
                 </Stack>
-                {/* bg={useColorModeValue('gray.50', 'gray.800')} */}
+       
                 <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} w="500px">
                   <Stack spacing={4}>
                     <FormControl id="email">
