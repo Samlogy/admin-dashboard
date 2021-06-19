@@ -473,7 +473,7 @@ const Products = () => {
             value={filter.queryString} ml=".5rem"
             onChange={(e) => onFilter(e.target.value)} />
 
-          <Select w="100px" value={filter.filterType} mr=".5rem" w="8rem"
+          <Select value={filter.filterType} mr=".5rem" w="7rem"
                   onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}>
             <option value="name"> Name </option>
           </Select>
