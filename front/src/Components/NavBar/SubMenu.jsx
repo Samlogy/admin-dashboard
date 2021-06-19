@@ -5,24 +5,24 @@ import { Button, Stack, Icon,
 
 import { FaCog } from "react-icons/fa";
 
-const SubMenu = () => {
 
+const SubMenu = (props) => {
+  const { color, menuData } = props
     return(
       <Stack direction={["column", "row"]} style={{ marginLeft: "auto" }}>
         <Menu>
-          <MenuButton as={Button} colorScheme="navItem" variant="ghost"
-                      rightIcon={<Icon as={FaCog} color="navItem.500" />}>
+          <MenuButton as={Button} variant="ghost"
+                      rightIcon={<Icon as={FaCog} color={color && color} />}>
           </MenuButton>
           <MenuList>
-            <MenuGroup title="Profile">
-              <MenuItem> My Profile </MenuItem>
-            </MenuGroup>
-  
-            <MenuDivider />
-  
-            <MenuGroup title="Help">
-              <MenuItem> Tech Support </MenuItem>
-            </MenuGroup>
+          { menuData && menuData.map((el, idx) => 
+              <MenuGroup title={menuData.title}>
+               { el.items.map((e, subIdx) => <MenuItem> {e} </MenuItem>) }
+
+               <MenuDivider />
+              </MenuGroup>
+            )
+          }
           </MenuList>
         </Menu>
       </Stack>

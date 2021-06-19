@@ -12,28 +12,41 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, 
   useDisclosure,
   Link, Image,
   InputRightElement, InputGroup,
+  Menu, MenuList, MenuItem, MenuButton,
    } from "@chakra-ui/react"
 import { FaCog, FaChevronDown, FaTransgender, FaUserLock, FaEnvelope } from "react-icons/fa";
 import { MdLocationOn, MdPhoneIphone } from "react-icons/md"
 import { GoPrimitiveDot } from "react-icons/go" 
 import { GiRank3 } from "react-icons/gi"
+import { FaEllipsisV } from "react-icons/fa";
 
 import NavBar from "../../Components/NavBar/NavBar.jsx"
+
+const COLORS = {
+  notif: {
+    success: "#38A169",
+    error: "#E53E3E",
+    info: "#3182ce",
+    warning: "#D69E2E",
+    secondary: "#718096",
+    black: "#000000cc"
+  },
+}
+
+const proxy = "http://localhost:5000"
 
 const Users = () => {
   const [user, setUser] = useState({ 
       fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", confirmPassword: "", role: "" 
     });
-  const [showPwd, setShowPwd] = useState({ pass: false, confirmPass: false })
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState({ value: "edit", data: null })
+  const [action, setAction] = useState({ value: "users", data: null })
+  const [showPwd, setShowPwd] = useState({ pass: false, confirmPass: false });
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
-
-  const proxy = 'http://localhost:5000'
 
   // Functions
   const hidePassword = (password) => {
@@ -61,7 +74,7 @@ const Users = () => {
   };
   const blockUser = (userId, userIndex) => {
     setAction({ 
-      data: { text: "Are you sure to delete this user ?", 
+      data: { text: "Are you sure to block this user ?", 
       action: () => onBlock(userId, userIndex), label: "Block" }
     }); 
     onOpen()
@@ -70,6 +83,18 @@ const Users = () => {
     setAction({ value: "details", data:{ productIndex: userIndex } })
     setUser(userData)
   };
+  const usersOnChange = (e) => {
+    setUsers((prevState) => {
+        let newState = [...prevState];
+
+        newState.forEach((item) => {
+            if (item._id === e.target.id) {
+              item[e.target.name] = e.target.value;
+            }
+        });
+        return newState;
+    })
+};
 
   // API calls
   const getUsers = async () => {
@@ -228,20 +253,6 @@ const Users = () => {
     }
   };
 
-
-  const usersOnChange = (e) => {
-      setUsers((prevState) => {
-          let newState = [...prevState];
-
-          newState.forEach((item) => {
-              if (item._id === e.target.id) {
-                item[e.target.name] = e.target.value;
-              }
-          });
-          return newState;
-      })
-  };
-
   // Componenents
   const displayToast = (data) => {
     const { msg, status } = data
@@ -272,6 +283,29 @@ const Users = () => {
               </ModalContent>
             </Modal>
   };
+  const displaySubMenu = (userId, userIndex, userData) => {
+    return <Menu>
+            <MenuButton as={IconButton}
+              icon={<FaEllipsisV />}>
+            </MenuButton>
+            <MenuList>
+              <MenuItem textColor={COLORS.notif.warning}
+                    icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
+                    onClick={() =>  editUser(userId, userIndex, userData)}> Edit </MenuItem>
+
+              <MenuItem textColor={COLORS.notif.error}
+                    icon={<BiTrash size="18" color={COLORS.notif.error} />} 
+                    onClick={() => deleteUser(userId, userIndex)}> Delete </MenuItem>
+              <MenuItem textColor={COLORS.notif.secondary}
+                    icon={<BiBlock size="18" color={COLORS.notif.secondary} />} 
+                    onClick={() => blockUser(userId, userIndex)}> Block </MenuItem>
+
+              <MenuItem textColor={COLORS.notif.black}
+                    icon={<BiDetail size="18" color={COLORS.notif.black} />} 
+                    onClick={() => detailsUser(userData)}> Details </MenuItem>
+            </MenuList>
+          </Menu>
+  };
   const displayUsersList = (users) => {
      
     return (
@@ -292,41 +326,28 @@ const Users = () => {
         <Tbody>
           { users.map((el, idx) => 
             <Tr index={idx}>
-              <Td>
+              <Td  p="1rem">
                 <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox>
               </Td>
-              <Td>
+              <Td  p="1rem">
                 <Input type="email" placeholder="Email" name="email"
                       id={el._id} value={el.email} onChange={e => usersOnChange(e)} />
               </Td>
-              <Td>
+              <Td  p="1rem">
                 <Input type="password" placeholder="Password" name="password"
                       id={el._id} value={el.password} onChange={e => usersOnChange(e)} />
               </Td>
-              <Td>
+              <Td  p="1rem">
                   <Select id={el._id} value={el.role} onChange={e => usersOnChange(e)}>
                     <option value="moderator"> Moderator </option>
                     <option value="admin"> Admin </option>
                   </Select>
               </Td>
-              <Td>
-                <ButtonGroup variant="outline" colorScheme="blue" ml="0" spacing="6" display={"flex"} flexDirection="column" 
-                            justifyContent="center" alignItems="center" >
-                  <IconButton colorScheme="blue" aria-label="edit user" my=".25rem" icon={<BiPencil />} 
-                          onClick={() =>  editUser(el._id, idx, el)} />
-
-                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem"  icon={<BiTrash />}
-                          onClick={() => deleteUser(el._id, idx)} />
-                              
-                  <IconButton colorScheme="blue" aria-label="block user" my=".25rem" icon={<BiBlock />} 
-                        onClick={() => blockUser(el._id, idx)} />
-
-                  <IconButton colorScheme="blue" aria-label="details user" my=".25rem" icon={<BiDetail />}
-                          onClick={() => detailsUser(el)} />
-                </ButtonGroup>
+              <Td  p="1rem"> 
+                { displaySubMenu(el._id, idx, el) }
               </Td>
-              <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
-              <Td> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
+              <Td  p="1rem"> {el.createdAt && convertDate(el.createdAt)} </Td>
+              <Td p="1rem"> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
             </Tr>
           )
         }
@@ -450,10 +471,10 @@ const Users = () => {
         </Box>
 
         <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
-          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
+          <Button leftIcon={<AiOutlineUserAdd size="20" />} colorScheme="blue" variant="solid" w="10rem" onClick={() => onCreate()}>
             New User
           </Button>
-          <Button colorScheme="blue" variant="outline" onClick={() => backToUsers()}>
+          <Button colorScheme="blue" variant="outline" w="10rem" onClick={() => backToUsers()}>
             Back to Products
           </Button>
         </ButtonGroup>
@@ -461,105 +482,110 @@ const Users = () => {
     );
   };
   const displayEditUser = (data) => {
-    const { fullName, email, username, password, role, address, active, gender, phone } = data;
+    const { fullName, email, username, password, role, address, active, gender, phone, avatar } = data;
 
     return (
       <>
         <Box display="flex" flexDirection="row" justifyContent="center" >
         {displayUserDetails()}
 
-        <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
-          <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
+          <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
+            <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
 
-          <Stack>
-            <FormControl id="fullName" mb="1rem">
-              <FormLabel> Full Name </FormLabel>
-              <Input type="text" placeholder="Full Name" name="fullName"
-                  id="fullName" value={fullName ? fullName : user.fullName} onChange={(e) => setUser({ ...user, fullName: e.target.value })} />
-            </FormControl>
+            <Stack>
+            <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={user.username} fallbackSrc="https://via.placeholder.com/150"
+                      src={avatar ? avatar : user.avatar} />
+              <Input type="file" id="file" 
+                      value={user.avatar} onChange={(e) => setUser({ ...user, avatar: e.target.value })} />
 
-            <FormControl id="username" mb="1rem">
-              <FormLabel> Username </FormLabel>
-              <Input type="text" placeholder="Username" name="username"
-                  id="username" value={username ? username : user.username} onChange={(e) => setUser({ ...user, username: e.target.value })} />
-            </FormControl>
+              <FormControl id="fullName" mb="1rem">
+                <FormLabel> Full Name </FormLabel>
+                <Input type="text" placeholder="Full Name" name="fullName"
+                    id="fullName" value={fullName ? fullName : user.fullName} onChange={(e) => setUser({ ...user, fullName: e.target.value })} />
+              </FormControl>
 
-            <FormControl id="email" mb="1rem">
-              <FormLabel> Email </FormLabel>
-              <Input type="email" placeholder="Email" name="email"
-                  id="email" value={email ? email : user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
-            </FormControl>
+              <FormControl id="username" mb="1rem">
+                <FormLabel> Username </FormLabel>
+                <Input type="text" placeholder="Username" name="username"
+                    id="username" value={username ? username : user.username} onChange={(e) => setUser({ ...user, username: e.target.value })} />
+              </FormControl>
 
-            <FormControl id="phone" mb="1rem">
-              <FormLabel> Phone </FormLabel>
-              <Input type="text" placeholder="Phone" name="phone"
-                  id="phone" value={phone ? phone : user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} />
-            </FormControl>
+              <FormControl id="email" mb="1rem">
+                <FormLabel> Email </FormLabel>
+                <Input type="email" placeholder="Email" name="email"
+                    id="email" value={email ? email : user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
+              </FormControl>
 
-            <FormControl id="phone" mb="1rem">
-              <FormLabel> gender </FormLabel> 
-              <RadioGroup id="gender" name="gender" value={gender ? gender :user.gender}
-                          onChange={(e) => setUser({ ...user, gender: e })}>
-                <Stack direction="row">
-                  <Radio value="male"> Male </Radio>
-                  <Radio value="female"> Female </Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
+              <FormControl id="phone" mb="1rem">
+                <FormLabel> Phone </FormLabel>
+                <Input type="text" placeholder="Phone" name="phone"
+                    id="phone" value={phone ? phone : user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} />
+              </FormControl>
 
-            <FormControl id="active" mb="1rem">
-              <FormLabel> Active </FormLabel>
-              <RadioGroup id="active" name="active" value={active ? active : user.active}
-                          onChange={(e) => setUser({ ...user, active: e })}>
-                <Stack direction="row">
-                  <Radio value="false"> No </Radio>
-                  <Radio value="true"> Yes </Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
+              <FormControl id="phone" mb="1rem">
+                <FormLabel> gender </FormLabel> 
+                <RadioGroup id="gender" name="gender" value={gender ? gender :user.gender}
+                            onChange={(e) => setUser({ ...user, gender: e })}>
+                  <Stack direction="row">
+                    <Radio value="male"> Male </Radio>
+                    <Radio value="female"> Female </Radio>
+                  </Stack>
+                </RadioGroup>
+              </FormControl>
 
-            <FormControl id="address" mb="1rem">
-              <FormLabel> Address </FormLabel>
-              <Textarea placeholder="Address" name="address" id="address"
-                        value={address ? address : user.address} onChange={(e) => setUser({ ...user, address: e.target.value })} />
-            </FormControl>
+              <FormControl id="active" mb="1rem">
+                <FormLabel> Active </FormLabel>
+                <RadioGroup id="active" name="active" value={active ? active : user.active}
+                            onChange={(e) => setUser({ ...user, active: e })}>
+                  <Stack direction="row">
+                    <Radio value="false"> No </Radio>
+                    <Radio value="true"> Yes </Radio>
+                  </Stack>
+                </RadioGroup>
+              </FormControl>
 
-            <FormControl FormControl id="password" mb="1rem">
-              <FormLabel> Password </FormLabel>
-              <InputGroup>
-                <Input type={showPwd.pass ? "text" : "password"} placeholder="Password" name="password" id="password"
-                        value={password ? password :user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
-                <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, pass: !showPwd.pass })}>
-                      {showPwd.pass ? "Hide" : "Show"}
-                    </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
+              <FormControl id="address" mb="1rem">
+                <FormLabel> Address </FormLabel>
+                <Textarea placeholder="Address" name="address" id="address"
+                          value={address ? address : user.address} onChange={(e) => setUser({ ...user, address: e.target.value })} />
+              </FormControl>
 
-            <FormControl id="confirmPassword" mb="1rem">
-              <FormLabel> Confirm Password </FormLabel>
+              <FormControl FormControl id="password" mb="1rem">
+                <FormLabel> Password </FormLabel>
                 <InputGroup>
-                  <Input type={showPwd.confirmPass ? "text" : "password"} 
-                          placeholder="Confirm Password" name="confirmPassword" id="confirmPassword"
-                          value={user.confirmPassword} onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })} />
+                  <Input type={showPwd.pass ? "text" : "password"} placeholder="Password" name="password" id="password"
+                          value={password ? password :user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
                   <InputRightElement width="4.5rem">
-                      <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, confirmPass: !showPwd.confirmPass })}>
-                        {showPwd.confirmPass ? "Hide" : "Show"}
+                      <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, pass: !showPwd.pass })}>
+                        {showPwd.pass ? "Hide" : "Show"}
                       </Button>
                   </InputRightElement>
                 </InputGroup>
-            </FormControl>
+              </FormControl>
 
-            <FormControl id="role" mb="1rem">
-              <FormLabel> Role </FormLabel>
-              <Select name="role" id="role" value={role ? role :user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
-                <option value="moderator"> Moderator </option>
-                <option value="admin"> Admin </option>
-              </Select>
-            </FormControl>
-          </Stack>
-        </Box>
+              <FormControl id="confirmPassword" mb="1rem">
+                <FormLabel> Confirm Password </FormLabel>
+                  <InputGroup>
+                    <Input type={showPwd.confirmPass ? "text" : "password"} 
+                            placeholder="Confirm Password" name="confirmPassword" id="confirmPassword"
+                            value={user.confirmPassword} onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })} />
+                    <InputRightElement width="4.5rem">
+                        <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, confirmPass: !showPwd.confirmPass })}>
+                          {showPwd.confirmPass ? "Hide" : "Show"}
+                        </Button>
+                    </InputRightElement>
+                  </InputGroup>
+              </FormControl>
+
+              <FormControl id="role" mb="1rem">
+                <FormLabel> Role </FormLabel>
+                <Select name="role" id="role" value={role ? role :user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
+                  <option value="moderator"> Moderator </option>
+                  <option value="admin"> Admin </option>
+                </Select>
+              </FormControl>
+            </Stack>
+          </Box>
 
         </Box>
 
@@ -577,15 +603,14 @@ const Users = () => {
   };
   const displayUsersFilter = () => {
     return (
-      <Flex flexDirection="column" border="1px" borderColor="gray.200" borderStyle="solid" py="2rem" px="1rem" borderRadius="md" width="500px" my="2rem"
-            justifyContent="center" mx="auto">
-        <Heading as="h3" size="md" mb="1rem" textAlign="center"> Filter </Heading>
+      <Flex flexDirection="column" border="1px" borderColor="gray.200" borderStyle="solid" py="2rem" px="1rem" borderRadius="md" width="500px"  my="2rem" justifyContent="center" mx="auto">
+        <Heading as="h3" size="md" mb="1rem" textAlign="center"> Users Filter </Heading>
 
         <Flex flexDirection="row">
           <Input type="text" placeholder={`Filter by ${filter.filterType}`}
-            value={filter.queryString} onChange={(e) => onFilter(e.target.value)} mr=".5rem" />
+                value={filter.queryString} onChange={(e) => onFilter(e.target.value)} mr=".5rem" />
 
-          <Select w="100px" placeholder="Role" value={filter.filterType} onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}
+          <Select w="8rem" value={filter.filterType} onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}
                    ml=".5rem" >
             <option value="email"> Email </option>
             <option value="role"> Role </option>
@@ -595,8 +620,6 @@ const Users = () => {
     );
   };
   const displayUserDetails = () => {
-    //  const { avatar, fullName, username, email, role, password } = data;
-
     return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
             <Box display="flex" flexDirection="row" mr="1rem" mb="3rem" justifyContent="center">
               <Flex flexDirection="column" p="1rem" w="20rem" mr="1rem"
@@ -639,8 +662,8 @@ const Users = () => {
                 </Box>
 
                 <Text display="flex" flexDirection="row" my="1.25rem"> 
-                  <GoPrimitiveDot size="20" color={user.active ? "green" : "red"} /> active: 
-                    <Text ml=".5rem" fontWeight="bold"> {user.active === "true" ? "active" : "inavtive"} </Text>
+                  <GoPrimitiveDot size="20" color={user.active === "true" ? COLORS.notif.success : COLORS.notif.error} /> active: 
+                    <Text ml=".5rem" fontWeight="bold"> {user.active === "true" ? "active" : "inactive"} </Text>
                 </Text>
 
                 <Box display="flex" flexDirection="row" my="1.25rem"> 
@@ -670,16 +693,16 @@ const Users = () => {
                         USER ACTIONS
                     </Heading>
               
-                  <ButtonGroup variant="outline" colorScheme="blue" spacing="6" display={"flex"} flexDirection="column" 
-                              justifyContent="center" alignItems="center" >
-                    <Button colorScheme="blue" my=".25rem"
+                  <ButtonGroup variant="outline" display={"flex"} flexDirection="column" 
+                              justifyContent="center" alignItems="center">
+                    <Button rightIcon={<BiPencil size="18" />} colorScheme="yellow" mb="1rem" w="7rem"
                             onClick={() =>  setAction({ value: "edit", 
                                                           data: {userId: user._id, userIndex: action.data}
                                                         })}>
                             Edit
                     </Button>
 
-                    <Button colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BiTrash />} 
+                    <Button rightIcon={<BiTrash size="18" />} colorScheme="red" mb="1rem" w="7rem"
                             onClick={() => { 
                               setAction({ 
                                     data: { text: "Are you sure to delete this User ?", 
@@ -692,7 +715,7 @@ const Users = () => {
                                 Delete
                     </Button>
                                 
-                    <Button colorScheme="blue" aria-label="block user" my=".25rem" icon={<BiBlock />} 
+                    <Button rightIcon={<BiBlock size="18" />} colorScheme="gray" mb="1rem" w="7rem"
                             onClick={() => { 
                               setAction({ 
                                     data: { text: "Are you sure to block this user ?", 
@@ -717,9 +740,17 @@ const Users = () => {
           </Flex>
   };
   
+  
   useEffect(() => {
     getUsers();
   }, []);
+
+  useEffect(() => {
+    // set user avatar inside (image / avatar)
+    if (user.avatar) {
+      // 
+    }
+  }, [user.avatar]);
 
   return (
     <>
@@ -737,7 +768,8 @@ const Users = () => {
 
               action.value === "users" ? 
                   <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                    <Button colorScheme="blue" onClick={() => setAction({value: "create"})} w="100px"> Create </Button>
+                    <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
+                            onClick={() => setAction({value: "create"})} > Create </Button>
 
                     {displayUsersFilter()}
                     

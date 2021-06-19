@@ -1,8 +1,5 @@
-import React, { useRef } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai"
+import React from "react";
 import { Box,  Link, Button,
-  Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent,  DrawerCloseButton,
-  Menu, MenuItem, MenuDivider, MenuGroup, MenuList, MenuButton, 
   Image, Icon, Flex, Stack, Text, Avatar, Badge,
   useDisclosure, useColorMode
    } from "@chakra-ui/react"
@@ -19,10 +16,23 @@ const NavBar = (props) =>  {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { colorMode, toggleColorMode } = useColorMode()
 
+
+    // sub-menu data
+    const menuData = [
+      {
+        title: "profile",
+        items: ["My Profile"]
+      },
+      {
+        title: "help",
+        items: ["Tech Support"]
+      }
+    ];
+
     return (
       <>
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" bg="gray.200" p=".5rem">
-          <Button colorScheme="navItem" variant="outline" colorScheme="blue">
+          <Button colorScheme="blue" variant="outline">
             <MdKeyboardArrowLeft size="24" onClick={onOpen} />
           </Button>
 
@@ -35,18 +45,18 @@ const NavBar = (props) =>  {
           </Stack>
 
           <Stack direction={["column", "row"]} alignItems={["flex-end", "center"]}>
-              <Button as="a" colorScheme="navItem" variant="ghost" href="/home">
+              <Button as="a" colorScheme="blue" variant="ghost" href="/home">
                 <MdHome size="24" />
               </Button>
 
-              <Button colorScheme="navItem" variant="ghost">
+              <Button colorScheme="blue" variant="ghost">
                 { colorMode === "light" ? 
                   <BiMoon size="24" onClick={toggleColorMode} /> : 
                   <BiSun size="24" onClick={toggleColorMode} /> 
                 }
               </Button>
 
-              <Button as="a" colorScheme="navItem" variant="ghost" href="/notifications">
+              <Button as="a" colorScheme="blue" variant="ghost" href="/notifications">
                 { (notifs && notifs.length > 0) &&  
                   <Badge variant="solid" colorScheme="red" borderRadius="2xl"> 
                     {notifs.length > 99 ? "99+" : notifs.length}
@@ -55,11 +65,11 @@ const NavBar = (props) =>  {
                 <MdNotificationsActive size="24" />
               </Button>
 
-              <Button colorScheme="navItem" variant="ghost">
+              <Button colorScheme="blue" variant="ghost">
                 <Avatar name="admin" src={avatar && avatar} size="sm" />
               </Button>
 
-              <SubMenu />
+              <SubMenu color="blue.500" menuData={menuData} />
               <Logout />
           </Stack>
         </Box>

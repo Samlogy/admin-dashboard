@@ -1,25 +1,34 @@
 import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { IconButton, chakra } from "@chakra-ui/react"
+import { useDispatch } from 'react-redux';
+import { IconButton, chakra, useToast } from "@chakra-ui/react"
 import { BiExit} from "react-icons/bi"
-// import { useToasts } from 'react-toast-notifications'
 
 import { notLogged } from '../../_actions/authActions';
 // import proxy from '../proxySetup'
-// import "./style.css";
 
 const proxy = "http://localhost:5000";
 
 const Logout = () => {
   const [loggedOut, setLoggedOut] = useState(false);
 
-  // const authStore = useSelector(state => state.auth)
   const dispatch = useDispatch()
   const history = useHistory()
-  // const { addToast } = useToasts()
+  const toast = useToast();
 
   const CBiExit = chakra(BiExit)
+
+  const displayToast = (data) => {
+    const { msg, status } = data
+    return toast({
+      title: msg,
+      status: status,
+      variant: "top-accent",
+      position: "bottom-right", // "top-right"
+      duration: 5000,
+      isClosable: true,
+    })
+  };
 
   const onLogout = async () => {
     const url = `${proxy}/admin/auth/logout`
@@ -35,23 +44,20 @@ const Logout = () => {
           userData: {},
         }))
 
-        // addToast(result.message, { appearance: 'success', autoDismiss: false })
+        displayToast({ msg: result.message, status: "success" })
         return history.push('/')
       }
-      // addToast('An error occured during logging out !', { appearance: 'error', autoDismiss: false })
+      displayToast({ msg: 'An error occured during logging out !', status: "error" })
 
     } catch (err) {
-      // addToast(err.message, { appearance: 'error', autoDismiss: false })
+      displayToast({ msg: err.message, status: "error" })
     }
-  }
+  };
 
   if ( loggedOut ) onLogout()
 
-  return  <div className="logout-container">
-              <IconButton colorScheme="blue" aria-label="logout" icon={<CBiExit />} 
-                          border="2px" borderSolid="solid" borderColor="white.400" borderRadius="md" mr=".5rem"
-                          onClick={() => setLoggedOut(true)} />
-          </div>;
+  return  <IconButton colorScheme="blue" variant="solid" aria-label="logout" mr="1rem" 
+                      icon={<CBiExit size="20" />} onClick={() => setLoggedOut(true)} />
 };
 
 export default Logout;
