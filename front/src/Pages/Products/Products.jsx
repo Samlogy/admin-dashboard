@@ -5,10 +5,12 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Image,
   useToast, useDisclosure,
   Flex, Stack, Box, Text, Button, ButtonGroup, Heading, Textarea, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
+  Menu, MenuList, MenuItem, MenuButton,
   Tag, TagLabel,
+  Portal,
    } from "@chakra-ui/react"
-   import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
-   import { FaProductHunt, FaSortAmountUp } from "react-icons/fa";
+   import { BiBlock, BiTrash, BiPencil, BiDetail } from "react-icons/bi"
+   import { FaProductHunt, FaSortAmountUp, FaEllipsisV } from "react-icons/fa";
    import { ImPriceTags } from "react-icons/im";
    import { BsCardChecklist } from "react-icons/bs"
    import { MdDescription } from "react-icons/md";
@@ -18,9 +20,20 @@ import Features from "./Features.jsx"
 
 const proxy = "http://localhost:5000"
 
+const COLORS = {
+  notif: {
+    success: "#38A169",
+    error: "#E53E3E",
+    info: "#3182ce",
+    warning: "#D69E2E",
+    secondary: "#718096",
+    black: "#000000cc"
+  },
+};
+
 const Products = () => {
   const [product, setProduct] = useState({ 
-        name: "", description: "", price: "", amount: "", features: []  
+        name: "", description: "", price: "", amount: "", features: [], thumbnail: "" 
         });
   const [action, setAction] = useState({ value: "products", data: null })
   const [products, setProducts] = useState([]);
@@ -30,24 +43,7 @@ const Products = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  // Table logic (checkbox)
-  // const selectable = true;
-  // const [selected, setSelected] = useState([])
-  // let itemsIds = products.map((item) => item.id);
-  // let [localSelected, setLocalSelected] = useState(selected);
 
-  // const setCheckedItems = (isChecked) => {
-  //   setLocalSelected([]);
-  //   if (isChecked === true) {
-  //     setLocalSelected(itemsIds);
-  //   }
-  //   // console.log(isChecked)
-  // };
-  // const setCheckedItem = (item, isChecked) => {
-  //   isChecked ? setLocalSelected((prevState) => [...prevState, item])
-  //             : setLocalSelected((prevState) => prevState.filter((i) => i !== item));
-  // };
-  
   // API calls
   const getProducts = async () => {
     setLoading(true);
@@ -178,9 +174,9 @@ const Products = () => {
     setProduct({ name: "", description: "", price: "", amount: "", features: [] })
   };
 
-  const deleteproduct = (productId, productIndex) => {
+  const deleteProduct = (productId, productIndex) => {
     setAction({ 
-      data: { text: "Are you sure to delete this user ?", 
+      data: { text: "Are you sure to delete this Product ?", 
       action: () => onDelete(productId, productIndex), label: "Delete" } 
     }); 
     onOpen()
@@ -224,6 +220,26 @@ const Products = () => {
               </ModalContent>
             </Modal>
   };
+  const displaySubMenu = (productId, producIndex, producData) => {
+    return <Menu>
+            <MenuButton as={IconButton}
+              icon={<FaEllipsisV />}>
+            </MenuButton>
+            <MenuList>
+              <MenuItem textColor={COLORS.notif.warning}
+                    icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
+                    onClick={() => editProduct(productId, producIndex, producData)}> Edit </MenuItem>
+
+              <MenuItem textColor={COLORS.notif.error}
+                    icon={<BiTrash size="18" color={COLORS.notif.error} />} 
+                    onClick={() => deleteProduct(productId, producIndex)}> Delete </MenuItem>
+
+              <MenuItem textColor={COLORS.notif.black}
+                    icon={<BiDetail size="18" color={COLORS.notif.black} />} 
+                    onClick={() => detailsProduct(producData)}> Details </MenuItem>
+            </MenuList>
+          </Menu>
+  };
   const displayProductsList = (products) => {
        
     return (
@@ -258,17 +274,7 @@ const Products = () => {
               <Td> {el.amount} </Td>
               <Td> {el.features && el.features > 0 && el.features.map(item => item) } </Td>
               <Td>
-              <ButtonGroup variant="outline" colorScheme="blue" ml="0" spacing="6" display={"flex"} flexDirection="column" 
-                          justifyContent="center" alignItems="center" >
-                <IconButton colorScheme="blue" aria-label="edit user" my=".25rem" icon={<BiPencil />} 
-                        onClick={() =>  editProduct(el._id, idx, el)} />
-
-                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem"  icon={<BiTrash />}
-                        onClick={() => deleteproduct(el._id, idx)} />
-
-                <IconButton colorScheme="blue" aria-label="details user" my=".25rem" icon={<BiDetail />}
-                        onClick={() => detailsProduct(el, idx)} />
-              </ButtonGroup>
+                { displaySubMenu(el._id, idx, el) }
             </Td>
               <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
               <Td> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
@@ -299,9 +305,7 @@ const Products = () => {
       </>
     )
   };
-  const displayProductDetails = () => {
-    //  const { name, description, price, amount, features } = data;
-    
+  const displayProductDetails = () => {    
     return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
             <Box display="flex" flexDirection="row" mr="1rem" mb="3rem" justifyContent="center">
               <Flex flexDirection="column" p="1rem" w="20rem" mr="1rem"
@@ -312,8 +316,8 @@ const Products = () => {
                 </Heading>
 
                 <Box display="flex" flexDirection="row" my="1.25rem"> 
-                    <Image borderRadius="md" boxSize="150px"
-                          src={product.avatar} alt={product.name} />
+                  <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={product.name} fallbackSrc="https://via.placeholder.com/150"
+                      src={product.thumbnail} />
                 </Box>
 
                 <Box display="flex" flexDirection="row" my="1.25rem"> 
@@ -394,7 +398,7 @@ const Products = () => {
 
           { action.value === "details" && 
             <Button colorScheme="blue" variant="outline" w="120px" mx="auto" onClick={() =>  backToProducts()}>
-                Back to Users
+                Back to Products
             </Button>
           }
           </Flex>
@@ -409,10 +413,11 @@ const Products = () => {
           <Heading as="h3" size="md" my="1rem" textAlign="left"> Add new Product </Heading>
 
           <Stack>
-            <Box display="flex" flexDirection="row" my="1.25rem"> 
-                <Image borderRadius="md" boxSize="150px"
-                      src={product.avatar} alt={product.name} />
-             </Box>
+              <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={product.name} fallbackSrc="https://via.placeholder.com/150"
+                      src={product.thumbnail} />
+              <Input type="file" id="file" 
+                      value={product.thumbnail} onChange={(e) => setProduct({ ...product, thumbnail: e.target.value })} />
+
             <FormControl id="fullName" mb="1rem">
               <FormLabel> Product Name </FormLabel>
               <Input type="text" placeholder="Product Name" name="Name" id="fullName"
@@ -460,18 +465,20 @@ const Products = () => {
   };
   const displayProductsFilter = () => {
     return (
-      <>
-        <Flex flexDirection="row" border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="500px" my="2rem">
-        <Input type="text" placeholder={`Filter by ${filter.filterType}`}
-          value={filter.queryString}
-          onChange={(e) => onFilter(e.target.value)} />
+      <Flex flexDirection="column" border="1px" borderColor="gray.200" borderStyle="solid" py="2rem" px="1rem" borderRadius="md" width="500px"  my="2rem" justifyContent="center" mx="auto">
+        <Heading as="h3" size="md" mb="1rem" textAlign="center"> Products Filter </Heading>
 
-        <Select w="100px" value={filter.filterType}
-                onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}>
-          <option value="name"> Name </option>
-        </Select>
+        <Flex flexDirection="row">
+          <Input type="text" placeholder={`Filter by ${filter.filterType}`}
+            value={filter.queryString} ml=".5rem"
+            onChange={(e) => onFilter(e.target.value)} />
+
+          <Select w="100px" value={filter.filterType} mr=".5rem" w="8rem"
+                  onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}>
+            <option value="name"> Name </option>
+          </Select>
+        </Flex>
       </Flex>
-      </>
     );
   };
   const displayEditProduct = (data) => {
@@ -486,10 +493,10 @@ const Products = () => {
           <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
 
           <Stack>
-            <Box display="flex" flexDirection="row" my="1.25rem"> 
-                <Image borderRadius="md" boxSize="150px"
-                      src={avatar ? avatar : product.avatar} alt={name ? name : product.name} />
-             </Box>
+            <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={product.name} fallbackSrc="https://via.placeholder.com/150"
+                      src={product.thumbnail} />
+            <Input type="file" id="file" 
+                      value={product.thumbnail} onChange={(e) => setProduct({ ...product, thumbnail: e.target.value })} />
             <FormControl id="name" mb="1rem">
               <FormLabel> Product Name </FormLabel>
               <Input type="text" placeholder="Product Name" name="name"
@@ -545,8 +552,8 @@ const Products = () => {
     return (
       <>
       <NavBar />
-        <Flex flexDirection="column" width="100wh" p="1rem">
-            <Heading as="h2" size="md" textAlign="left" my="2rem"> Product Managment </Heading>
+      <Flex flexDirection="column" width="100wh">
+            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Products Managment </Heading>
 
             {
               action.value === "create" ? displayAddProduct() :
@@ -556,8 +563,9 @@ const Products = () => {
               action.value === "details" ? displayProductDetails() :
 
               action.value === "products" ? 
-                  <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                    <Button colorScheme="blue" onClick={() => setAction({ value: "create" })} w="100px"> Create </Button>
+              <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+              <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<FaProductHunt size="20" />} 
+                      onClick={() => setAction({value: "create"})} > Create </Button>
 
                     {displayProductsFilter()}
                     
@@ -568,8 +576,10 @@ const Products = () => {
                     }
                   </Box> : ""
             }   
-
-            { action.data && displayModal(action.data && action.data) }
+            
+            <Portal> 
+              { action.data && displayModal(action.data && action.data) }
+            </Portal>
         </Flex>
       </>
     )

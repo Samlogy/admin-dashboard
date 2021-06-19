@@ -38,7 +38,7 @@ const THEMES = {
 };
 
 const NavBar = (props) =>  {
-    const { avatar, notifs, logo } = props;
+    const { avatar, notifs, logo, isFixedNav } = props;
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { colorMode, toggleColorMode } = useColorMode()
@@ -49,7 +49,7 @@ const NavBar = (props) =>  {
     return (
       <>
         <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" 
-            p=".5rem" bg={bgClr} boxShadow="md" width="100%">
+            p=".5rem" bg={bgClr} boxShadow="md" width="100%" pos={isFixedNav ? "fixed" : "inherit"}>
           <Button colorScheme="blue" variant="outline">
             <MdKeyboardArrowLeft size="24" onClick={onOpen} />
           </Button>

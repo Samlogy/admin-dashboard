@@ -31,7 +31,7 @@ const COLORS = {
     secondary: "#718096",
     black: "#000000cc"
   },
-}
+};
 
 const proxy = "http://localhost:5000"
 
@@ -745,19 +745,19 @@ const Users = () => {
     getUsers();
   }, []);
 
-  useEffect(() => {
-    // set user avatar inside (image / avatar)
-    if (user.avatar) {
-      // 
-    }
-  }, [user.avatar]);
+  // useEffect(() => {
+  //   // set user avatar inside (image / avatar)
+  //   if (user.avatar) {
+  //     // 
+  //   }
+  // }, [user.avatar]);
 
   return (
     <>
     <NavBar />
     <Box p="1rem">
       <Flex flexDirection="column" width="100wh">
-            <Heading as="h2" size="lg" textAlign="left" my="2rem"> User Managment </Heading>
+            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Managment </Heading>
 
             {
               action.value === "create" ? displayAddUser() :
