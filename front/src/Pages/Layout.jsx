@@ -1,17 +1,19 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
 
-import { NavBar } from "../Components/NavBar"
+import { NavBar } from "../Components"
 
 const Layout = (props) => {
-    // const { children, isFixedNav  } = props;
+    // const { children, isFixedNav, isVisible, additonalStyle  } = props;
 
   return (
-    <Flex flexDirection="column" minHeight="100%" w="100%">
-      <NavBar isFixedNav />
+    <Flex flexDirection="column" minHeight="100%" w="100%" {...props.additonalStyle}>
+      { (props.isVisible && props.isVisible) &&
+        <NavBar isFixedNav={props.isFixedNav} />
+      }
 
       <Flex alignItems="center" justifyContent="top" flexDirection="column"
-            pt={props.isFixedNav ? { md: "4rem" } : "0"}>
+            py={props.isFixedNav ? { md: "4rem" } : "0"}>
 
         {props.children && props.children}
 
@@ -21,7 +23,3 @@ const Layout = (props) => {
 }
 
 export default Layout;
-
-{/* <Layout isFixedNav>
-    all components
-</Layout> */}

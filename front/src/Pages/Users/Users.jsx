@@ -20,7 +20,7 @@ import { GoPrimitiveDot } from "react-icons/go"
 import { GiRank3 } from "react-icons/gi"
 import { FaEllipsisV } from "react-icons/fa";
 
-import NavBar from "../../Components/NavBar/NavBar.jsx"
+import Layout from "../Layout.jsx"
 
 const COLORS = {
   notif: {
@@ -740,23 +740,13 @@ const Users = () => {
           </Flex>
   };
   
-  
   useEffect(() => {
     getUsers();
   }, []);
 
-  // useEffect(() => {
-  //   // set user avatar inside (image / avatar)
-  //   if (user.avatar) {
-  //     // 
-  //   }
-  // }, [user.avatar]);
-
   return (
-    <>
-    <NavBar />
-    <Box p="1rem">
-      <Flex flexDirection="column" width="100wh">
+    <Layout isFixedNav isVisible>
+      <Flex flexDirection="column" width="90vw">
             <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Managment </Heading>
 
             {
@@ -786,8 +776,7 @@ const Users = () => {
               { action.data && displayModal(action.data && action.data) } 
             </Portal>      
       </Flex>      
-    </Box>
-    </>
+    </Layout>
   );
 };
 

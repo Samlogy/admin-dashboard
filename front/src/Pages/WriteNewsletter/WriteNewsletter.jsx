@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { Heading, Button, ButtonGroup, Box } from "@chakra-ui/react"
+import { useSelector } from "react-redux";
+import { Tabs, TabList, TabPanels, Tab, TabPanel,
+        FormControl, FormLabel, Input, Flex, useToast,
+        Heading, Button, Box, Text } from "@chakra-ui/react"
+import Parser from 'html-react-parser'
 
- import Write from "./Write.jsx"
- import Preview from "./Preview.jsx"
- import { NavBar } from "../../Components"
 
+ import { MyEditor } from "../../Components"
+ import Layout from "../Layout.jsx"
 
 import "./style.css";
 
@@ -12,41 +15,123 @@ const proxy = "http://localhost:5000/";
 
 const WriteNewsletter = () => {
   const [action, setAction] = useState("write");
-  const [saved, setSaved] = useState(false);
-  
+  const [newsletter, setNewsletter] = useState({ subject: "", message: "" });
+  const [files, setFiles] = useState([]);
 
+  const authStore = useSelector(state => state.auth)
+  const toast = useToast();
+
+  const onEditorChange = (value) => {
+    setNewsletter({ ...newsletter, message: value });
+  //   console.log(newsletter.message);
+  };
+  const onFilesChange = (files) => {
+    setFiles(files);
+  };
+  const writeNewsltter = async () => {
+    const url = `${proxy}/admin/writeNewsletter`;
+
+    // newsletter data validation --> schema
+    const variables = {
+      newsletterData: newsletter,
+      files: files,
+      authorID: authStore.userData._id
+    };
+
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "content-type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(variables)
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        displayToast({ msg: result.message, status: "success" })
+        return;
+      }
+      displayToast({ msg: "an Error occured while editing post !", status: "error" })
+
+    } catch (err) {
+      displayToast({ msg: err.message, status: "error" })
+    }
+  };
+
+  // Components
+  const displayToast = (data) => {
+    const { msg, status } = data
+    return toast({
+      title: msg,
+      status: status,
+      variant: "top-accent",
+      position: "bottom-right", // "top-right"
+      duration: 5000,
+      isClosable: true,
+    })
+  }; 
+  const displayWrite = () => {
+    return(
+      <Flex border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="35rem" my="2rem" mx="auto"
+            flexDirection="column" justifyContent="center" alignItems="center" boxShadow="md">
+        <FormControl id="email" mb="1rem">
+          <FormLabel> Subject </FormLabel>
+          <Input type="text" id="subject"  placeholder="Subject" name="subject" value={newsletter.subject}
+                onChange={(e) => setNewsletter({ ...newsletter, subject: e.target.value }) } />
+        </FormControl>
+
+        <FormControl id="newsletter" mb="1rem">
+          <FormLabel> Newsletter Content </FormLabel>
+          <MyEditor placeholder="Newsletter Content"
+                    onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
+        </FormControl>
+
+        <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => writeNewsltter()}>
+          Send
+        </Button> 
+      </Flex>
+  )
+  };
+  const displayPreview = () => {
+    return(
+      <Flex border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="35rem" my="2rem" mx="auto"
+            flexDirection="column"  boxShadow="md">
+        <Box display="flex" flexDirection="column"> 
+          <Text mb="1rem" fontWeight="bold" textAlign="left"> Subject: </Text>
+          <Text mb="2rem" p=".5rem"> {newsletter.subject && newsletter.subject} </Text> 
+        </Box>
+
+        <Box>
+          <Text mb="1rem" fontWeight="bold" textAlign="left"> Message: </Text>
+          <Text p=".5rem"> {newsletter.message && Parser(newsletter.message)} </Text>  
+        </Box>
+      </Flex>
+    )
+  };
   return (
-    <>
-      <NavBar />
+      <Layout isFixedNav isVisible>
+          <Heading as="h2" size="md" my="2rem" textAlign="left">
+            { action === "write" ? "Write Newsletter" : "Preview Newsletter" }
+          </Heading>
+  
+        <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue">
+          <TabList>
+            <Tab> Write </Tab>
+            <Tab> Preview </Tab>
+          </TabList>
+          
+          <TabPanels>
+            <TabPanel>
+              { displayWrite() }
+            </TabPanel>
 
-      <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center"
-          p="2rem"> 
-        <Heading as="h2" size="md" my="1rem" textAlign="left">
-          { action === "write" ? "Write Newsletter" : "Preview Newsletter" }
-        </Heading>
-
-        <ButtonGroup>
-          { action === "preview" ?  <Button mt="1rem" colorScheme="blue" variant="solid" 
-                                                  onClick={() => setAction("write")}>
-                                            Write
-                                          </Button> :
-
-            action === "write" ?  <Button mt="1rem" colorScheme="blue" variant="solid"
-                                                onClick={() => {
-                                                  setAction("preview");
-                                                  setSaved(true)
-                                                }}>
-                                          Preview
-                                        </Button> : ""
-          }
-        </ButtonGroup>
-
-        { action === "write" ? 
-          <Write saved={saved && saved} /> : 
-          <Preview saved={saved && saved} /> 
-        }     
-      </Box>
-    </>
+            <TabPanel>
+              { displayPreview() }
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Layout>
   );
 };
 

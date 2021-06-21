@@ -10,6 +10,7 @@ import {
 
 // import proxy from '../../proxySetup'
 // import { loginSchema } from '../../data_validation/index'
+import Layout from "../Layout.jsx"
 import { logged } from '../../_actions/authActions'
 
 
@@ -71,8 +72,10 @@ const Login = () => {
         }
 
     };
-
-  return    <Flex minH={'100vh'} align={'center'} justify={'center'} >
+    
+    // const additionalStyle = [minH='100vh', align='center', justify='center'];
+    // additonalStyle={additionalStyle}
+  return    <Layout >
               <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>
                   <Heading fontSize={'4xl'}> Sign In </Heading>
@@ -109,7 +112,7 @@ const Login = () => {
                   </Stack>
                 </Box>
               </Stack>
-            </Flex>
+            </Layout>
 };
 
 export default Login;

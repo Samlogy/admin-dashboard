@@ -7,7 +7,7 @@ import { Button, Flex, Heading, Select, Box, Spinner, VStack, Avatar, Text, Icon
   } from "@chakra-ui/react"
 import { BsTrash, BsFillEyeSlashFill  } from "react-icons/bs";
 
-import NavBar from "../../Components/NavBar/NavBar.jsx"
+import Layout from "../Layout.jsx"
 // import Accordion from "../../Components/Accordion/Accordion"
 // import proxy from "../../proxy"
 
@@ -256,9 +256,8 @@ const Notifications = () => {
       }, [])     
   
     return (
-      <>
-      <NavBar />
-        <Flex flexDirection="column" justifyContent="center" alignItems="center" width="100wh" p="2rem">
+      // flexDirection="column" justifyContent="center" alignItems="center" width="100wh" p="2rem"
+        <Layout isFixedNav isVisible>
             <Heading as="h2" size="lg" my="2rem"> Notifications </Heading>
 
             <Select name="notif-type" w="200px" mb="2rem"
@@ -282,8 +281,7 @@ const Notifications = () => {
             </Box>
 
             { action.data && displayModal(action.data && action.data)  }   
-        </Flex>
-      </>
+        </Layout>
     )
 };
 

@@ -1,20 +1,61 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import { useToast,
+import { useToast, useColorModeValue,
   Stat, StatLabel, StatNumber, StatHelpText, StatArrow, StatGroup,
   Stack, VStack,
-  Text,
+  Text, Heading ,
   Divider,
    } from "@chakra-ui/react"
 
-import NavBar from "../../Components/NavBar/NavBar.jsx"
-// import './style.css';
+import Layout from "../Layout.jsx"
 
+const THEMES = {
+  light: {
+    color: "black",
+    bg: "white",
+    colorHover: "black",
+    bgHover: "gray.100"
+  },
+  dark: {
+    color: "white",
+    bg: "gray.700",
+    colorHover: "white",
+    bgHover: "gray.600"
+  },
+};
+const appStats = [
+  {
+    label: "Users",
+    number: 345.670,
+    arrowType: "increase",
+    percent: "23.36%",
+  },
+  {
+    label: "Products",
+    number: 345.670,
+    arrowType: "increase",
+    percent: "23.36%",
+  },
+  {
+    label: "Newsletters",
+    number: 345.670,
+    arrowType: "decrease",
+    percent: "23.36%",
+  },
+  {
+    label: "Sells",
+    number: 345.670,
+    arrowType: "increase",
+    percent: "23.36%",
+  },
+];
 
 function Home() {
 
   const toast = useToast();
-
+  const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
+  
+  // Components
   const displayToast = (data) => {
     const { msg, status } = data
     return toast({
@@ -26,77 +67,45 @@ function Home() {
       isClosable: true,
     })
   };
-
-  // Components
   const displayStats = () => {
-    return <StatGroup display="flex" flexDirection="row" flexWrap="wrap">
-              <Stat border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="15rem" m="1rem" p="1rem" shadow="md">
-                <StatLabel> Users </StatLabel>
-                <StatNumber>345,670</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  23.36%
-                </StatHelpText>
-              </Stat>
-              
-              <Stat border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="15rem" m="1rem" p="1rem" shadow="md">
-                <StatLabel> Products </StatLabel>
-                <StatNumber>345,670</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  23.36%
-                </StatHelpText>
-              </Stat>
-
-              <Stat border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="15rem" m="1rem" p="1rem" shadow="md">
-                <StatLabel> Newsletters </StatLabel>
-                <StatNumber>345,670</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="decrease" />
-                  23.36%
-                </StatHelpText>
-              </Stat>
-
-              <Stat border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="15rem" m="1rem" p="1rem" shadow="md">
-                <StatLabel> Sells </StatLabel>
-                <StatNumber>345,670</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  23.36%
-                </StatHelpText>
-              </Stat>
+    return <StatGroup display="flex" flexDirection="row" flexWrap="wrap" my="1rem">
+              { appStats.map((el, idx) => 
+                  <Stat border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
+                        w="15rem" m="1rem" p="1rem" shadow="md" _hover={{bg: bgClrHover}}>
+                    <StatLabel fontSize="1.1rem"> {el.label} </StatLabel>
+                    <StatNumber> {el.number} </StatNumber>
+                    <StatHelpText>
+                      <StatArrow type={el.arrowType} />
+                      {el.percent}
+                    </StatHelpText>
+                  </Stat>
+                )
+              }
             </StatGroup>
   };
   const displayChart = () => {
     return <Stack border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                  w="15rem" m="1rem" p="1rem" shadow="md">
-                <Text> # 1 qsd;mqsdm </Text>  
+                  w="15rem" p="1rem" shadow="md">
+                  <Heading as="h2" size="lg" mb="1rem">I'm a Heading</Heading>
+
+                <Text> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cum impedit vel quidem quam molestias aut dolorum molestiae beatae inventore odit vitae accusamus labore, architecto ad quia nihil ducimus accusantium maiores. </Text>  
           </Stack>
   };
   
   return (
-    <>
-      <NavBar />
-      <div className="home-container">
-
+      <Layout isFixedNav isVisible>
         { displayStats() }
         
-        <VStack>
+        <VStack my="2rem">
           { displayChart() }
-          <Divider colorScheme="blue.400" w="15rem" />
+          <Divider w="15rem" border="1px" borderColor="blue.500" borderStyle="solid" />
 
           { displayChart() }
-          <Divider colorScheme="blue.400" w="15rem" />
+          <Divider w="15rem" border="1px" borderColor="blue.500" borderStyle="solid" />
 
           { displayChart() }
         </VStack>
-
-      </div>
-    </>
+      </Layout>
   );
 }
 

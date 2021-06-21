@@ -9,13 +9,13 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Image,
   Tag, TagLabel,
   Portal,
    } from "@chakra-ui/react"
-   import { BiBlock, BiTrash, BiPencil, BiDetail } from "react-icons/bi"
+   import { BiTrash, BiPencil, BiDetail } from "react-icons/bi"
    import { FaProductHunt, FaSortAmountUp, FaEllipsisV } from "react-icons/fa";
    import { ImPriceTags } from "react-icons/im";
    import { BsCardChecklist } from "react-icons/bs"
    import { MdDescription } from "react-icons/md";
 
-import NavBar from "../../Components/NavBar/NavBar.jsx"
+import Layout from "../Layout.jsx"
 import Features from "./Features.jsx"
 
 const proxy = "http://localhost:5000"
@@ -550,11 +550,9 @@ const Products = () => {
   }, []);
     
     return (
-      <>
-      <NavBar />
-      <Flex flexDirection="column" width="100wh">
+      <Layout isFixedNav isVisible>
+        <Flex flexDirection="column" width="90vw">
             <Heading as="h2" size="lg" textAlign="left" my="2rem"> Products Managment </Heading>
-
             {
               action.value === "create" ? displayAddProduct() :
 
@@ -576,12 +574,12 @@ const Products = () => {
                     }
                   </Box> : ""
             }   
-            
+
             <Portal> 
               { action.data && displayModal(action.data && action.data) }
             </Portal>
         </Flex>
-      </>
+      </Layout>
     )
 };
 

@@ -21,7 +21,8 @@ const THEMES = {
     colorHover: "white",
     bgHover: "gray.600"
   },
-}
+};
+
 const SideBar = (props) => {
   const { onClose, isOpen } = props;
 
