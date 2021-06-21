@@ -16,7 +16,7 @@ const proxy = "http://localhost:5000/";
 const WriteNewsletter = () => {
   const [newsletter, setNewsletter] = useState({ subject: "", message: "" });
   const [files, setFiles] = useState([]);
-  const [action, setAction] = useState("write");
+  const [action, setAction] = useState(0);
 
   const authStore = useSelector(state => state.auth)
   const toast = useToast();
@@ -110,13 +110,15 @@ const WriteNewsletter = () => {
     )
   };
 
+
   return (
       <Layout isFixedNav isVisible>
           <Heading as="h2" size="md" my="2rem" textAlign="left">
-            { action === "write" ? "Write Newsletter" : "Preview Newsletter" }
+            { action === 0 ? "Write Newsletter" : "Preview Newsletter" }
           </Heading>
   
-        <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue">
+        <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
+              onChange={(idx) => setAction(idx)}>
           <TabList>
             <Tab> Write </Tab>
             <Tab> Preview </Tab>

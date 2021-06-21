@@ -1,13 +1,13 @@
 import React from 'react'
 import { Flex, Heading, Button, Text, ButtonGroup } from "@chakra-ui/react"
 
+import Layout from "./Layout.jsx"
 
 function NotFound() {
   
-  
+  // minHeight="100vh"
   return (
-      <Flex flexDirection="column" justifyContent="center" alignItems="center"
-            p="2rem">
+      <Layout> 
           <Heading as="h1" size="2xl" my="2rem">
             404 not Found
           </Heading>
@@ -24,7 +24,7 @@ function NotFound() {
               Back to Dashboard 
             </Button>
           </ButtonGroup>
-      </Flex>
+      </Layout>
   );
 }
 

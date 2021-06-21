@@ -4,8 +4,20 @@ const Subscribe = require('../models/subscribe.model')
 const NewsLetterTrace = require('../models/newsLetterTrace.model')
 
 const { sendEmail } = require('../utils/email')
+const upload = require('../utils/upload_file')
 
-/* Newsletter */                
+/* Newsletter */  
+router.post("/uploadfiles", async (req, res) => {
+    upload(req, res, err => {
+        if (err) {
+            return res.json({ success: false, err })
+        }
+        return res.json({ success: true, 
+                        url: res.req.file.path, 
+                        fileName: res.req.file.filename 
+                    })
+    })
+});             
 router.post("/writeNewsletter", async (req, res) => {
     try {
         const { newsletterData, files, authorID } = req.body

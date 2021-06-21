@@ -100,7 +100,7 @@ const Users = () => {
   const getUsers = async () => {
     setLoading(true);
     try {
-      const url = `${proxy}/admin/manageUser/getUsers`;
+      const url = `${proxy}/admin/users/getUsers`;
       const res = await fetch(url);
 
       if (res.ok) {
@@ -124,7 +124,7 @@ const Users = () => {
 
     try {
       // data validation (yup)
-      const url = `${proxy}/admin/manageUser/createUser`;
+      const url = `${proxy}/admin/users/createUser`;
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
@@ -155,7 +155,7 @@ const Users = () => {
         delete editedUser.password;
       }
 
-      const url = `${proxy}/admin/manageUser/editUser/${userId}`;
+      const url = `${proxy}/admin/users/editUser/${userId}`;
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
@@ -176,7 +176,7 @@ const Users = () => {
   };
   const onDelete = async (userId) => {
     try {
-      const url = `${proxy}/admin/manageUser/deleteUser/${userId}`;
+      const url = `${proxy}/admin/users/deleteUser/${userId}`;
       const res = await fetch(url, {
         method: "DELETE"
       });
@@ -199,7 +199,7 @@ const Users = () => {
   };
   const onBlock = async (userId, userIndex) => {
     try {
-      const url = `${proxy}/admin/manageUser/blockUser/${userId}`;
+      const url = `${proxy}/admin/users/blockUser/${userId}`;
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
@@ -235,7 +235,7 @@ const Users = () => {
     setLoading(true);
 
     try {
-      const url = `${proxy}/admin/manageUser/filterUsers?queryString=${value}&filterType=${filter.filterType}`;
+      const url = `${proxy}/admin/users/filterUsers?queryString=${value}&filterType=${filter.filterType}`;
       const res = await fetch(url);
 
       if (res.ok) {

@@ -12,7 +12,7 @@ import "react-quill/dist/quill.snow.css";
 
 const QuillClipboard = Quill.import("modules/clipboard");
 
-const proxy = "http://localhost:5000/";
+const proxy = "http://localhost:5000";
 
 class Clipboard extends QuillClipboard {
   getMetaTagElements = (stringContent) => {
@@ -251,7 +251,7 @@ class MyEditor extends Component {
       formData.append("file", file);
 
       axios
-        .post(`${proxy}/profile/uploadfiles`, formData, config)
+        .post(`${proxy}/admin/newsletter/uploadfiles`, formData, config)
         .then((response) => {
           if (response.data.success) {
             const quill = this.reactQuillRef.getEditor();
@@ -301,7 +301,7 @@ class MyEditor extends Component {
       formData.append("file", file);
 
       axios
-        .post(`${proxy}/profile/uploadfiles`, formData, config)
+        .post(`${proxy}/admin/newsletter/uploadfiles`, formData, config)
         .then((response) => {
           if (response.data.success) {
             const quill = this.reactQuillRef.getEditor();
@@ -351,7 +351,7 @@ class MyEditor extends Component {
       formData.append("file", file);
 
       axios
-        .post(`${proxy}/profile/uploadfiles`, formData, config)
+        .post(`${proxy}/admin/newsletter/uploadfiles`, formData, config)
         .then((response) => {
           if (response.data.success) {
             const quill = this.reactQuillRef.getEditor();

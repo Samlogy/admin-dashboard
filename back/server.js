@@ -35,17 +35,19 @@ require('./utils/init_db')
 // require('./utils/mongoDB_backup')
 
 // add routes
-const manageUserRoutes = require('./routes/manageUser.route')
+const usersRoutes = require('./routes/users.route')
 const newsletterRoutes = require('./routes/newsletter.route')
 const notificatonsRoutes = require("./routes/notifications.route")
 const productsRoutes = require("./routes/products.route")
 const authRoutes = require("./routes/auth.route")
+const contactRoutes = require("./routes/contact.route")
 
-app.use('/admin/manageUser', manageUserRoutes)
+app.use('/admin/users', usersRoutes)
 app.use('/admin/newsletter', newsletterRoutes)
 app.use("/admin/notifications", notificatonsRoutes)
 app.use("/admin/products", productsRoutes)
 app.use("/admin/auth", authRoutes)
+app.use("/admin/contact", contactRoutes)
 
   // Setting the PORT
 const PORT = process.env.PORT || 5000

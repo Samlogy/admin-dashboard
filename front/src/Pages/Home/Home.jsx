@@ -4,7 +4,6 @@ import { useToast, useColorModeValue,
   Stat, StatLabel, StatNumber, StatHelpText, StatArrow, StatGroup,
   Stack, VStack,
   Text, Heading,
-  Divider,
    } from "@chakra-ui/react"
 import {Bar, Line, Doughnut, Pie} from 'react-chartjs-2';
 
@@ -53,7 +52,7 @@ const appStats = [
 const proxy = "http://localhost:5000";
 
 function Home() {
-  const [userData, setUserData] = useState([])
+  const [data, setData] = useState([])
 
   const toast = useToast();
   const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
@@ -65,17 +64,17 @@ function Home() {
     const url = `${proxy}`
 
     try {
-        let res = await fetch(url)
+        const res = await fetch(url)
 
         if (res.ok) {
-          res = await res.json()
-          setUserData(res)
-          displayToast(res.message, 'success')
+          const result = await res.json()
+          setData(result.data)
+          displayToast(result.message, "success")
         }
-        displayToast('Your stats Profile has been loaded', 'error')
+        displayToast("Your stats Profile has been loaded", "error")
 
     } catch (err) { 
-      displayToast(err.message, 'error')
+      displayToast(err.message, "error")
     }
   };
   
