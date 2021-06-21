@@ -14,9 +14,9 @@ import "./style.css";
 const proxy = "http://localhost:5000/";
 
 const WriteNewsletter = () => {
-  const [action, setAction] = useState("write");
   const [newsletter, setNewsletter] = useState({ subject: "", message: "" });
   const [files, setFiles] = useState([]);
+  const [action, setAction] = useState("write");
 
   const authStore = useSelector(state => state.auth)
   const toast = useToast();
@@ -28,7 +28,7 @@ const WriteNewsletter = () => {
   const onFilesChange = (files) => {
     setFiles(files);
   };
-  const writeNewsltter = async () => {
+  const sendNewsletter = async () => {
     const url = `${proxy}/admin/writeNewsletter`;
 
     // newsletter data validation --> schema
@@ -87,7 +87,7 @@ const WriteNewsletter = () => {
                     onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
         </FormControl>
 
-        <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => writeNewsltter()}>
+        <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => sendNewsletter()}>
           Send
         </Button> 
       </Flex>
@@ -109,6 +109,7 @@ const WriteNewsletter = () => {
       </Flex>
     )
   };
+
   return (
       <Layout isFixedNav isVisible>
           <Heading as="h2" size="md" my="2rem" textAlign="left">

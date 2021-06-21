@@ -75,7 +75,7 @@ const Login = () => {
     
     // const additionalStyle = [minH='100vh', align='center', justify='center'];
     // additonalStyle={additionalStyle}
-  return    <Layout >
+  return    <Layout>
               <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>
                   <Heading fontSize={'4xl'}> Sign In </Heading>

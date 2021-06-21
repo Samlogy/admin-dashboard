@@ -5,9 +5,9 @@ import { NavBar } from "../Components"
 
 const Layout = (props) => {
     // const { children, isFixedNav, isVisible, additonalStyle  } = props;
-
+    // {...props.additonalStyle}
   return (
-    <Flex flexDirection="column" minHeight="100%" w="100%" {...props.additonalStyle}>
+    <Flex flexDirection="column" minHeight="100%" w="100%" {...props.rest}>
       { (props.isVisible && props.isVisible) &&
         <NavBar isFixedNav={props.isFixedNav} />
       }
