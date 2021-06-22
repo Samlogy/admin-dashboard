@@ -12,6 +12,7 @@ const Features = (props) => {
   const [features, setFeatures] = useState((value && value.length > 0) ? [...value] : []);
 
   const addFeature = () => {
+    if (feature === "") return;
     // create a regular expression to reject what is not permitted
       setFeatures((prevState) => {
         if (prevState) {

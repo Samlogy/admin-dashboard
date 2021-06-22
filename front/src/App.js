@@ -2,23 +2,15 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import { useSelector } from "react-redux"
 
-import { Home, Notifications, Login, WriteNewsletter, Users, Products, NotFound, Contacts } from "./Pages"
+import { Home, Notifications, Login, WriteNewsletter, Users, Products, NotFound, Contacts, Reports } from "./Pages"
 
 import PrivateRoute from "./utils/PrivateRoute"
-import { saveState } from "./utils/localStorage";
-import { Store } from "./_stores"
 
 import './App.css';
 
 
 export default function App() {
   const authStore = useSelector(state => state.auth)
-
-  Store.subscribe(() => {
-    saveState("auth-admin", {
-      auth: Store.getState().auth,
-    });
-  });
   
   return (
 
@@ -38,6 +30,7 @@ export default function App() {
             <Route path="/products" component={Products} />
             <Route path="/users" component={Users} />
             <Route path="/contacts" component={Contacts} />
+            <Route path="/reports" component={Reports} />
 
             <Route path="*" component={NotFound}/>
         </Switch>

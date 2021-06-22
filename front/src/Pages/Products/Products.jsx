@@ -45,6 +45,38 @@ const Products = () => {
 
 
   // API calls
+  const uploadImage = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const url = `${proxy}/admin/products/uploadfiles`;
+
+    if (
+      e.currentTarget &&
+      e.currentTarget.files &&
+      e.currentTarget.files.length > 0
+    ) {
+      const file = e.currentTarget.files[0];
+
+      // let formData = new FormData();
+      const config = {
+        headers: { "content-type": "multipart/form-data" }
+      };
+      // formData.append("file", file);
+      // console.log('file: ', file)
+
+      fetch(url, file, config)
+      .then((res) => {
+        if (res.data.success) {
+          setProduct({...product, thumbnail: `/uploads/${res.data.fileName}` })
+          return displayToast({ msg: 'Upload success: ', status: "success" })
+        } else {
+          return displayToast({ msg: 'Failed to Upload !', status: "error" })
+        }
+      })
+      .catch((err) => displayToast({ msg: err.message, status: "error" }))
+    }
+  };
   const getProducts = async () => {
     setLoading(true);
     try {
@@ -240,6 +272,16 @@ const Products = () => {
             </MenuList>
           </Menu>
   };
+  const displayFeatures = (data) => {
+    return data.map((item, idx) => (
+            <Box className="feature-item" key={idx}>
+              <Tag size="md" key={idx} borderRadius="full" variant="solid" mr=".2rem" mb=".25rem"
+                  textColor="blue.700" bg="white" border="1px" borderColor="blue">
+                <TagLabel> {item} </TagLabel>
+              </Tag>
+            </Box>
+          ))
+  }
   const displayProductsList = (products) => {
        
     return (
@@ -247,12 +289,7 @@ const Products = () => {
       <Table variant="simple" border="1px" borderWidth="solid" borderColor="gray.200" colorScheme="blue" size="sm" w="95%" mx="auto">
         <Thead>
           <Tr>
-            {/* { selectable &&
-              <Th p="1rem"> 
-                <Checkbox isChecked={localSelected.length === itemsIds.length}
-                          onChange={(e) => setCheckedItems(e.target.checked)} />
-              </Th>
-            } */}
+            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
             <Th p="1rem"> Name </Th>
             <Th p="1rem"> Amount </Th>
             <Th p="1rem"> Features </Th>
@@ -265,17 +302,11 @@ const Products = () => {
         <Tbody>
           { products.map((el, idx) => 
             <Tr index={idx}>
-              <Td>
-                {/* <Checkbox defaultIsChecked={selected.includes(el._id)}
-                          isChecked={localSelected.includes(el._id)}
-                          onChange={(e) => setCheckedItem(el._id, e.target.checked)} /> */}
-              </Td>
+              <Td> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Td>
               <Td> {el.name} </Td>
               <Td> {el.amount} </Td>
-              <Td> {el.features && el.features > 0 && el.features.map(item => item) } </Td>
-              <Td>
-                { displaySubMenu(el._id, idx, el) }
-            </Td>
+              <Td> {(el.features && el.features > 0) && displayFeatures(el.features) } </Td>
+              <Td> { displaySubMenu(el._id, idx, el) } </Td>
               <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
               <Td> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
             </Tr>
@@ -285,13 +316,7 @@ const Products = () => {
 
         <Tfoot>
           <Tr>
-          {/* { selectable &&
-              <Th p="1rem"> 
-                <Checkbox isChecked={localSelected.length === itemsIds.length}
-                          onChange={(e) => setCheckedItems(e.target.checked)}
-                        />
-              </Th>
-            } */}
+            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
             <Th p="1rem"> Name </Th>
             <Th p="1rem"> Amount </Th>
             <Th p="1rem"> Features </Th>
@@ -413,11 +438,10 @@ const Products = () => {
           <Heading as="h3" size="md" my="1rem" textAlign="left"> Add new Product </Heading>
 
           <Stack>
-              <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={product.name} fallbackSrc="https://via.placeholder.com/150"
-                      src={product.thumbnail} />
-              <Input type="file" id="file" 
-                      value={product.thumbnail} onChange={(e) => setProduct({ ...product, thumbnail: e.target.value })} />
-
+            <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={product.name} fallbackSrc="https://via.placeholder.com/150"
+                    src={product.thumbnail} />
+            <Input type="file" id="file"  value={product.thumbnail} onChange={(e) => uploadImage(e)} />
+                    
             <FormControl id="fullName" mb="1rem">
               <FormLabel> Product Name </FormLabel>
               <Input type="text" placeholder="Product Name" name="Name" id="fullName"
@@ -482,7 +506,7 @@ const Products = () => {
     );
   };
   const displayEditProduct = (data) => {
-    const { name, description, price, amount, features, avatar } = data;
+    const { name, description, price, amount, features, thumbnail } = data;
 
     return (
       <>
@@ -494,9 +518,9 @@ const Products = () => {
 
           <Stack>
             <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={product.name} fallbackSrc="https://via.placeholder.com/150"
-                      src={product.thumbnail} />
-            <Input type="file" id="file" 
-                      value={product.thumbnail} onChange={(e) => setProduct({ ...product, thumbnail: e.target.value })} />
+                      src={thumbnail ? thumbnail : product.thumbnail} />
+            <Input type="file" id="file"  value={product.thumbnail} onChange={(e) => uploadImage(e)} />
+
             <FormControl id="name" mb="1rem">
               <FormLabel> Product Name </FormLabel>
               <Input type="text" placeholder="Product Name" name="name"

@@ -115,7 +115,7 @@ const Notifications = () => {
       /* API Calls */
       const loadNotifications = async () => {
         setNotif({...notif, loading: true })
-        const userId = "60bbc4ed781e2232e4429473" // authStore.userData._id
+        const userId = authStore.userData._id
         const url = `${proxy}/admin/notifications/${userId}`
     
         try {
@@ -179,8 +179,6 @@ const Notifications = () => {
         }
       };
 
-      
-
       // Componenents
       const displayToast = (data) => {
         const { msg, status } = data
@@ -239,9 +237,9 @@ const Notifications = () => {
                                 <Text my="1rem"> { el.content && el.content } </Text>
 
                                 <ButtonGroup display="flex" flexDirection="row" justifyContent="flex-end">
-                                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
+                                  <IconButton colorScheme="blue" variant="outline" aria-label="delete user" my=".25rem" ml="0" icon={<BsTrash />} 
                                               onClick={() => deleteNotif(el._id, idx)} />
-                                  <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
+                                  <IconButton colorScheme="blue" variant="outline" aria-label="delete user" my=".25rem" ml="0" icon={<BsFillEyeSlashFill />} 
                                               onClick={() => hideNotif(el._id, idx)} />
                                 </ButtonGroup>
                               </AccordionPanel>

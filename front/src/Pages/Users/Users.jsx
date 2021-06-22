@@ -97,6 +97,37 @@ const Users = () => {
 };
 
   // API calls
+  const uploadImage = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const url = `${proxy}/users/uploadfiles`;
+
+    if (
+      e.currentTarget &&
+      e.currentTarget.files &&
+      e.currentTarget.files.length > 0
+    ) {
+      const file = e.currentTarget.files[0];
+
+      let formData = new FormData();
+      const config = {
+        header: { "content-type": "multipart/form-data" }
+      };
+      formData.append("file", file);
+
+      fetch(url, formData, config)
+      .then((res) => {
+        if (res.data.success) {
+          setUser({...user, avatar: `/uploads/${res.data.fileName}` })
+          return displayToast({ msg: 'Upload success: ', status: "success" })
+        } else {
+          return displayToast({ msg: 'Failed to Upload !', status: "error" })
+        }
+      })
+      .catch((err) => displayToast({ msg: err.message, status: "error" }))
+    }
+  };
   const getUsers = async () => {
     setLoading(true);
     try {
@@ -291,7 +322,7 @@ const Users = () => {
             <MenuList>
               <MenuItem textColor={COLORS.notif.warning}
                     icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
-                    onClick={() =>  editUser(userId, userIndex, userData)}> Edit </MenuItem>
+                    onClick={() => editUser(userId, userIndex, userData)}> Edit </MenuItem>
 
               <MenuItem textColor={COLORS.notif.error}
                     icon={<BiTrash size="18" color={COLORS.notif.error} />} 
@@ -381,8 +412,7 @@ const Users = () => {
           <Stack>
             <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={user.username} fallbackSrc="https://via.placeholder.com/150"
                     src={user.avatar} />
-            <Input type="file" id="file" 
-                    value={user.avatar} onChange={(e) => setUser({ ...user, avatar: e.target.value })} />
+            <Input type="file" id="file" onChange={(e) => uploadImage(e)} value={user.avatar} />
 
             <FormControl id="fullName" mb="1rem">
               <FormLabel> Full Name </FormLabel>
@@ -495,8 +525,7 @@ const Users = () => {
             <Stack>
             <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={user.username} fallbackSrc="https://via.placeholder.com/150"
                       src={avatar ? avatar : user.avatar} />
-              <Input type="file" id="file" 
-                      value={user.avatar} onChange={(e) => setUser({ ...user, avatar: e.target.value })} />
+              <Input type="file" id="file" onChange={(e) => uploadImage(e)} value={user.avatar} />
 
               <FormControl id="fullName" mb="1rem">
                 <FormLabel> Full Name </FormLabel>
@@ -759,7 +788,7 @@ const Users = () => {
               action.value === "users" ? 
                   <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                     <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
-                            onClick={() => setAction({value: "create"})} > Create </Button>
+                            onClick={() => setAction({value: "create"})}> Create </Button>
 
                     {displayUsersFilter()}
                     

@@ -1,15 +1,10 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
-import { 
-  Flex, Heading, Input, Button, FormControl, Stack, Box, InputRightElement, InputGroup,
-  useToast,
-  FormLabel, useColorModeValue, 
-} from "@chakra-ui/react";
-
+import { Heading, Input, Button, FormControl, Stack, Box, InputRightElement, InputGroup, FormLabel,
+  useToast, useColorModeValue } from "@chakra-ui/react";
 
 // import proxy from '../../proxySetup'
-// import { loginSchema } from '../../data_validation/index'
 import Layout from "../Layout.jsx"
 import { logged } from '../../_actions/authActions'
 
@@ -20,23 +15,13 @@ const proxy = "http://localhost:5000";
 const Login = () => {
   const [auth, setAuth] = useState({ email: "", password: "", checked: true })
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleShowClick = () => setShowPassword(!showPassword);
     
     const dispatch = useDispatch()
     const history = useHistory()
     const toast = useToast();
 
-    const displayToast = (data) => {
-      const { msg, status } = data
-      return toast({
-        title: msg,
-        status: status,
-        variant: "top-accent",
-        position: "bottom-right", // "top-right"
-        duration: 5000,
-        isClosable: true,
-      })
+    const handleShowClick = () => {
+      setShowPassword(!showPassword);
     };
  
     const onLogin = async () => {
@@ -73,8 +58,26 @@ const Login = () => {
 
     };
     
-    // const additionalStyle = [minH='100vh', align='center', justify='center'];
-    // additonalStyle={additionalStyle}
+    const displayToast = (data) => {
+      const { msg, status } = data
+      return toast({
+        title: msg,
+        status: status,
+        variant: "top-accent",
+        position: "bottom-right", // "top-right"
+        duration: 5000,
+        isClosable: true,
+      })
+    };
+    // useEffect(() => {
+    //   // load data
+    //   const data = loadState("auth-admin")
+    // }, [])
+    // useEffect(() => {
+    //   // store data
+    //   saveState("auth-admin", data)
+    // })
+    
   return    <Layout>
               <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>

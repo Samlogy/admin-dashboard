@@ -1,0 +1,48 @@
+
+/* Completed Tasks */
+
+server-side products
+server-side notifications
+front-side products
+front-side notifications
+setup redux (actions - reducers - store)
+server-side auth (login - logout)
+refactor server-side #2
+mongoDB back-up ??
+front-side logout 
+front-side login
+front-side login/logout (redux + localStorage) ??
+front-side routing added
+add navBar / sideBar
+redux bug fix #1
+add topBar / sideBar to all pages 
+add logout / props.avatar to topBar
+create privateRoutes in front
+notFound
+products 'same as users' 
+edit / create / filter list delete / block / details / user - sideBar
+add private routes in react
+notification when action is performed (warning / success / error)
+add style to all pages to render top/side bar correctly
+add layout component for each page (it contains regular style of how to display a page)
+newsletter make it work properly
+add layout to all other pages (users - products)
+charts added
+add upload images to backEnd
+
+
+front-side products --> add new features pb --> with update state of parent cpt ??
+// update state notification after api calls (hide, delete) ??
+// update state products after api calls (create, edit, delete) ??
+// test all features ??
+// products images upload (front / back) if works --> same thing in users ???
+
+git commit -m ''
+
+
+/* Pending Tasks */
+// data validation (front + back) 
+// user feed back on forms
+// global error handling
+
+

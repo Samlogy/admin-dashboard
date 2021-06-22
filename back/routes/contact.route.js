@@ -30,7 +30,6 @@ router.get("/getContacts", async (req, res) => {
                 .catch(err => res.status(500).send({ error: err.message }))
             )
             const result = await Promise.all(requests)
-            console.log('promise: ', result)
 
         res.status(201).send({
             message: "Contacts loaded !",

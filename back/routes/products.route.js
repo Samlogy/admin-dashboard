@@ -1,8 +1,30 @@
 const router = require('express').Router()
 
 const Product = require('../models/products.model');
+const upload = require('../utils/upload_file');
 
-/* get all - add - edit - delete - filter */
+// Functions
+const resizeImage = (imgInput, height, width, imgOutput, quality) => {
+    sharp(__dirname + `/images/${imgInput}.jpg`).resize(width, height)
+    .jpeg({quality : quality}).toFile(__dirname 
+        + `/images/${imgOutput}.jpg`);
+};
+
+router.post("/uploadfiles", async (req, res) => {
+    upload(req, res, err => {
+        if (err)  return res.json({ success: false, err })
+        
+        // generate an img 250x250
+        resizeImage(res.req.file.filename, 250, 250, "imgOutput", 50)
+
+        return res.json({ 
+            success: true, 
+            url: res.req.file.path, 
+            fileName: res.req.file.filename 
+        })
+    })
+}); 
+
 router.get("/getProducts", async (req, res) => {
     try {
         const result = await Product.find()

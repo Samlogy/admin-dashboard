@@ -31,7 +31,7 @@ const proxy = "http://localhost:5000"
 const Contacts = () => {
   const [contact, setContact] = useState({ message: "", status: "unchecked" });
   const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState({ queryString: "", filterStatus: "unchecked", filterType: "", filterDate: "" });
+  const [filter, setFilter] = useState({ queryString: "", filterStatus: "unchecked", filterType: "", filterDate: "all" });
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState({ value: "contacts", data: null })
 
@@ -201,6 +201,12 @@ const Contacts = () => {
   };
   const displayModal = (data) => {
     const { text, action, label } = data
+    
+    const closeModal = () => {
+      backToContacts(); 
+      onClose();
+    };
+
     return  <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
               <ModalContent>
@@ -218,7 +224,7 @@ const Contacts = () => {
                   <Button colorScheme="blue" mr={3} onClick={action && action}>
                     { label && label }
                   </Button>
-                  <Button variant="outiline" colorScheme="blue" onClick={() => { backToContacts(); onClose()}}> Cancel </Button>
+                  <Button variant="outiline" colorScheme="blue" onClick={() => closeModal()}> Cancel </Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>
@@ -270,17 +276,31 @@ const Contacts = () => {
                                     <Avatar name={el.username && el.username} src={el.avatar} size="md" /> 
                                 }
                                 <Text my="auto"> { el.subject && el.subject } </Text>
-
                                 <Text my="auto" fontWeight="medium"> { el.status && el.status } </Text>
 
-                                <Text my="auto" mr="1rem" fontStyle="italic"> { el.createdAt && convertDate(el.createdAt) }  </Text>
+                                <Text my="auto" mr="1rem"  fontStyle="italic"> { el.createdAt && convertDate(el.createdAt) }  </Text>
                               </Box>
 
                               <AccordionIcon />
                             </AccordionButton>
                           
                           <AccordionPanel pb={4}>
-                            <Text my="1rem"> { el.message && el.message } </Text>
+                            <Box display="flex" flexDirection="row" my="1.25rem"> 
+                                <Text ml=".5rem"  fontWeight="bold"> Email : </Text>
+                                <Text ml=".5rem"> { el.email && el.email } </Text>
+                            </Box>
+                            <Box display="flex" flexDirection="row" my="1.25rem"> 
+                                <Text ml=".5rem"  fontWeight="bold"> Full Name : </Text>
+                                <Text ml=".5rem"> { el.fullName && el.fullName } </Text>
+                            </Box>
+                            <Box display="flex" flexDirection="row" my="1.25rem"> 
+                                <Text ml=".5rem"  fontWeight="bold"> Subject : </Text>
+                                <Text ml=".5rem"> { el.subject && el.subject } </Text>
+                            </Box>
+                            <Box display="flex" flexDirection="row" my="1.25rem">   
+                                <Text ml=".5rem"  fontWeight="bold"> Message : </Text>
+                                <Text ml=".5rem">  { el.message && el.message } </Text>
+                            </Box>
 
                             <ButtonGroup display="flex" flexDir="row" justifyContent="flex-end">
                                 <IconButton colorScheme="blue" aria-label="reply user" my=".25rem" ml="0" variant="outline" 
