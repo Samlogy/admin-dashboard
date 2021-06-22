@@ -147,6 +147,7 @@ const Notifications = () => {
             const result = await res.json()
             // update state after delete op
             displayToast({ msg: result.message, status: "error" })
+            return;
           }
     
         } catch (err) {
@@ -170,6 +171,7 @@ const Notifications = () => {
             console.log(result.data)
             // update state after edit op
             displayToast({ msg: result.message, status: "error" })
+            return;
           }
     
         } catch (err) {

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ContactsSchema = new mongoose.Schema({
   email: {
-    type: [String],
+    type: String,
   },
   subject: {
     type: String
@@ -10,13 +10,17 @@ const ContactsSchema = new mongoose.Schema({
   message: {
     type: String
   },
+  status: {
+    type: String,
+    default: "unchecked"
+  },
   authorId: {
     type: mongoose.Schema.Types.ObjectId,
   }, 
   responseTo: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  createdAt:{
+  createdAt: {
       type: Date,
       default: Date.now()
   }

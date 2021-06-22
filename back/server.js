@@ -47,7 +47,7 @@ app.use('/admin/newsletter', newsletterRoutes)
 app.use("/admin/notifications", notificatonsRoutes)
 app.use("/admin/products", productsRoutes)
 app.use("/admin/auth", authRoutes)
-app.use("/admin/contact", contactRoutes)
+app.use("/admin/contacts", contactRoutes)
 
   // Setting the PORT
 const PORT = process.env.PORT || 5000

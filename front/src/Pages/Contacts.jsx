@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { BiBlock, BiTrash, BiPencil, BiDetail, BiUser } from "react-icons/bi"
 import { BsReplyFill, BsFillEyeSlashFill, BsCheckBox } from "react-icons/bs"
 import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, RadioGroup, Textarea,
@@ -8,9 +9,6 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, 
   Avatar,
   Button, ButtonGroup, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
-  Image,
-  InputRightElement, InputGroup,
-  Menu, MenuList, MenuItem, MenuButton,
   Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
   Portal,
    } from "@chakra-ui/react";
@@ -30,45 +28,16 @@ const COLORS = {
 
 const proxy = "http://localhost:5000"
 
-const data = [
-    {
-        email: "s@gmail.com",
-        subject: "le sujet ici",
-        message: "le message ici...",
-        status: "unchecked",
-        createdAt: "",
-        avatar: "qsdsqd",
-        username: "the username"
-    },
-    {
-        email: "s@gmail.com",
-        subject: "le sujet ici",
-        message: "le message ici...",
-        status: "unchecked",
-        createdAt: "",
-        avatar: "qsdsqd",
-        username: "the username"
-    },
-    {
-        email: "s@gmail.com",
-        subject: "le sujet ici",
-        message: "le message ici...",
-        status: "unchecked",
-        createdAt: "",
-        avatar: "qsdsqd",
-        username: "the username"
-    },
-];
-
 const Contacts = () => {
-  const [contact, setContact] = useState({ responseTo: "", message: "" });
-  const [contacts, setContacts] = useState(data || []);
+  const [contact, setContact] = useState({ message: "", status: "unchecked" });
+  const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterStatus: "unchecked", filterType: "", filterDate: "" });
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState({ value: "contacts", data: null })
 
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const authStore = useSelector(state => state.auth);
 
   // Functions
   const convertDate = (date) => {
@@ -77,7 +46,7 @@ const Contacts = () => {
   };
   const backToContacts = () => {
     setAction({ value: "contacs" })
-    // setUser({ fullName: "", username: "", email: "", password: "", role: "" })
+    setContact({ message: "", status: "unchecked" })
   };
 
   const hideContact = (contactId, contactIndex) => {
@@ -87,18 +56,24 @@ const Contacts = () => {
     }); 
     onOpen()
   };
-  const replyContact = (contactId, contactIndex) => {
-    // 
+  const replyContact = (contactId, contactIndex, userId) => {
+    // opens a modal box (message)
+    setAction({ data: { action: () => onReply(contactId, contactIndex, userId), label: "reply" } });
+    onOpen()
   };
   const checkContact = (contactId, contactIndex) => {
-    //
+    setAction({ 
+      data: { text: "Are you sure to Check mark this Contact ?", 
+              action: () => onCheck(contactId, contactIndex), label: "Check" } 
+    }); 
+    onOpen()
   };
 
   // API calls
   const getContacts = async () => {
     setLoading(true);
     try {
-      const url = `${proxy}/admin/contact/getContacts`;
+      const url = `${proxy}/admin/contacts/getContacts`;
       const res = await fetch(url);
 
       if (res.ok) {
@@ -113,7 +88,7 @@ const Contacts = () => {
       displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
-  const onHide = async (contactId) => {
+  const onHide = async (contactId, contactIndex) => {
     const url = `${proxy}/admin/contacts/hide/${contactId}`
 
     try {
@@ -122,21 +97,23 @@ const Contacts = () => {
           "Content-Type": "applicaion/json"
         },
         method: "PUT",
-        body: { status: "hidden"}
+        body: JSON.stringify({ status: "hidden"})
       })
 
       if (res.ok) {
         const result = await res.json()
         console.log(result.data)
         // update state after edit op
-        displayToast({ msg: result.message, status: "error" })
+        displayToast({ msg: result.message, status: "success" })
+        return;
       }
+      displayToast({ msg: "an Error occured while hiding the client message !", status: "error" })
 
     } catch (err) {
       displayToast({ msg: err.message, status: "error" })
     }
   };
-  const onCheck = async (contactId) => {
+  const onCheck = async (contactId, contactIndex) => {
     const url = `${proxy}/admin/contacts/check/${contactId}`
 
     try {
@@ -152,16 +129,19 @@ const Contacts = () => {
         const result = await res.json()
         console.log(result.data)
         // update state after edit op
-        displayToast({ msg: result.message, status: "error" })
+        displayToast({ msg: result.message, status: "success" })
+        return;
       }
+      displayToast({ msg: "an Error occured while checking up the client message !", status: "error" })
 
     } catch (err) {
       displayToast({ msg: err.message, status: "error" })
     }
   };
-  const onReply = async (contactId) => {
+  const onReply = async (contactId, contactIndex, userId) => {
     const url = `${proxy}/admin/contacts/reply/${contactId}`
-    // contact.responseTo = contactUserId
+    contact.responseTo = 
+    contact.authorId = authStore.userData._id;
 
     try {
       const res = await fetch(url, {
@@ -176,8 +156,10 @@ const Contacts = () => {
         const result = await res.json()
         console.log(result.data)
         // update state after edit op
-        displayToast({ msg: result.message, status: "error" })
+        displayToast({ msg: result.message, status: "success" })
+        return;
       }
+      displayToast({ msg: "an Error occured while repling to client !", status: "error" })
 
     } catch (err) {
       displayToast({ msg: err.message, status: "error" })
@@ -188,7 +170,7 @@ const Contacts = () => {
     setLoading(true);
 
     try {
-      const url = `${proxy}/admin/users/filterUsers?queryString=${value}&filterStatus=${filter.filterStatus}`;
+      const url = `${proxy}/admin/contacts/filterUsers?queryString=${value}&filterStatus=${filter.filterStatus}`;
       const res = await fetch(url);
 
       if (res.ok) {
@@ -196,12 +178,12 @@ const Contacts = () => {
         console.log('contacts: ', result.data)
         // setUsers(result.data);
         setLoading(false);
-        console.log(result.message);
         return;
       }
-      console.log("an Error occured while filtering contacts !");
+      displayToast({ msg:"an Error occured while filtering contacts !", status: "error" })
+
     } catch (err) {
-      console.log("Error: ", err.message);
+      displayToast({ msg: err.message, status: "error" })
     }
   };
 
@@ -224,7 +206,13 @@ const Contacts = () => {
               <ModalContent>
                 <ModalHeader> { label && label } </ModalHeader>
                 <ModalCloseButton />
-                <ModalBody> { text && text } </ModalBody>
+                <ModalBody> 
+                { label === "reply" ? 
+                  <Textarea placeholder="Reply message ..." size="md" isRequired variant="filled"
+                            value={contact.message} onChange={(e) => setContact({...contact, message: e.target.value})} /> :
+                  text && text
+                }
+                </ModalBody>
 
                 <ModalFooter>
                   <Button colorScheme="blue" mr={3} onClick={action && action}>
@@ -270,7 +258,7 @@ const Contacts = () => {
   const displayContacts = (data) => {
     return  <Box w="45rem" p="1rem" mb="1rem" border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
                   boxShadow="md">
-            {/* merge userData + contactData */}
+            
             <Text my="1rem"> Query:  </Text>
               {  data.map((el, idx) =>
                       <Accordion allowToggle allowMultiple>
@@ -295,12 +283,12 @@ const Contacts = () => {
                             <Text my="1rem"> { el.message && el.message } </Text>
 
                             <ButtonGroup display="flex" flexDir="row" justifyContent="flex-end">
-                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" variant="outline" 
-                                            icon={<BsReplyFill />} onClick={() => onReply(el._id, idx)} />
-                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" variant="outline" 
-                                            icon={<BsCheckBox />} onClick={() => onCheck(el._id, idx)} />
-                                <IconButton colorScheme="blue" aria-label="delete user" my=".25rem" ml="0" variant="outline" 
-                                            icon={<BsFillEyeSlashFill />} onClick={() => onHide(el._id, idx)} /> 
+                                <IconButton colorScheme="blue" aria-label="reply user" my=".25rem" ml="0" variant="outline" 
+                                            icon={<BsReplyFill />} onClick={() => replyContact(el._id, idx, el.userId)} />
+                                <IconButton colorScheme="blue" aria-label="check message" my=".25rem" ml="0" variant="outline" 
+                                            icon={<BsCheckBox />} onClick={() => checkContact(el._id, idx)} />
+                                <IconButton colorScheme="blue" aria-label="hide message" my=".25rem" ml="0" variant="outline" 
+                                            icon={<BsFillEyeSlashFill />} onClick={() => hideContact(el._id, idx)} /> 
                             </ButtonGroup>
                           </AccordionPanel>
                         </AccordionItem>
@@ -310,9 +298,9 @@ const Contacts = () => {
             </Box>
   };
   
-//   useEffect(() => {
-//     getContacts();
-//   }, []);
+  useEffect(() => {
+    getContacts();
+  }, []);
 
   return (
     <Layout isFixedNav isVisible>
@@ -327,7 +315,7 @@ const Contacts = () => {
                     
                     { loading ? 
                       <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
-                      (contacts &&contacts.length > 0) ? displayContacts(contacts) :
+                      (contacts && contacts.length > 0) ? displayContacts(contacts) :
                       <Heading as="h4" size="md" textAlign="center"> There is not any Contact </Heading>
                     }
                   </Box> : ""

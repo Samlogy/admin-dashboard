@@ -1,11 +1,36 @@
 const router = require('express').Router()
 
 const Contacts = require("../models/contacts.model")
+const User = require("../models/user.model")
 
-router.get("/", async (req, res) => {
-    try {   
-        const result = await Contacts.find()
+router.get("/getContacts", async (req, res) => {
+    try { 
+        const contacts = await Contacts.find()
+                                        .sort("-createdAt")
                                         .limit(10)
+        const requests = contacts.map(contact => 
+                User.findById(contact.authorId)
+                .then(user => {
+                    // create fn to format data
+                    let data = {...user['_doc']}
+
+                    // change key attributes
+                    data.userCreatedAt = data.createdAt
+                    data.user__v = data.__v
+
+                    // delete previous fields
+                    delete data['createdAt']; 
+                    delete data['__v']; 
+                    delete data['_id'];
+                    
+                    // merge commentData + userData
+                    data = {...data, ...contact['_doc']}
+                    return data
+                })
+                .catch(err => res.status(500).send({ error: err.message }))
+            )
+            const result = await Promise.all(requests)
+            console.log('promise: ', result)
 
         res.status(201).send({
             message: "Contacts loaded !",
@@ -73,11 +98,10 @@ router.put("/check/:contactId", async (req, res) => {
 });
 
 router.post("/reply", async (req, res) => {
-    const { contactId } = req.params
+    const newContact = req.body
    
     try {   
-        const newContact = new Contacts({ ...req.body })
-        const result = await Contacts.save(newContact)
+        const result = await Contacts.create(newContact)
 
         res.status(201).send({
             message: "Contact replied !",
