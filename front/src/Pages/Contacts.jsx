@@ -187,7 +187,7 @@ const Contacts = () => {
     }
   };
 
-  // Componenents
+  // Components
   const displayToast = (data) => {
     const { msg, status } = data
     return toast({

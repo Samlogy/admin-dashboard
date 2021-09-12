@@ -57,7 +57,8 @@ const NavBar = (props) =>  {
           </Button>
 
           <Stack display="flex" flexDirection="row" alignItems="center">
-            <Image boxSize="45px" fallbackSrc={logo && logo} borderRadius="md" mr=".5rem" />
+            <Image boxSize="45px" borderRadius="md" mr=".5rem" src={logo && logo} 
+                    fallbackSrc="https://via.placeholder.com/150"  />
             
             <Text fontSize="lg" fontWeight="500">
               ADMIN Panel
@@ -77,9 +78,9 @@ const NavBar = (props) =>  {
               </Button>
 
               <Button as="a" colorScheme="blue" variant="ghost" href="/notifications">
-                { (notifs && notifs.length > 0) &&  
+                { (notifs && notifs > 0) &&  
                   <Badge variant="solid" colorScheme="red" borderRadius="2xl"> 
-                    {notifs.length > 99 ? "99+" : notifs.length}
+                    {notifs > 99 ? "99+" : notifs}
                   </Badge> 
                 }
                 <MdNotificationsActive size="24" />

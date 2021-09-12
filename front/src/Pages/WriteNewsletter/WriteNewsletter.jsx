@@ -11,7 +11,7 @@ import Parser from 'html-react-parser'
 
 import "./style.css";
 
-const proxy = "http://localhost:5000/";
+const proxy = "http://localhost:5000";
 
 const WriteNewsletter = () => {
   const [newsletter, setNewsletter] = useState({ subject: "", message: "" });
@@ -29,7 +29,7 @@ const WriteNewsletter = () => {
     setFiles(files);
   };
   const sendNewsletter = async () => {
-    const url = `${proxy}/admin/writeNewsletter`;
+    const url = `${proxy}/admin/newsletter/write`;
 
     // newsletter data validation --> schema
     const variables = {
@@ -52,7 +52,7 @@ const WriteNewsletter = () => {
         displayToast({ msg: result.message, status: "success" })
         return;
       }
-      displayToast({ msg: "an Error occured while editing post !", status: "error" })
+      displayToast({ msg: "an Error occured while sending newsletter !", status: "error" })
 
     } catch (err) {
       displayToast({ msg: err.message, status: "error" })

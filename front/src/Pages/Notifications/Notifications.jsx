@@ -256,7 +256,6 @@ const Notifications = () => {
       }, [])     
   
     return (
-      // flexDirection="column" justifyContent="center" alignItems="center" width="100wh" p="2rem"
         <Layout isFixedNav isVisible>
             <Heading as="h2" size="lg" my="2rem"> Notifications </Heading>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { Heading, Input, Button, FormControl, Stack, Box, InputRightElement, InputGroup, FormLabel,
@@ -6,7 +6,7 @@ import { Heading, Input, Button, FormControl, Stack, Box, InputRightElement, Inp
 
 // import proxy from '../../proxySetup'
 import Layout from "../Layout.jsx"
-import { logged } from '../../_actions/authActions'
+import { logged } from '../../store/actions/authActions';
 
 
 const proxy = "http://localhost:5000";
@@ -33,7 +33,7 @@ const Login = () => {
             // const valid = await loginSchema.validate({ ...auth })
             const res = await fetch(url, { 
                 headers: { 
-                    'Content-Type': 'application/json' 
+                  'Content-Type': 'application/json' 
                 },
                 method: "POST", 
                 body: JSON.stringify(auth)
@@ -44,7 +44,7 @@ const Login = () => {
                 displayToast({msg: result.message, status: "success"})
 
                 dispatch(logged({
-                    logged: true,
+                    isLogged: true,
                     userData: result.data
                 })) 
 
@@ -69,17 +69,9 @@ const Login = () => {
         isClosable: true,
       })
     };
-    // useEffect(() => {
-    //   // load data
-    //   const data = loadState("auth-admin")
-    // }, [])
-    // useEffect(() => {
-    //   // store data
-    //   saveState("auth-admin", data)
-    // })
     
   return    <Layout>
-              <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+              <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6} minH="100vh" display="flex" justifyContent="center" alignItems="center">
                 <Stack align={'center'}>
                   <Heading fontSize={'4xl'}> Sign In </Heading>
                 </Stack>

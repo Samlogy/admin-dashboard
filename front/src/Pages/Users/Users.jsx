@@ -37,7 +37,7 @@ const proxy = "http://localhost:5000"
 
 const Users = () => {
   const [user, setUser] = useState({ 
-      fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", confirmPassword: "", role: "" 
+      fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", confirmPassword: "", role: "moderator" 
     });
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
@@ -83,6 +83,7 @@ const Users = () => {
     setAction({ value: "details", data:{ productIndex: userIndex } })
     setUser(userData)
   };
+  
   const usersOnChange = (e) => {
     setUsers((prevState) => {
         let newState = [...prevState];
@@ -150,6 +151,7 @@ const Users = () => {
   const onCreate = async () => {
     if (user.password !== user.confirmPassword) {
       displayToast({msg: "password & confirm password do not match !", status: "error"})
+      return; 
     }
     delete user.confirmPassword
 
@@ -164,7 +166,7 @@ const Users = () => {
         body: JSON.stringify(user)
       });
       // reset form
-      setUsers({ email: "", password: "", role: "" });
+      // setUser({ email: "", password: "", role: "" });
 
       if (res.ok) {
         const result = await res.json();
@@ -177,13 +179,20 @@ const Users = () => {
       displayToast({msg: `Error: ${err.message}`, status: "error"})
     }
   };
-  const onEdit = async (userId, userIndex) => {
+  const onEdit = async () => {
+    let userId, userIndex; 
+    if(action.value === "edit") {
+       userId = action.data.userId
+      //  userIndex = action.data.userIndex
+    }
+
     try {
       // data validation
-      let editedUser = users[userIndex];
+      let editedUser = user;
       // remove password from obj if do not change
       if (editedUser.password === "") {
         delete editedUser.password;
+        delete editedUser.confirmPassword;
       }
 
       const url = `${proxy}/admin/users/editUser/${userId}`;
@@ -198,6 +207,7 @@ const Users = () => {
       if (res.ok) {
         const result = await res.json();
         displayToast({msg: result.message, status: "success"})
+        // update state
         return;
       }
       displayToast({msg: "an Error occured during user edition !", status: "error"})
@@ -216,8 +226,8 @@ const Users = () => {
         const result = await res.json();
 
         // remove user data from users
-        const new_users_list = users.filter((el) => el._id !== userId);
-        setUsers(new_users_list);
+        // const new_users_list = users.filter((el) => el._id !== userId);
+        // setUsers(new_users_list);
 
         displayToast({msg: result.message, status: "success"})
         return;
@@ -242,16 +252,16 @@ const Users = () => {
       if (res.ok) {
         const result = await res.json();
 
-        setUsers((prevState) => {
-          let newState = [...prevState];
+        // setUsers((prevState) => {
+        //   let newState = [...prevState];
 
-          newState.forEach((item) => {
-              if (item._id === userId) {
-                item.active = !users[userIndex].active
-              }
-          });
-          return newState;
-        })
+        //   newState.forEach((item) => {
+        //       if (item._id === userId) {
+        //         item.active = !users[userIndex].active
+        //       }
+        //   });
+        //   return newState;
+        // })
         displayToast({msg: result.message, status: "succes"})
         return;
       }
@@ -732,15 +742,7 @@ const Users = () => {
                     </Button>
 
                     <Button rightIcon={<BiTrash size="18" />} colorScheme="red" mb="1rem" w="7rem"
-                            onClick={() => { 
-                              setAction({ 
-                                    data: { text: "Are you sure to delete this User ?", 
-                                    action: () => onDelete(user._id, action.data), 
-                                    label: "Delete" } 
-                                    }); 
-                              onOpen()
-                              }
-                              }>
+                            onClick={() => deleteUser(user._id, action.data)}>
                                 Delete
                     </Button>
                                 
@@ -776,7 +778,7 @@ const Users = () => {
   return (
     <Layout isFixedNav isVisible>
       <Flex flexDirection="column" width="90vw">
-            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Managment </Heading>
+            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Management </Heading>
 
             {
               action.value === "create" ? displayAddUser() :
@@ -799,8 +801,7 @@ const Users = () => {
                     }
                   </Box> : ""
             }
-                
-              
+                              
             <Portal> 
               { action.data && displayModal(action.data && action.data) } 
             </Portal>      

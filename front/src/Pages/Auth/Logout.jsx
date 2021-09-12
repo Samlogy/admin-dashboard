@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { IconButton, chakra, useToast } from "@chakra-ui/react"
 import { BiExit} from "react-icons/bi"
 
-import { notLogged } from '../../_actions/authActions';
+import { notLogged } from '../../store/actions/authActions';
 // import proxy from '../proxySetup'
 
 const proxy = "http://localhost:5000";
@@ -40,7 +40,7 @@ const Logout = () => {
         const result = await res.json()
 
         dispatch(notLogged({
-          logged: false,
+          isLogged: false,
           userData: {},
         }))
 
