@@ -1,1 +1,23 @@
 import { request } from "./_http";
+
+
+export const login = async (data) => {
+    try {
+        const res = await request("post", "/auth/login", {}, data);
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
