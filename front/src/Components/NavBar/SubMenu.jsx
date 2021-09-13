@@ -1,8 +1,5 @@
 import React from "react";
-import { Button, Stack, Icon,
-  Menu, MenuItem, MenuDivider, MenuGroup, MenuList, MenuButton,
-   } from "@chakra-ui/react"
-
+import { Button, Stack, Icon, Menu, MenuItem, MenuGroup, MenuList, MenuButton } from "@chakra-ui/react"
 import { FaCog } from "react-icons/fa";
 
 

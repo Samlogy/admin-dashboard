@@ -1,67 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent,  DrawerCloseButton,
   useColorModeValue,
-  Text, Link,
-   } from "@chakra-ui/react"
-import { FaUsers, FaProductHunt, FaRegNewspaper } from "react-icons/fa"
-import { ImStatsDots } from "react-icons/im"
-import { BiMessageSquareDetail } from "react-icons/bi"
-import { BsInfoCircle } from "react-icons/bs"
+  Text, Box,
+   } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
 
 import Logout from "../../Pages/Auth/Logout"
-
-const THEMES = {
-  light: {
-    color: "black",
-    bg: "white",
-    colorHover: "black",
-    bgHover: "gray.100"
-  },
-  dark: {
-    color: "white",
-    bg: "gray.700",
-    colorHover: "white",
-    bgHover: "gray.600"
-  },
-};
-const sideBarData = [
-  {
-    url: "/home",
-    icon: <ImStatsDots size="24" />,
-    label: "Analytics"
-  },
-  {
-    url: "/users",
-    icon: <FaUsers size="24" />,
-    label: "Users Management"
-  },
-  {
-    url: "/products",
-    icon: <FaProductHunt size="24" />,
-    label: "Products Management"
-  },
-  {
-    url: "/newsletter",
-    icon: <FaRegNewspaper size="24" />,
-    label: "Write Newsletter"
-  },
-  {
-    url: "/contacts",
-    icon: <BiMessageSquareDetail size="24" />,
-    label: "Contacts"
-  },
-  {
-    url: "/reports",
-    icon: <BsInfoCircle size="24" />,
-    label: "Reports"
-  },
-];
+import SubList from "./SubList.jsx"
+import { THEMES } from "../../utils/constants"
+import { sideBarData } from "./sideBarData"
+// import { setSideBarItem } from "../../store/actions/navBarActions"
 
 const SideBar = (props) => {
   const { onClose, isOpen } = props;
+  const [showList, setShowList] = useState({ state: false, id: null });
+
+  const dispatch = useDispatch();
 
   const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
   const bgClr = useColorModeValue(THEMES.light.bg, THEMES.dark.bg);  
+
+  const handleList = (item) => {
+    // show / hide subMenu (list)
+    if (!showList.state) { // #1 click
+      setShowList({ ...showList, state: true, id: item.id })
+      return;
+    } // #2 click
+    setShowList({...showList, state: false, id: null })
+
+    // update global store
+    // dispatch(setSideBarItem(item))
+  };
 
   return <Drawer placement="left" onClose={onClose && onClose} isOpen={isOpen && isOpen}  
                 size="xs" p=".5rem"> 
@@ -74,12 +43,17 @@ const SideBar = (props) => {
 
               <DrawerBody display="flex" flexDirection="column" justifyContent="left" size="md" mt="2rem">
                 { sideBarData.map((el, idx) => 
-                    <Link href={el.url} display="flex" flexDirection="row" fontSize="15" justifyContent="left"
-                          mb="1rem" p="1rem" borderRadius="md" bg={bgClr}
-                          _hover={{ bg: bgClrHover, fontWeight: "medium"}} > 
-                      {el.icon}
-                      <Text ml="1.5rem"> {el.label} </Text>
-                    </Link>
+                    <>
+                      <Box  display="flex" flexDirection="row" fontSize="15" justifyContent="left"
+                            mb="1rem" p="1rem" borderRadius="md" bg={(showList.id === el.id) && bgClrHover}
+                            _hover={{bg: bgClrHover, fontWeight: "medium"}}
+                            onClick={() => handleList(el)}>
+                          {el.icon}
+                          <Text ml="1.5rem"> {el.label} </Text>
+                      </Box>
+
+                      {(showList.state && showList.id === el.id)  && <SubList data={el.subMenu} /> }
+                    </>                   
                   )}
               </DrawerBody>
 

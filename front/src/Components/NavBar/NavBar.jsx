@@ -9,33 +9,9 @@ import { BiMoon, BiSun } from "react-icons/bi"
 import SideBar from "./SideBar.jsx"
 import SubMenu from "./SubMenu.jsx"
 import Logout from "../../Pages/Auth/Logout"
+import { THEMES } from "../../utils/constants"
+import { menuData } from "./sideBarData"
 
-// sub-menu data
-const menuData = [
-  {
-    title: "profile",
-    items: ["My Profile"]
-  },
-  {
-    title: "help",
-    items: ["Tech Support"]
-  }
-];
-
-const THEMES = {
-  light: {
-    color: "black",
-    bg: "white",
-    colorHover: "black",
-    bgHover: "gray.100"
-  },
-  dark: {
-    color: "white",
-    bg: "gray.700",
-    colorHover: "white",
-    bgHover: "gray.600"
-  },
-};
 
 const NavBar = (props) =>  {
     const { avatar, notifs, logo, isFixedNav } = props;
@@ -78,10 +54,10 @@ const NavBar = (props) =>  {
               </Button>
 
               <Button as="a" colorScheme="blue" variant="ghost" href="/notifications">
-                { (notifs && notifs > 0) &&  
+                { notifs ?  
                   <Badge variant="solid" colorScheme="red" borderRadius="2xl"> 
                     {notifs > 99 ? "99+" : notifs}
-                  </Badge> 
+                  </Badge> : ""
                 }
                 <MdNotificationsActive size="24" />
               </Button>
