@@ -7,6 +7,7 @@ import { Heading, Input, Button, FormControl, Stack, Box, InputRightElement, Inp
 // import proxy from '../../proxySetup'
 import Layout from "../Layout.jsx"
 import { logged } from '../../store/actions/authActions';
+import { login } from "../../api"
 
 
 const proxy = "http://localhost:5000";
@@ -25,37 +26,18 @@ const Login = () => {
     };
  
     const onLogin = async () => {
-        const url = `${proxy}/admin/auth/login`
-
         if (auth.checked) delete auth.checked
+        const result = await login(auth);
 
-        try {
-            // const valid = await loginSchema.validate({ ...auth })
-            const res = await fetch(url, { 
-                headers: { 
-                  'Content-Type': 'application/json' 
-                },
-                method: "POST", 
-                body: JSON.stringify(auth)
-            })
-           
-            if (res.ok) {
-                const result = await res.json()
-                displayToast({msg: result.message, status: "success"})
-
-                dispatch(logged({
-                    isLogged: true,
-                    userData: result.data
-                })) 
-
-                return history.push('/home')
-            }
-            displayToast({msg: "An Error Occured during the sending process !", status: "error"})
-
-        } catch (err) {
-            displayToast({msg: `Error: ${err.message}`, status: "error"})
+        if (result.success) {
+          displayToast({ msg: result.message, status: "success" })
+          dispatch(logged({
+            isLogged: true,
+            userData: result.data
+          }))
+          return history.push('/home');
         }
-
+        displayToast({msg: result.error, status: "error"})
     };
     
     const displayToast = (data) => {
