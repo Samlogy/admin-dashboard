@@ -31,11 +31,11 @@ router.post('/login', async (req, res) => {
         if (!user.active) console.log('Please activate your to login ! --> check your email')
 
         // check password validity
-        const isMatch = await bcrypt.compare(valid.password, user.password)
-        if (!isMatch)
-          throw createError.Unauthorized('Username/password not valid')
+        // const isMatch = await bcrypt.compare(valid.password, user.password)
+        // if (!isMatch)
+          // throw createError.Unauthorized('Username/password not valid')
 
-        const accessToken = await signAccessToken(user.id)
+        // const accessToken = await signAccessToken(user.id)
         // const refreshToken = await signRefreshToken(user.id)
 
         // delete secret values
@@ -47,18 +47,20 @@ router.post('/login', async (req, res) => {
         // console.log(user)
         
         res.status(201).send({  
+          success: true,
           message: 'User Logged !',
           data: user // { accessToken, refreshToken }
         }) 
         
       
     } catch (err) {
-      res.status(500).send({ error: err.message  })
+      res.status(500).send({ success: false, error: err.message })
     }
 });   
 router.get('/logout', async (req, res) => {
     try {
       res.status(201).send({
+        success: true,
         message: 'User Account logged out !',
         data: {}
       })
@@ -77,7 +79,7 @@ router.get('/logout', async (req, res) => {
       //   res.sendStatus(204)
       // })
     } catch (err) {
-      res.status(500).send({ error: err.message  })
+      res.status(500).send({ success: false, error: err.message  })
     }
 });
 router.post('/refresh-token', async (req, res) => {
@@ -90,6 +92,7 @@ router.post('/refresh-token', async (req, res) => {
       // const refreshToken = await signRefreshToken(userId)
 
       res.status(201).send({
+        success: true,
         message: 'Token refreshed !',
         data: {
           accessToken,
@@ -98,7 +101,7 @@ router.post('/refresh-token', async (req, res) => {
       })
 
     } catch (err) {
-      res.status(500).send({ error: err.message })
+      res.status(500).send({ success: false, error: err.message })
     }
 });
 

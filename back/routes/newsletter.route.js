@@ -10,15 +10,16 @@ const upload = require('../utils/upload_file')
 router.post("/uploadfiles", async (req, res) => {
     upload(req, res, err => {
         if (err) {
-            return res.json({ success: false, err })
+            return res.json({ success: false, error: err })
         }
-        return res.json({ success: true, 
+        return res.json({ 
+                        success: true, 
                         url: res.req.file.path, 
                         fileName: res.req.file.filename 
                     })
     })
 });             
-router.post("/writeNewsletter", async (req, res) => {
+router.post("/write", async (req, res) => {
     try {
         const { newsletterData, files, authorID } = req.body
 
@@ -49,12 +50,13 @@ router.post("/writeNewsletter", async (req, res) => {
     //   sendEmail(data, "register")
 
         res.status(201).send({
+            success: true,
             message: 'Newsletter sent !',
             data: result
         })
         
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }
 });
 

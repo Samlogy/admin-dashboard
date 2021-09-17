@@ -12,7 +12,7 @@ const resizeImage = (imgInput, height, width, imgOutput, quality) => {
 
 router.post("/uploadfiles", async (req, res) => {
     upload(req, res, err => {
-        if (err)  return res.json({ success: false, err })
+        if (err)  return res.json({ success: false, error: err })
         
         // generate an img 250x250
         resizeImage(res.req.file.filename, 250, 250, "imgOutput", 50)
@@ -29,12 +29,13 @@ router.get("/getProducts", async (req, res) => {
     try {
         const result = await Product.find()
         res.status(201).send({
+            success: true,
             message: 'Products retieved !',
             data: result
         })
         
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }
 });
 router.get("/filterProducts", async (req, res) => {
@@ -56,17 +57,19 @@ router.get("/filterProducts", async (req, res) => {
                                 .where(filterType).equals(regex)
 
         } else res.status(404).send({
+            success: false,
             message: 'wrong filter type set !',
             data: {}
         })
 
         res.status(201).send({
+            success: true,
             message: 'Products retieved !',
             data: products
         })
         
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }
 });
 router.post("/createProduct", async (req, res) => {
@@ -76,12 +79,13 @@ router.post("/createProduct", async (req, res) => {
         const result = await newProduct.save()
 
         res.status(201).send({
+            success: true,
             message: 'Product Created !',
             data: result
         })
         
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }
 });
 router.put("/editProduct/:productId", async (req, res) => {
@@ -96,12 +100,13 @@ router.put("/editProduct/:productId", async (req, res) => {
                                     )
 
         res.status(201).send({
+            success: true,
             message: 'Product Edited !',
             data: result
         })
         
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }
 });
 router.delete("/deleteProduct/:productId", async (req, res) => {
@@ -109,12 +114,13 @@ router.delete("/deleteProduct/:productId", async (req, res) => {
         const result = await Product.findByIdAndRemove(req.params.productId)
 
         res.status(201).send({
+            success: true,
             message: 'Product Deleted !',
             data: result
         })
         
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }
 });
 

@@ -12,12 +12,13 @@ router.get("/:userId", async (req, res) => {
                                         .limit(10)
 
         res.status(201).send({
+            success: true,
             message: "Notifications loaded !",
             data: result
         })
 
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }        
 });
 
@@ -33,12 +34,13 @@ router.post("/filterByType/:userId", async (req, res) => {
                                         .limit(limit)
 
         res.status(201).send({
+            success: true,
             message: `${type} Notifications loaded !`,
             data: result
         })
 
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }        
 });
 
@@ -50,12 +52,13 @@ router.put("/hide/:notificationId/:status", async (req, res) => {
         const result = await Notification.findByIdAndUpdate(notificationId, {status: status}, { new: true })
 
         res.status(201).send({
+            success: true,
             message: "Notification hidden !",
             data: result
         })
 
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }        
 });
 
@@ -66,12 +69,13 @@ router.delete("/delete/:notificationId", async (req, res) => {
         const result = await Notification.findByIdAndRemove(notificationId)
 
         res.status(201).send({
+            success: true,
             message: "Notification deleted !",
             data: result
         })
 
     } catch (err) {
-        res.status(500).send({ error: err.message })
+        res.status(500).send({ success: false, error: err.message })
     }        
 });
 
