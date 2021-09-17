@@ -21,3 +21,24 @@ export const login = async (data) => {
         }
     }
 };
+
+export const logout = async () => {
+    try {
+        const res = await request("get", "/auth/logout", {});
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};

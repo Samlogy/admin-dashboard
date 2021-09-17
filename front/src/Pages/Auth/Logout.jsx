@@ -5,9 +5,7 @@ import { IconButton, chakra, useToast } from "@chakra-ui/react"
 import { BiExit} from "react-icons/bi"
 
 import { notLogged } from '../../store/actions/authActions';
-// import proxy from '../proxySetup'
-
-const proxy = "http://localhost:5000";
+import { logout } from "../../api"
 
 const Logout = () => {
   const [loggedOut, setLoggedOut] = useState(false);
@@ -31,27 +29,17 @@ const Logout = () => {
   };
 
   const onLogout = async () => {
-    const url = `${proxy}/admin/auth/logout`
+      const result = await logout();
 
-    try {
-      const res = await fetch(url)
-
-      if (res.ok) {
-        const result = await res.json()
-
+      if (result.success) {
+        displayToast({ msg: result.message, status: "success" })
         dispatch(notLogged({
           isLogged: false,
           userData: {},
         }))
-
-        displayToast({ msg: result.message, status: "success" })
         return history.push('/')
       }
       displayToast({ msg: 'An error occured during logging out !', status: "error" })
-
-    } catch (err) {
-      displayToast({ msg: err.message, status: "error" })
-    }
   };
 
   if ( loggedOut ) onLogout()

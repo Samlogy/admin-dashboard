@@ -3,14 +3,10 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { Heading, Input, Button, FormControl, Stack, Box, InputRightElement, InputGroup, FormLabel,
   useToast, useColorModeValue } from "@chakra-ui/react";
-
-// import proxy from '../../proxySetup'
+  
 import Layout from "../Layout.jsx"
 import { logged } from '../../store/actions/authActions';
 import { login } from "../../api"
-
-
-const proxy = "http://localhost:5000";
 
 
 const Login = () => {
