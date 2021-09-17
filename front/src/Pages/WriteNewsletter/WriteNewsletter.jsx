@@ -113,7 +113,7 @@ const WriteNewsletter = () => {
 
   return (
       <Layout isFixedNav isVisible>
-          <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+          <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
           <Heading as="h2" size="md" my="2rem" textAlign="left">
             { action === 0 ? "Write Newsletter" : "Preview Newsletter" }
           </Heading>

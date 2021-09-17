@@ -174,7 +174,7 @@ function Home() {
   
   return (
       <Layout isFixedNav isVisible px="1rem">
-        <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+        <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
           <Heading as="h3" size="lg" textAlign="left" mt="1rem"> Statistics </Heading>
           <Stats data={appStats} />
           

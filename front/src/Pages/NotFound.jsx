@@ -8,7 +8,7 @@ function NotFound() {
   // minHeight="100vh"
   return (
       <Layout> 
-        <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="10vh auto 0 auto" borderRadius="4px"
+        <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="10vh auto 0 auto" borderRadius="4px"
                   display="flex" flexDir="column" justifyContent="center" alignItems="center">
           <Heading as="h1" size="2xl" my="2rem">
             404 not Found

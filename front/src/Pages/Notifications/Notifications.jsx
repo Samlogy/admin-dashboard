@@ -257,7 +257,7 @@ const Notifications = () => {
   
     return (
         <Layout isFixedNav isVisible>
-          <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+          <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
             <Heading as="h2" size="lg" my="2rem"> Notifications </Heading>
 
             <Select name="notif-type" w="200px" mb="2rem"
