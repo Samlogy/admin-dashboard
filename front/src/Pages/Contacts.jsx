@@ -10,7 +10,7 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, 
   Button, ButtonGroup, IconButton,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
   Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
-  Portal,
+  Portal, Container
    } from "@chakra-ui/react";
 
 import Layout from "./Layout.jsx"
@@ -324,28 +324,27 @@ const Contacts = () => {
 
   return (
     <Layout isFixedNav isVisible>
-      <Flex flexDirection="column" width="90vw">
-            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Contacts </Heading>
+      <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+        <Heading as="h2" size="lg" textAlign="left" my="2rem"> Contacts </Heading>
 
-            {
-              action.value === "contacts" ? 
-                  <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+        { action.value === "contacts" ? 
+              <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
 
-                    {displayContactsFilter()}
-                    
-                    { loading ? 
-                      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
-                      (contacts && contacts.length > 0) ? displayContacts(contacts) :
-                      <Heading as="h4" size="md" textAlign="center"> There is not any Contact </Heading>
-                    }
-                  </Box> : ""
-            }
+                {displayContactsFilter()}
                 
-              
-            <Portal> 
-              { action.data && displayModal(action.data && action.data) } 
-            </Portal>      
-      </Flex>      
+                { loading ? 
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
+                  (contacts && contacts.length > 0) ? displayContacts(contacts) :
+                  <Heading as="h4" size="md" textAlign="center"> There is not any Contact </Heading>
+                }
+              </Box> : ""
+        }
+            
+          
+        <Portal> 
+          { action.data && displayModal(action.data && action.data) } 
+        </Portal>      
+      </Container>
     </Layout>
   );
 };
