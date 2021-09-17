@@ -1,6 +1,6 @@
 import { request } from "./_http";
 
-
+/* Auth */
 export const login = async (data) => {
     try {
         const res = await request("post", "/auth/login", {}, data);
@@ -42,3 +42,10 @@ export const logout = async () => {
         }
     }
 };
+
+/* Users */
+/* Products */
+/* Newsletters */
+/* Notifications */
+/* Home */
+/* Contacts */

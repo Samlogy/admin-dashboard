@@ -1,28 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import { Link } from "react-router-dom";
-import { useToast, useColorModeValue,
-  Stat, StatLabel, StatNumber, StatHelpText, StatArrow, StatGroup,
-  Stack, VStack,
-  Text, Heading,
-   } from "@chakra-ui/react"
-import {Bar, Line, Doughnut, Pie} from 'react-chartjs-2';
+import { useToast, useColorModeValue, VStack, Heading, Stack, Container, Flex } from "@chakra-ui/react"
 
 import Layout from "../Layout.jsx"
+import Stats from './Stats.jsx';
+import Chart from "./Chart.jsx";
 
-const THEMES = {
-  light: {
-    color: "black",
-    bg: "white",
-    colorHover: "black",
-    bgHover: "gray.100"
-  },
-  dark: {
-    color: "white",
-    bg: "gray.700",
-    colorHover: "white",
-    bgHover: "gray.600"
-  },
-};
+import { THEMES } from "../../utils/constants"
+import { Toast } from "../../Components"
+
+
 const appStats = [
   {
     label: "Users",
@@ -49,103 +35,22 @@ const appStats = [
     percent: "23.36%",
   },
 ];
-const proxy = "http://localhost:5000";
 
 function Home() {
   const [data, setData] = useState([])
 
   const toast = useToast();
+
   const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
 
-  // Functions
-
   // API call
-  const loadData = async () => {
-    const url = `${proxy}`
+  const onLoad = async () => {
 
-    try {
-        const res = await fetch(url)
-
-        if (res.ok) {
-          const result = await res.json()
-          setData(result.data)
-          displayToast(result.message, "success")
-        }
-        displayToast("Your stats Profile has been loaded", "error")
-
-    } catch (err) { 
-      displayToast(err.message, "error")
-    }
   };
   
   // Components
-  const displayToast = (data) => {
-    const { msg, status } = data
-    return toast({
-      title: msg,
-      status: status,
-      variant: "top-accent",
-      position: "bottom-right", // "top-right"
-      duration: 5000,
-      isClosable: true,
-    })
-  };
-  const displayStats = () => {
-    return <StatGroup display="flex" flexDirection="row" flexWrap="wrap" my="1rem">
-              { appStats.map((el, idx) => 
-                  <Stat border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
-                        w="15rem" m="1rem" p="1rem" shadow="md" _hover={{bg: bgClrHover}}>
-                    <StatLabel fontSize="1.1rem"> {el.label} </StatLabel>
-                    <StatNumber> {el.number} </StatNumber>
-                    <StatHelpText>
-                      <StatArrow type={el.arrowType} />
-                      {el.percent}
-                    </StatHelpText>
-                  </Stat>
-                )
-              }
-            </StatGroup>
-  };
-  const displayChart = (type, data, options) => {
-      switch(type) {
-      case 'pie': return displayPie(data, options);
-      case 'line': return displayLine(data, options);
-      case 'bars': return diplayBars(data, options);
-      case 'doughnut': return displayDoughnut(data, options);
-      default: break;
-    }
-  };
 
-  // Charts
-  const diplayBars = (data, options) => {
-    return <Stack border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                  w="40rem" p="1rem" shadow="md" >
-                  <Heading as="h3" size="md" textAlign="left"> le titre </Heading>
-                  <Bar data={data} options={options} />
-            </Stack>
-  };
-  const displayLine = (data, options) => {
-    return  <Stack border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="40rem" p="1rem" shadow="md" >
-                <Heading as="h3" size="md" textAlign="left"> le titre </Heading>
-                <Line data={data} options={options} />
-            </Stack>
-  };
-  const displayDoughnut = (data, options) => {
-    return  <Stack border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="40rem" p="1rem" shadow="md" >
-                <Heading as="h3" size="md" textAlign="left"> le titre </Heading>
-                <Doughnut data={data} options={options} />
-            </Stack>
-  };
-  const displayPie = (data, options) => {
-    return  <Stack border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md" 
-                    w="40rem" p="1rem" shadow="md" >
-                <Heading as="h3" size="md" textAlign="left"> le titre </Heading>
-                <Pie data={data} options={options} />
-            </Stack>
-  };
-
+  // charts data
   const barsData = {
     labels: ['January', 'February', 'March',
              'April', 'May'],
@@ -160,14 +65,26 @@ function Home() {
     ]
   };
   const barsOptions = {
-    title:{
-      display:true,
-      text:'Average Rainfall per month',
-      fontSize:20
-    },
-    legend:{
-      display:true,
-      position:'right'
+    maintainAspectRatio: false,
+    plugins: {
+      title: { // title
+        display: true,
+        text: 'Average Rainfall per month',
+        padding: {
+            top: 10,
+            bottom: 30
+        }
+      },
+      subtitle: { // subtitle
+        display: true,
+        text: 'Subtitle Rainfall'
+      },
+      legend: { // legend
+        display: true,
+        labels: {
+            color: '#111'
+        }
+      }
     }
   };
   
@@ -187,14 +104,26 @@ function Home() {
     ]
   };
   const lineOptions = {
-    title:{
-      display:true,
-      text:'Average Rainfall per month',
-      fontSize:20
-    },
-    legend:{
-      display:true,
-      position:'right'
+    maintainAspectRatio: false,
+    plugins: {
+      title: { // title
+        display: true,
+        text: 'Average Rainfall per month',
+        padding: {
+            top: 10,
+            bottom: 30
+        }
+      },
+      subtitle: { // subtitle
+        display: true,
+        text: 'Subtitle Rainfall'
+      },
+      legend: { // legend
+        display: true,
+        labels: {
+            color: '#111'
+        }
+      }
     }
   };
 
@@ -223,40 +152,50 @@ function Home() {
   ]
   };
   const pieOptions = {
-    title:{
-      display:true,
-      text:'Average Rainfall per month',
-      fontSize:20
-    },
-    legend:{
-      display:true,
-      position:'right'
+    maintainAspectRatio: false,
+    plugins: {
+      title: { // title
+        display: true,
+        text: 'Average Rainfall per month',
+        padding: {
+            top: 10,
+            bottom: 30
+        }
+      },
+      subtitle: { // subtitle
+        display: true,
+        text: 'Subtitle Rainfall'
+      },
+      legend: { // legend
+        display: true,
+        labels: {
+            color: '#111'
+        }
+      }
     }
   };
 
   // useEffect(() => { 
-  //     loadData() 
+  //     onLoad() 
   // }, [])
   
   return (
-      <Layout isFixedNav isVisible>
-        <Heading as="h3" size="lg" textAlign="left" mt="1rem"> Statistics </Heading>
-        { displayStats() }
-        
-        <VStack my="2rem">
-          <Heading as="h3" size="lg" textAlign="left" mb="1rem"> Graphs </Heading>
+      <Layout isFixedNav isVisible px="1rem">
+        <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+          <Heading as="h3" size="lg" textAlign="left" mt="1rem"> Statistics </Heading>
+          <Stats data={appStats} />
+          
+          <VStack my="2rem">
+            <Heading as="h3" size="lg" textAlign="left" mb="1rem"> Graphs </Heading>
 
-          { displayChart("bars", barsData, barsOptions) }
-          <hr style={{borderBottom:".15rem solid #2b6cb0", width: "15rem", margin: "2rem 0"}} />
-
-          { displayChart("line", lineData, lineOptions) }
-          <hr style={{borderBottom:".15rem solid #2b6cb0", width: "15rem", margin: "2rem 0"}} />
-
-          { displayChart("doughnut", pieData, pieOptions) }
-          <hr style={{borderBottom:".15rem solid #2b6cb0", width: "15rem", margin: "2rem 0"}} />
-
-          { displayChart("pie", pieData, pieOptions) }
-        </VStack>
+            <Flex flexDir="row" flexWrap="wrap" justifyContent="space-evenly" alignItems="flex-end">
+              <Chart type="bars" data={barsData} options={barsOptions} title={'title 1'} />
+              <Chart type="line" data={lineData} options={lineOptions} title={'title 2'} />
+              <Chart type="doughnut" data={pieData} options={pieOptions} title={'title 3'} />
+              <Chart type="pie" data={pieData} options={pieOptions} title={'title 4'} />
+            </Flex>
+          </VStack>
+        </Container>
       </Layout>
   );
 }
