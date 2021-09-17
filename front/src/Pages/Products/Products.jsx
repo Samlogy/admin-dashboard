@@ -7,7 +7,7 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Image,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Menu, MenuList, MenuItem, MenuButton,
   Tag, TagLabel,
-  Portal,
+  Portal, Container
    } from "@chakra-ui/react"
    import { BiTrash, BiPencil, BiDetail } from "react-icons/bi"
    import { FaProductHunt, FaSortAmountUp, FaEllipsisV } from "react-icons/fa";
@@ -575,7 +575,7 @@ const Products = () => {
     
     return (
       <Layout isFixedNav isVisible>
-        <Flex flexDirection="column" width="90vw">
+        <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
             <Heading as="h2" size="lg" textAlign="left" my="2rem"> Products Managment </Heading>
             {
               action.value === "create" ? displayAddProduct() :
@@ -602,7 +602,7 @@ const Products = () => {
             <Portal> 
               { action.data && displayModal(action.data && action.data) }
             </Portal>
-        </Flex>
+        </Container>
       </Layout>
     )
 };

@@ -12,7 +12,7 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Text, Heading, Radio, 
   Image,
   InputRightElement, InputGroup,
   Menu, MenuList, MenuItem, MenuButton,
-  Portal,
+  Portal, Container
    } from "@chakra-ui/react"
 import { FaCog, FaChevronDown, FaTransgender, FaUserLock, FaEnvelope } from "react-icons/fa";
 import { MdLocationOn, MdPhoneIphone } from "react-icons/md"
@@ -777,35 +777,35 @@ const Users = () => {
 
   return (
     <Layout isFixedNav isVisible>
-      <Flex flexDirection="column" width="90vw">
-            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Management </Heading>
+      <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+          <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Management </Heading>
 
-            {
-              action.value === "create" ? displayAddUser() :
+          {
+            action.value === "create" ? displayAddUser() :
 
-              action.value === "edit" ? Object.keys(user).length > 0 && displayEditUser(user) :
+            action.value === "edit" ? Object.keys(user).length > 0 && displayEditUser(user) :
 
-              action.value === "details" ? displayUserDetails() :
+            action.value === "details" ? displayUserDetails() :
 
-              action.value === "users" ? 
-                  <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                    <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
-                            onClick={() => setAction({value: "create"})}> Create </Button>
+            action.value === "users" ? 
+                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+                  <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
+                          onClick={() => setAction({value: "create"})}> Create </Button>
 
-                    {displayUsersFilter()}
-                    
-                    { loading ? 
-                      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
-                      users.length > 0 ? displayUsersList(users) :
-                      <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
-                    }
-                  </Box> : ""
-            }
-                              
-            <Portal> 
-              { action.data && displayModal(action.data && action.data) } 
-            </Portal>      
-      </Flex>      
+                  {displayUsersFilter()}
+                  
+                  { loading ? 
+                    <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
+                    users.length > 0 ? displayUsersList(users) :
+                    <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
+                  }
+                </Box> : ""
+          }
+                            
+          <Portal> 
+            { action.data && displayModal(action.data && action.data) } 
+          </Portal>     
+      </Container>   
     </Layout>
   );
 };

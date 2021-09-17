@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Button, Flex, Heading, Select, Box, Spinner, VStack, Avatar, Text, IconButton, ButtonGroup,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
-  useDisclosure, useToast, 
+  useDisclosure, useToast, Container,
   Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
   } from "@chakra-ui/react"
 import { BsTrash, BsFillEyeSlashFill  } from "react-icons/bs";
@@ -257,6 +257,7 @@ const Notifications = () => {
   
     return (
         <Layout isFixedNav isVisible>
+          <Container maxW="80em" bg="white" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
             <Heading as="h2" size="lg" my="2rem"> Notifications </Heading>
 
             <Select name="notif-type" w="200px" mb="2rem"
@@ -279,7 +280,8 @@ const Notifications = () => {
               }
             </Box>
 
-            { action.data && displayModal(action.data && action.data)  }   
+            { action.data && displayModal(action.data && action.data)  }  
+            </Container> 
         </Layout>
     )
 };

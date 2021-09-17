@@ -5,8 +5,8 @@ import Layout from "../Layout.jsx"
 import Stats from './Stats.jsx';
 import Chart from "./Chart.jsx";
 
-import { THEMES } from "../../utils/constants"
-import { Toast } from "../../Components"
+// import { THEMES } from "../../utils/constants"
+// import { Toast } from "../../Components"
 
 
 const appStats = [
@@ -35,20 +35,6 @@ const appStats = [
     percent: "23.36%",
   },
 ];
-
-function Home() {
-  const [data, setData] = useState([])
-
-  const toast = useToast();
-
-  const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
-
-  // API call
-  const onLoad = async () => {
-
-  };
-  
-  // Components
 
   // charts data
   const barsData = {
@@ -175,6 +161,13 @@ function Home() {
     }
   };
 
+function Home() {
+  const [data, setData] = useState([])
+
+  const onLoad = async () => {
+
+  };
+  
   // useEffect(() => { 
   //     onLoad() 
   // }, [])
