@@ -210,7 +210,7 @@ const Notifications = () => {
                 </Modal>
       };
       const displayNotifs = (label, data) => {
-        return  <Box w="45rem" p="1rem" mb="1rem" border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
+        return  <Box maxW="45rem" p="1rem" mb="1rem" border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
                       boxShadow="md">
                   <Heading as="h3" size="md" mt="0" mb="1rem"> {label} </Heading>
     
@@ -269,16 +269,14 @@ const Notifications = () => {
               <option value="appNews"> App News </option>
             </Select>
             
-            <Box>
-              {   notif.loading ? 
-                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> :
-                  notif.response ?
-                      <VStack>
-                        { notif.type && checkType(notif.type) }
-                      </VStack> :
-                  <h3> There is not any new Notification </h3>
-              }
-            </Box>
+            {   notif.loading ? 
+                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> :
+                notif.response ?
+                    <Flex flexDir="column" maxW="45rem" mx="auto">
+                      { notif.type && checkType(notif.type) }
+                    </Flex> :
+                <h3> There is not any new Notification </h3>
+            }
 
             { action.data && displayModal(action.data && action.data)  }  
             </Container> 
