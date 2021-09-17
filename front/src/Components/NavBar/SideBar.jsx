@@ -11,8 +11,7 @@ import { THEMES } from "../../utils/constants"
 import { sideBarData } from "./sideBarData"
 // import { setSideBarItem } from "../../store/actions/navBarActions"
 
-const SideBar = (props) => {
-  const { onClose, isOpen } = props;
+const SideBar = ({ onClose, isOpen, btnRef }) => {
   const [showList, setShowList] = useState({ state: false, id: null });
 
   const dispatch = useDispatch();
@@ -32,8 +31,8 @@ const SideBar = (props) => {
     // dispatch(setSideBarItem(item))
   };
 
-  return <Drawer placement="left" onClose={onClose && onClose} isOpen={isOpen && isOpen}  
-                size="xs" p=".5rem"> 
+  return <Drawer placement="left" onClose={onClose && onClose} isOpen={isOpen && isOpen} 
+                finalFocusRef={btnRef} size="xs" p=".5rem"> 
             <DrawerOverlay />
 
             <DrawerContent>

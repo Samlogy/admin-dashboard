@@ -13,13 +13,12 @@ import { THEMES } from "../../utils/constants"
 import { menuData } from "./sideBarData"
 
 
-const NavBar = (props) =>  {
-    const { avatar, notifs, logo, isFixedNav } = props;
+const NavBar = ({ avatar, notifs, logo, isFixedNav }) =>  {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { colorMode, toggleColorMode } = useColorMode()
+    const btnRef = React.useRef()
 
-    // const bgClrHover = useColorModeValue(THEMES.light.bgHover, THEMES.dark.bgHover);
     const bgClr = useColorModeValue(THEMES.light.bg, THEMES.dark.bg);
 
     return (
@@ -28,7 +27,7 @@ const NavBar = (props) =>  {
             p=".5rem" bg={bgClr} boxShadow="md" width="100%" pos={isFixedNav ? "fixed" : "inherit"}
             zIndex="999">
 
-          <Button colorScheme="blue" variant="outline">
+          <Button colorScheme="blue" variant="outline" ref={btnRef}>
             <MdKeyboardArrowLeft size="24" onClick={onOpen} />
           </Button>
 
@@ -48,8 +47,8 @@ const NavBar = (props) =>  {
 
               <Button colorScheme="blue" variant="ghost">
                 { colorMode === "light" ? 
-                  <BiMoon size="24" onClick={toggleColorMode} /> : 
-                  <BiSun size="24" onClick={toggleColorMode} /> 
+                  <BiMoon size="24" onClick={() => toggleColorMode(colorMode)} /> : 
+                  <BiSun size="24" onClick={() => toggleColorMode(colorMode)} /> 
                 }
               </Button>
 
@@ -71,7 +70,7 @@ const NavBar = (props) =>  {
           </Stack>
         </Box>
 
-        <SideBar onClose={onClose} isOpen={isOpen} />
+        <SideBar onClose={onClose} isOpen={isOpen} btnRef={btnRef} />
       </>
     );
 };
