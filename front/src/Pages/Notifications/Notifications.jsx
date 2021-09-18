@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Flex, Heading, Select, Box, Spinner, VStack, Avatar, Text, IconButton, ButtonGroup,
+import { Button, Heading, Select, Box, Spinner, Avatar, Text, IconButton, ButtonGroup,
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
   useDisclosure, useToast, Container,
   Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
@@ -10,8 +10,6 @@ import { BsTrash, BsFillEyeSlashFill  } from "react-icons/bs";
 import Layout from "../Layout.jsx"
 import { View } from "../../Components"
 import { load_notifications, delete_notification, hide_notification } from "../../api"
-
-const proxy = "http://localhost:5000"
 
 const Notifications = () => {
     const [notif, setNotif] = useState({
