@@ -22,6 +22,7 @@ import { FaEllipsisV } from "react-icons/fa";
 
 import Layout from "../Layout.jsx"
 import { load_users, create_user, filter_user, block_user, delete_user, edit_user } from "../../api"
+import { View } from "../../Components"
 
 const COLORS = {
   notif: {
@@ -704,34 +705,59 @@ const Users = () => {
       <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
           <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Management </Heading>
 
-          {
-            action.value === "create" ? displayAddUser() :
+          <View if={action.value === "create"}>
+            { displayAddUser() }
+          </View>
 
-            action.value === "edit" ? Object.keys(user).length > 0 && displayEditUser(user) :
+          <View if={action.value === "edit"}>
+            { Object.keys(user).length > 0 && displayEditUser(user) }
+          </View>
 
-            action.value === "details" ? displayUserDetails() :
+          <View if={action.value === "details"}>
+            { displayUserDetails() }
+          </View>
+          <View if={action.value === "users"}>
+            <Flex flexDirection="column" justifyContent="center" alignItems="center">
+                <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
+                        onClick={() => setAction({value: "create"})}> Create </Button>
 
-            action.value === "users" ? 
-                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                  <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
-                          onClick={() => setAction({value: "create"})}> Create </Button>
-
-                  {displayUsersFilter()}
-                  
-                  { loading ? 
-                    <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
-                    users.length > 0 ? displayUsersList(users) :
-                    <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
-                  }
-                </Box> : ""
-          }
-                            
-          <Portal> 
-            { action.data && displayModal(action.data && action.data) } 
-          </Portal>     
+                { displayUsersFilter() }
+                
+                { loading ? 
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
+                  users.length > 0 ? displayUsersList(users) :
+                  <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
+                }
+            </Flex>
+          </View>
+         
+          <View if={action.data}>
+            <ModalBox data={action.data} isOpen={isOpen} onClose={onClose} />
+          </View>
       </Container>   
     </Layout>
   );
+};
+
+const ModalBox = ({ data, isOpen, onClose }) => {
+  const { text, action, label } = data
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader> { label && label } </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody> { text && text } </ModalBody>
+
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={action && action}>
+            { label && label }
+          </Button>
+          <Button variant="outiline" colorScheme="blue" onClick={() => onClose()}> Cancel </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
 };
 
 export default Users;
