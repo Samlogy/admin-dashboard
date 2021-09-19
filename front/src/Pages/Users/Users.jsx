@@ -39,13 +39,13 @@ const proxy = "http://localhost:5000"
 
 const Users = () => {
   const [user, setUser] = useState({ 
-      fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", confirmPassword: "", role: "moderator" 
+      fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", role: "moderator" 
     });
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState({ value: "users", data: null })
-  const [showPwd, setShowPwd] = useState({ pass: false, confirmPass: false });
+  const [showPwd, setShowPwd] = useState(false);
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -142,22 +142,16 @@ const Users = () => {
     displayToast({msg: "an Error occured while loading users !", status: "error"})
   };
   const onCreate = async () => {
-    if (user.password !== user.confirmPassword) {
-      displayToast({msg: "password & confirm password do not match !", status: "error"})
-      return; 
+    // data validation (yup)
+    const result = await create_user(user); 
+
+    if (result.success) {
+      const data = result.data;
+      // update state
+      displayToast({msg: result.message, status: "success"})
+      return;
     }
-    delete user.confirmPassword
-
-      // data validation (yup)
-      const result = await create_user(user); 
-
-      if (result.success) {
-        const data = result.data;
-        // update state
-        displayToast({msg: result.message, status: "success"})
-        return;
-      }
-      displayToast({msg: "an Error occured while adding a user !", status: "error"})
+    displayToast({msg: "an Error occured while adding a user !", status: "error"})
   };
   const onEdit = async () => {
     let userId, userIndex; 
@@ -169,10 +163,7 @@ const Users = () => {
     // data validation
     let editedUser = user;
     // remove password from obj if do not change
-    if (editedUser.password === "") {
-      delete editedUser.password;
-      delete editedUser.confirmPassword;
-    }
+    if (editedUser.password === "") delete editedUser.password
 
     const result = await edit_user(userId, editedUser);
 
@@ -304,20 +295,6 @@ const Users = () => {
               </InputGroup>
             </FormControl>
 
-            <FormControl id="confirmPassword" mb="1rem">
-              <FormLabel> Confirm Password </FormLabel>
-                <InputGroup>
-                  <Input type={showPwd.confirmPass ? "text" : "password"} 
-                          placeholder="Confirm Password" name="confirmPassword" id="confirmPassword"
-                          value={user.confirmPassword} onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })} />
-                  <InputRightElement width="4.5rem">
-                      <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, confirmPass: !showPwd.confirmPass })}>
-                        {showPwd.confirmPass ? "Hide" : "Show"}
-                      </Button>
-                  </InputRightElement>
-                </InputGroup>
-            </FormControl>
-
             <FormControl id="role" mb="1rem">
               <FormLabel> Role </FormLabel>
               <Select name="role" id="role" 
@@ -347,8 +324,8 @@ const Users = () => {
 
     return (
       <>
-        <Box display="flex" flexDirection="row" justifyContent="center" >
-        {displayUserDetails()}
+        <Flex justifyContent="center" >
+          {displayUserDetails()}
 
           <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
             <Heading as="h3" size="md" my="1rem" textAlign="left"> Edit User </Heading>
@@ -422,21 +399,7 @@ const Users = () => {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-
-              <FormControl id="confirmPassword" mb="1rem">
-                <FormLabel> Confirm Password </FormLabel>
-                  <InputGroup>
-                    <Input type={showPwd.confirmPass ? "text" : "password"} 
-                            placeholder="Confirm Password" name="confirmPassword" id="confirmPassword"
-                            value={user.confirmPassword} onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })} />
-                    <InputRightElement width="4.5rem">
-                        <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, confirmPass: !showPwd.confirmPass })}>
-                          {showPwd.confirmPass ? "Hide" : "Show"}
-                        </Button>
-                    </InputRightElement>
-                  </InputGroup>
-              </FormControl>
-
+              
               <FormControl id="role" mb="1rem">
                 <FormLabel> Role </FormLabel>
                 <Select name="role" id="role" value={role ? role :user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
@@ -447,7 +410,7 @@ const Users = () => {
             </Stack>
           </Box>
 
-        </Box>
+        </Flex>
 
         <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
           <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" 
