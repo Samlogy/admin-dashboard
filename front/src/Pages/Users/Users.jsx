@@ -21,6 +21,7 @@ import { GiRank3 } from "react-icons/gi"
 import { FaEllipsisV } from "react-icons/fa";
 
 import Layout from "../Layout.jsx"
+import { load_users, create_user, filter_user, block_user, delete_user, edit_user } from "../../api"
 
 const COLORS = {
   notif: {
@@ -131,22 +132,13 @@ const Users = () => {
   };
   const getUsers = async () => {
     setLoading(true);
-    try {
-      const url = `${proxy}/admin/users/getUsers`;
-      const res = await fetch(url);
-
-      if (res.ok) {
-        const result = await res.json();
-        setLoading(false);
-        setUsers(result.data);
-
-        return;
-      }
-      displayToast({msg: "an Error occured while loading users !", status: "error"})
-
-    } catch (err) {
-      displayToast({msg: `Error: ${err.message}`, status: "error"})
+    const result = await load_users();
+    if (result.success) {
+      setLoading(false);
+      setUsers(result.data);
+      return;
     }
+    displayToast({msg: "an Error occured while loading users !", status: "error"})
   };
   const onCreate = async () => {
     if (user.password !== user.confirmPassword) {
@@ -155,29 +147,16 @@ const Users = () => {
     }
     delete user.confirmPassword
 
-    try {
       // data validation (yup)
-      const url = `${proxy}/admin/users/createUser`;
-      const res = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(user)
-      });
-      // reset form
-      // setUser({ email: "", password: "", role: "" });
+      const result = await create_user(user); 
 
-      if (res.ok) {
-        const result = await res.json();
+      if (result.success) {
+        const data = result.data;
+        // update state
         displayToast({msg: result.message, status: "success"})
         return;
       }
       displayToast({msg: "an Error occured while adding a user !", status: "error"})
-
-    } catch (err) {
-      displayToast({msg: `Error: ${err.message}`, status: "error"})
-    }
   };
   const onEdit = async () => {
     let userId, userIndex; 
@@ -186,112 +165,57 @@ const Users = () => {
       //  userIndex = action.data.userIndex
     }
 
-    try {
-      // data validation
-      let editedUser = user;
-      // remove password from obj if do not change
-      if (editedUser.password === "") {
-        delete editedUser.password;
-        delete editedUser.confirmPassword;
-      }
-
-      const url = `${proxy}/admin/users/editUser/${userId}`;
-      const res = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "PUT",
-        body: JSON.stringify(editedUser)
-      });
-
-      if (res.ok) {
-        const result = await res.json();
-        displayToast({msg: result.message, status: "success"})
-        // update state
-        return;
-      }
-      displayToast({msg: "an Error occured during user edition !", status: "error"})
-    } catch (err) {
-      displayToast({msg: `Error: ${err.message}`, status: "error"})
+    // data validation
+    let editedUser = user;
+    // remove password from obj if do not change
+    if (editedUser.password === "") {
+      delete editedUser.password;
+      delete editedUser.confirmPassword;
     }
+
+    const result = await edit_user(userId, editedUser);
+
+    if (result.success) {
+      // update state
+      displayToast({msg: result.message, status: "success"})
+      return;
+    }
+    displayToast({msg: "an Error occured during user edition !", status: "error"})
   };
   const onDelete = async (userId) => {
-    try {
-      const url = `${proxy}/admin/users/deleteUser/${userId}`;
-      const res = await fetch(url, {
-        method: "DELETE"
-      });
+    const result = await delete_user(userId);
 
-      if (res.ok) {
-        const result = await res.json();
-
-        // remove user data from users
-        // const new_users_list = users.filter((el) => el._id !== userId);
-        // setUsers(new_users_list);
-
-        displayToast({msg: result.message, status: "success"})
-        return;
-      }
-      displayToast({msg: "an Error occured while deleting user !", status: "error"})
-
-    } catch (err) {
-      displayToast({msg: `Error: ${err.message}`, status: "error"})
+    if (result.success) {
+      // update stat
+      displayToast({msg: result.message, status: "success"})
+      return;
     }
+    displayToast({msg: "an Error occured while deleting user !", status: "error"})
   };
   const onBlock = async (userId, userIndex) => {
-    try {
-      const url = `${proxy}/admin/users/blockUser/${userId}`;
-      const res = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "PUT",
-        body: JSON.stringify({ active: !users[userIndex].active })
-      });
-      
-      if (res.ok) {
-        const result = await res.json();
-
-        // setUsers((prevState) => {
-        //   let newState = [...prevState];
-
-        //   newState.forEach((item) => {
-        //       if (item._id === userId) {
-        //         item.active = !users[userIndex].active
-        //       }
-        //   });
-        //   return newState;
-        // })
-        displayToast({msg: result.message, status: "succes"})
-        return;
-      }
-      displayToast({msg: "an Error occured while blocking user !", status: "error"})
-
-    } catch (err) {
-      displayToast({msg: `Error: ${err.message}`, status: "error"})
+    const result = await block_user(userId, { active: !users[userIndex].active })
+    
+    if (result.success) {
+      // update state
+      displayToast({ msg: result.message, status: "succes" })
+      return;
     }
+    displayToast({msg: "an Error occured while blocking user !", status: "error"})
   };
   const onFilter = async (value) => {
     setFilter({ ...filter, queryString: value });
     setLoading(true);
 
-    try {
-      const url = `${proxy}/admin/users/filterUsers?queryString=${value}&filterType=${filter.filterType}`;
-      const res = await fetch(url);
+    const result = await filter_user(value, filter.filterType);
 
-      if (res.ok) {
-        const result = await res.json();
-        // setFilter({ ...filter, response: result.data });
-        console.log('users: ', result.data)
-        setUsers(result.data);
-        setLoading(false);
-        console.log(result.message);
-        return;
-      }
-      console.log("an Error occured while filtering users !");
-    } catch (err) {
-      console.log("Error: ", err.message);
+    if (result.success) {
+      // update state
+      setUsers(result.data);
+      setLoading(false);
+      return;
     }
+    setLoading(false);
+    displayToast({msg: "an Error occured while filtering users !", status: "error"})
   };
 
   // Componenents
