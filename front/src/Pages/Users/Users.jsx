@@ -131,7 +131,7 @@ const Users = () => {
       .catch((err) => displayToast({ msg: err.message, status: "error" }))
     }
   };
-  const getUsers = async () => {
+  const onLoad = async () => {
     setLoading(true);
     const result = await load_users();
     if (result.success) {
@@ -230,110 +230,6 @@ const Users = () => {
       duration: 5000,
       isClosable: true,
     })
-  };
-  const displayModal = (data) => {
-    const { text, action, label } = data
-    return  <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader> { label && label } </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody> { text && text } </ModalBody>
-
-                <ModalFooter>
-                  <Button colorScheme="blue" mr={3} onClick={action && action}>
-                    { label && label }
-                  </Button>
-                  <Button variant="outiline" colorScheme="blue" onClick={() => { backToUsers(); onClose()}}> Cancel </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-  };
-  const displaySubMenu = (userId, userIndex, userData) => {
-    return <Menu>
-            <MenuButton as={IconButton}
-              icon={<FaEllipsisV />}>
-            </MenuButton>
-            <MenuList>
-              <MenuItem textColor={COLORS.notif.warning}
-                    icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
-                    onClick={() => editUser(userId, userIndex, userData)}> Edit </MenuItem>
-
-              <MenuItem textColor={COLORS.notif.error}
-                    icon={<BiTrash size="18" color={COLORS.notif.error} />} 
-                    onClick={() => deleteUser(userId, userIndex)}> Delete </MenuItem>
-              <MenuItem textColor={COLORS.notif.secondary}
-                    icon={<BiBlock size="18" color={COLORS.notif.secondary} />} 
-                    onClick={() => blockUser(userId, userIndex)}> Block </MenuItem>
-
-              <MenuItem textColor={COLORS.notif.black}
-                    icon={<BiDetail size="18" color={COLORS.notif.black} />} 
-                    onClick={() => detailsUser(userData)}> Details </MenuItem>
-            </MenuList>
-          </Menu>
-  };
-  const displayUsersList = (users) => {
-     
-    return (
-      <>
-      <Table variant="simple" border="1px" borderWidth="solid" borderColor="gray.200" colorScheme="blue" size="sm" w="95%" mx="auto">
-        <Thead>
-          <Tr>
-            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
-            <Th p="1rem"> Email </Th>
-            <Th p="1rem"> Password </Th>
-            <Th p="1rem"> Role </Th>
-            <Th p="1rem"> Actions </Th>
-            <Th p="1rem"> Created </Th>
-            <Th p="1rem"> Last Edit </Th>
-          </Tr>
-        </Thead>
-        
-        <Tbody>
-          { users.map((el, idx) => 
-            <Tr index={idx}>
-              <Td  p="1rem">
-                <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox>
-              </Td>
-              <Td  p="1rem">
-                <Input type="email" placeholder="Email" name="email"
-                      id={el._id} value={el.email} onChange={e => usersOnChange(e)} />
-              </Td>
-              <Td  p="1rem">
-                <Input type="password" placeholder="Password" name="password"
-                      id={el._id} value={el.password} onChange={e => usersOnChange(e)} />
-              </Td>
-              <Td  p="1rem">
-                  <Select id={el._id} value={el.role} onChange={e => usersOnChange(e)}>
-                    <option value="moderator"> Moderator </option>
-                    <option value="admin"> Admin </option>
-                  </Select>
-              </Td>
-              <Td  p="1rem"> 
-                { displaySubMenu(el._id, idx, el) }
-              </Td>
-              <Td  p="1rem"> {el.createdAt && convertDate(el.createdAt)} </Td>
-              <Td p="1rem"> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
-            </Tr>
-          )
-        }
-        </Tbody>
-
-        <Tfoot>
-          <Tr>
-            <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
-            <Th p="1rem"> Email </Th>
-            <Th p="1rem"> Password </Th>
-            <Th p="1rem"> Role </Th>
-            <Th p="1rem"> Actions </Th>
-            <Th p="1rem"> Created </Th>
-            <Th p="1rem"> Last Edit </Th>
-          </Tr>
-        </Tfoot>
-      </Table>
-     
-      </>
-    )
   };
   const displayAddUser = () => {
     return (
@@ -565,24 +461,7 @@ const Users = () => {
       </>
     );
   };
-  const displayUsersFilter = () => {
-    return (
-      <Flex flexDirection="column" border="1px" borderColor="gray.200" borderStyle="solid" py="2rem" px="1rem" borderRadius="md" width="500px"  my="2rem" justifyContent="center" mx="auto">
-        <Heading as="h3" size="md" mb="1rem" textAlign="center"> Users Filter </Heading>
-
-        <Flex flexDirection="row">
-          <Input type="text" placeholder={`Filter by ${filter.filterType}`}
-                value={filter.queryString} onChange={(e) => onFilter(e.target.value)} mr=".5rem" />
-
-          <Select w="8rem" value={filter.filterType} onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}
-                   ml=".5rem" >
-            <option value="email"> Email </option>
-            <option value="role"> Role </option>
-          </Select>
-        </Flex>
-      </Flex>
-    );
-  };
+  // avant de l'a supprimer faudra faire (edit / add)
   const displayUserDetails = () => {
     return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
             <Box display="flex" flexDirection="row" mr="1rem" mb="3rem" justifyContent="center">
@@ -697,7 +576,7 @@ const Users = () => {
   };
   
   useEffect(() => {
-    getUsers();
+    onLoad();
   }, []);
 
   return (
@@ -709,24 +588,27 @@ const Users = () => {
             { displayAddUser() }
           </View>
 
-          <View if={action.value === "edit"}>
-            { Object.keys(user).length > 0 && displayEditUser(user) }
+          <View if={action.value === "edit" && Object.keys(user).length > 0 }>
+            { displayEditUser(user) }
           </View>
 
           <View if={action.value === "details"}>
-            { displayUserDetails() }
+            <UserDetails backToUsers={backToUsers} deleteUser={deleteUser} onDelete={onDelete} onOpen={onOpen} hidePassword={hidePassword}
+                  user={user} action={action} setAction={setAction} />
           </View>
+
           <View if={action.value === "users"}>
             <Flex flexDirection="column" justifyContent="center" alignItems="center">
                 <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
                         onClick={() => setAction({value: "create"})}> Create </Button>
 
-                { displayUsersFilter() }
+                <UserFilter filter={filter} onFilter={onFilter} setFilter={setFilter} />
                 
                 { loading ? 
-                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
-                  users.length > 0 ? displayUsersList(users) :
-                  <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
+                    <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
+                      users.length > 0 ? 
+                        <UsersList users={users} usersOnChange={usersOnChange} convertDate={convertDate} editUser={editUser} deleteUser={deleteUser} blockUser={blockUser} detailsUser={detailsUser} /> :
+                          <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
                 }
             </Flex>
           </View>
@@ -759,5 +641,232 @@ const ModalBox = ({ data, isOpen, onClose }) => {
     </Modal>
   )
 };
+
+const UserDetails = ({ backToUsers, deleteUser, onDelete, onOpen, hidePassword, user, action, setAction }) => {
+  return <Flex flexDirection="column" justifyContent="center" alignContent="center"> 
+          <Flex mr="1rem" mb="3rem" justifyContent="center">
+            <Flex flexDirection="column" p="1rem" w="20rem" mr="1rem"
+                border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
+
+              <Heading as="h3" size="md" textAlign="left" my="1rem">
+                User Details
+              </Heading>
+              
+              <Avatar name="Dan Abrahmov" src={user.avatar} mb="1.25rem" />
+
+              <Flex my="1.25rem"> 
+                  <BiUser size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> fullName : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.fullName} </Text>
+              </Flex>
+
+              <View if={action.value !== "create"}>
+                <Flex my="1.25rem"> 
+                  <BiUser size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> username : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.username} </Text>
+                </Flex>
+              </View>
+
+              <Flex my="1.25rem"> 
+                  <FaEnvelope size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> email : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.email} </Text>
+              </Flex>
+
+              <Flex my="1.25rem"> 
+                  <MdPhoneIphone size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> phone : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.phone} </Text>
+              </Flex>
+
+              <Box display="flex" flexDirection="row" my="1.25rem"> 
+                  <FaTransgender size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> gender : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.gender} </Text>
+              </Box>
+
+              <Text display="flex" flexDirection="row" my="1.25rem"> 
+                <GoPrimitiveDot size="20" color={user.active === "true" ? COLORS.notif.success : COLORS.notif.error} /> active: 
+                  <Text ml=".5rem" fontWeight="bold"> {user.active === "true" ? "active" : "inactive"} </Text>
+              </Text>
+
+              <Flex my="1.25rem"> 
+                  <MdLocationOn size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> address : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.address} </Text>
+              </Flex>
+
+              <Flex my="1.25rem"> 
+                  <FaUserLock size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> password : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {hidePassword(user.password)} </Text>
+              </Flex>
+
+              <Flex my="1.25rem"> 
+                  <GiRank3 size="20" />  
+                  <Text ml=".5rem" fontStyle="italic"> role : </Text>
+                  <Text ml=".5rem" fontWeight="bold"> {user.role} </Text>
+              </Flex>
+            </Flex>
+          
+    
+            <View if={action.value === "details"}>
+              <Flex flexDirection="column" p="1rem" w="20rem" ml="1rem"
+                    border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md">
+
+                  <Heading as="h4" size="md" textAlign="center" my="1rem">
+                      USER ACTIONS
+                  </Heading>
+            
+                <ButtonGroup variant="outline" display={"flex"} flexDirection="column" 
+                            justifyContent="center" alignItems="center">
+                  <Button rightIcon={<BiPencil size="18" />} colorScheme="yellow" mb="1rem" w="7rem"
+                          onClick={() =>  setAction({ value: "edit", 
+                                                        data: {userId: user._id, userIndex: action.data}
+                                                      })}>
+                          Edit
+                  </Button>
+
+                  <Button rightIcon={<BiTrash size="18" />} colorScheme="red" mb="1rem" w="7rem"
+                          onClick={() => deleteUser(user._id, action.data)}>
+                              Delete
+                  </Button>
+                              
+                  <Button rightIcon={<BiBlock size="18" />} colorScheme="gray" mb="1rem" w="7rem"
+                          onClick={() => { 
+                            setAction({ 
+                                  data: { text: "Are you sure to block this user ?", 
+                                  action: () => onDelete(user._id, action.data), 
+                                  label: "Block" } 
+                                  }); 
+                            onOpen()
+                            }
+                            }>
+                          Block
+                  </Button>
+                </ButtonGroup>
+              </Flex>
+            </View> 
+          </Flex> 
+
+          <View if={action.value === "details"}>
+            <Button colorScheme="blue" variant="outline" w="120px" mx="auto" onClick={() => backToUsers()}>
+                  Back to Users
+            </Button>
+          </View>
+        </Flex>
+};
+
+const UserFilter = ({ filter, onFilter, setFilter }) => {
+  return (
+    <Flex flexDirection="column" border="1px" borderColor="gray.200" borderStyle="solid" py="2rem" px="1rem" borderRadius="md" width="500px"  my="2rem" justifyContent="center" mx="auto">
+      <Heading as="h3" size="md" mb="1rem" textAlign="center"> Users Filter </Heading>
+
+      <Flex>
+        <Input type="text" placeholder={`Filter by ${filter.filterType}`}
+              value={filter.queryString} onChange={(e) => onFilter(e.target.value)} mr=".5rem" />
+
+        <Select w="8rem" value={filter.filterType} onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}
+                 ml=".5rem" >
+          <option value="email"> Email </option>
+          <option value="role"> Role </option>
+        </Select>
+      </Flex>
+    </Flex>
+  );
+};
+
+const UsersList = ({ users, usersOnChange, convertDate, editUser, deleteUser, blockUser, detailsUser }) => {
+     
+  return (
+    <>
+    <Table variant="simple" border="1px" borderWidth="solid" borderColor="gray.200" colorScheme="blue" size="sm" w="95%" mx="auto">
+      <Thead>
+        <Tr>
+          <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
+          <Th p="1rem"> Email </Th>
+          <Th p="1rem"> Password </Th>
+          <Th p="1rem"> Role </Th>
+          <Th p="1rem"> Actions </Th>
+          <Th p="1rem"> Created </Th>
+          <Th p="1rem"> Last Edit </Th>
+        </Tr>
+      </Thead>
+      
+      <Tbody>
+        { users.map((el, idx) => 
+          <Tr index={idx}>
+            <Td  p="1rem">
+              <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox>
+            </Td>
+            <Td  p="1rem">
+              <Input type="email" placeholder="Email" name="email"
+                    id={el._id} value={el.email} onChange={e => usersOnChange(e)} />
+            </Td>
+            <Td  p="1rem">
+              <Input type="password" placeholder="Password" name="password"
+                    id={el._id} value={el.password} onChange={e => usersOnChange(e)} />
+            </Td>
+            <Td  p="1rem">
+                <Select id={el._id} value={el.role} onChange={e => usersOnChange(e)}>
+                  <option value="moderator"> Moderator </option>
+                  <option value="admin"> Admin </option>
+                </Select>
+            </Td>
+            <Td  p="1rem"> 
+              {/* { displaySubMenu(el._id, idx, el) } */}
+              <SubMenu  userId={el._id} userIndex={idx} userData={el} editUser={editUser} deleteUser={deleteUser} blockUser={blockUser} detailsUser={detailsUser} />
+            </Td>
+            <Td  p="1rem"> {el.createdAt && convertDate(el.createdAt)} </Td>
+            <Td p="1rem"> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
+          </Tr>
+        )
+      }
+      </Tbody>
+
+      <Tfoot>
+        <Tr>
+          <Th p="1rem"> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Th>
+          <Th p="1rem"> Email </Th>
+          <Th p="1rem"> Password </Th>
+          <Th p="1rem"> Role </Th>
+          <Th p="1rem"> Actions </Th>
+          <Th p="1rem"> Created </Th>
+          <Th p="1rem"> Last Edit </Th>
+        </Tr>
+      </Tfoot>
+    </Table>
+   
+    </>
+  )
+};
+
+const SubMenu = ({ userId, userIndex, userData, editUser, deleteUser, blockUser, detailsUser }) => {
+  return <Menu>
+          <MenuButton as={IconButton}
+            icon={<FaEllipsisV />}>
+          </MenuButton>
+
+          <MenuList>
+            <MenuItem color={COLORS.notif.warning}
+                  icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
+                  onClick={() => editUser(userId, userIndex, userData)}> Edit </MenuItem>
+
+            <MenuItem color={COLORS.notif.error}
+                  icon={<BiTrash size="18" color={COLORS.notif.error} />} 
+                  onClick={() => deleteUser(userId, userIndex)}> Delete </MenuItem>
+            <MenuItem color={COLORS.notif.secondary}
+                  icon={<BiBlock size="18" color={COLORS.notif.secondary} />} 
+                  onClick={() => blockUser(userId, userIndex)}> Block </MenuItem>
+
+            <MenuItem color={COLORS.notif.black}
+                  icon={<BiDetail size="18" color={COLORS.notif.black} />} 
+                  onClick={() => detailsUser(userData)}> Details </MenuItem>
+          </MenuList>
+        </Menu>
+};
+
+
 
 export default Users;
