@@ -235,6 +235,108 @@ export const block_user = async (userId, data) => {
 };
 
 /* Products */
+export const load_products = async () => {
+    try {
+        const res = await request("get", `/products/getProducts`, {});
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
+export const create_product = async (data) => {
+    try {
+        const res = await request("post", `/products/createProduct`, {}, data);
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
+export const edit_product = async (productId, data) => {
+    try {
+        const res = await request("put", `/products/editProduct/${productId}`, {}, data);
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
+export const delete_product = async (productId, data) => {
+    try {
+        const res = await request("put", `/products/deleteProduct/${productId}`, {}, data);
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
+export const filter_products = async (value, filterType) => {
+    try {
+        const res = await request("get", `/products/filterProducts?queryString=${value}&filterType=${filterType}`, {});
+        if (res.success) {
+            const { data, success, message } = res;
+            return {
+                success,
+                data,
+                message
+            }
+        }
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
+
+
 /* Newsletters */
 /* Home */
 /* Contacts */
