@@ -17,6 +17,8 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Image,
 
 import Layout from "../Layout.jsx"
 import Features from "./Features.jsx"
+// import { load_users, create_user, filter_user, block_user, delete_user, edit_user } from "../../api"
+import { View } from "../../Components"
 
 const proxy = "http://localhost:5000"
 
@@ -77,7 +79,7 @@ const Products = () => {
       .catch((err) => displayToast({ msg: err.message, status: "error" }))
     }
   };
-  const getProducts = async () => {
+  const onLoad = async () => {
     setLoading(true);
     try {
       const url = `${proxy}/admin/products/getProducts`;
@@ -234,54 +236,6 @@ const Products = () => {
       isClosable: true,
     })
   };
-  const displayModal = (data) => {
-    const { text, action, label } = data
-    return  <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader> { label && label } </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody> { text && text } </ModalBody>
-
-                <ModalFooter>
-                  <Button colorScheme="blue" mr={3} onClick={action && action}>
-                    { label && label }
-                  </Button>
-                  <Button variant="outiline" colorScheme="blue" onClick={() => { backToProducts(); onClose()}}> Cancel </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-  };
-  const displaySubMenu = (productId, producIndex, producData) => {
-    return <Menu>
-            <MenuButton as={IconButton}
-              icon={<FaEllipsisV />}>
-            </MenuButton>
-            <MenuList>
-              <MenuItem textColor={COLORS.notif.warning}
-                    icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
-                    onClick={() => editProduct(productId, producIndex, producData)}> Edit </MenuItem>
-
-              <MenuItem textColor={COLORS.notif.error}
-                    icon={<BiTrash size="18" color={COLORS.notif.error} />} 
-                    onClick={() => deleteProduct(productId, producIndex)}> Delete </MenuItem>
-
-              <MenuItem textColor={COLORS.notif.black}
-                    icon={<BiDetail size="18" color={COLORS.notif.black} />} 
-                    onClick={() => detailsProduct(producData)}> Details </MenuItem>
-            </MenuList>
-          </Menu>
-  };
-  const displayFeatures = (data) => {
-    return data.map((item, idx) => (
-            <Box className="feature-item" key={idx}>
-              <Tag size="md" key={idx} borderRadius="full" variant="solid" mr=".2rem" mb=".25rem"
-                  textColor="blue.700" bg="white" border="1px" borderColor="blue">
-                <TagLabel> {item} </TagLabel>
-              </Tag>
-            </Box>
-          ))
-  }
   const displayProductsList = (products) => {
        
     return (
@@ -305,8 +259,19 @@ const Products = () => {
               <Td> <Checkbox colorScheme="blue" size="md" defaultIsChecked={false}></Checkbox> </Td>
               <Td> {el.name} </Td>
               <Td> {el.amount} </Td>
-              <Td> {(el.features && el.features > 0) && displayFeatures(el.features) } </Td>
-              <Td> { displaySubMenu(el._id, idx, el) } </Td>
+              <Td>
+                {(el.features && el.features > 0) && el.features.map((item, idx) => (
+                    <Flex flexDir="row" flexWrap="wrap" key={idx}>
+                      <Tag size="md" key={idx} borderRadius="full" bg="white" border="1px solid" borderColor="blue" m=".25rem"
+                          color="blue.700" variant="solid">
+                        <TagLabel> {item} </TagLabel>
+                      </Tag>
+                    </Flex>
+                  )) }
+              </Td>
+              <Td> 
+                <SubMenu productId={el._id} producIndex={idx} producData={el} editProduct={editProduct} deleteProduct={deleteProduct} detailsProduct={detailsProduct} />
+              </Td>
               <Td> {el.createdAt && convertDate(el.createdAt)} </Td>
               <Td> {el.editedAt ? convertDate(el.editedAt) : "not updated "} </Td>
             </Tr>
@@ -376,7 +341,7 @@ const Products = () => {
                       { (product.features && product.features.length > 0) &&
                           product.features.map((item, idx) => 
                             <Tag size="md" key={idx} borderRadius="full" variant="solid" mr=".2rem" mb=".25rem"
-                                textColor="blue.700" bg="white" border="1px" borderColor="blue">
+                                color="blue.700" bg="white" border="1px" borderColor="blue">
                               <TagLabel> {item} </TagLabel>
                             </Tag>
                             )
@@ -487,24 +452,6 @@ const Products = () => {
       </>
     );
   };
-  const displayProductsFilter = () => {
-    return (
-      <Flex flexDirection="column" border="1px" borderColor="gray.200" borderStyle="solid" py="2rem" px="1rem" borderRadius="md" width="500px"  my="2rem" justifyContent="center" mx="auto">
-        <Heading as="h3" size="md" mb="1rem" textAlign="center"> Products Filter </Heading>
-
-        <Flex flexDirection="row">
-          <Input type="text" placeholder={`Filter by ${filter.filterType}`}
-            value={filter.queryString} ml=".5rem"
-            onChange={(e) => onFilter(e.target.value)} />
-
-          <Select value={filter.filterType} mr=".5rem" w="7rem"
-                  onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}>
-            <option value="name"> Name </option>
-          </Select>
-        </Flex>
-      </Flex>
-    );
-  };
   const displayEditProduct = (data) => {
     const { name, description, price, amount, features, thumbnail } = data;
 
@@ -570,41 +517,105 @@ const Products = () => {
   };
 
   useEffect(() => {
-    getProducts();
+    onLoad();
   }, []);
     
     return (
       <Layout isFixedNav isVisible>
         <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
-            <Heading as="h2" size="lg" textAlign="left" my="2rem"> Products Managment </Heading>
-            {
-              action.value === "create" ? displayAddProduct() :
+          <Heading as="h2" size="lg" textAlign="left" my="2rem"> Products Managment </Heading>
 
-              action.value === "edit" ? Object.keys(product).length > 0 && displayEditProduct(product)  :
+          <View if={action.value === "create"}>
+            {displayAddProduct()}
+          </View>
 
-              action.value === "details" ? displayProductDetails() :
+          <View if={action.value === "edit"}>
+            {Object.keys(product).length > 0 && displayEditProduct(product)}
+          </View>
 
-              action.value === "products" ? 
-              <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-              <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<FaProductHunt size="20" />} 
-                      onClick={() => setAction({value: "create"})} > Create </Button>
+          <View if={action.value === "details"}>
+            {displayProductDetails()}
+          </View>
 
-                    {displayProductsFilter()}
-                    
-                    { loading ? 
-                      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
-                      products.length > 0 ? displayProductsList(products) :
-                      <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
-                    }
-                  </Box> : ""
-            }   
+          <View if={action.value === "products"} display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+            <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<FaProductHunt size="20" />} 
+                  onClick={() => setAction({value: "create"})} > Create </Button>
 
-            <Portal> 
-              { action.data && displayModal(action.data && action.data) }
-            </Portal>
+            <ProductFilter filter={filter} onFilter={onFilter} setFilter={setFilter} />
+            
+            { loading ? 
+              <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
+                products.length > 0 ? displayProductsList(products) :
+                  <Heading as="h4" size="md" textAlign="center"> There is not any User </Heading>
+            }
+          </View>
+
+          <View if={action.data}>
+            <ModalBox data={action.data} isOpen={isOpen} onClose={onClose} />
+          </View>
         </Container>
       </Layout>
     )
+};
+
+const ModalBox = ({ data, isOpen, onClose }) => {
+  const { text, action, label } = data
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader> { label && label } </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody> { text && text } </ModalBody>
+
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={action && action}>
+            { label && label }
+          </Button>
+          <Button variant="outiline" colorScheme="blue" onClick={() => onClose()}> Cancel </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
+};
+const SubMenu = ({ productId, producIndex, producData, editProduct, deleteProduct, detailsProduct }) => {
+  return <Menu>
+          <MenuButton as={IconButton}
+            icon={<FaEllipsisV />}>
+          </MenuButton>
+
+          <MenuList>
+            <MenuItem color={COLORS.notif.warning}
+                  icon={<BiPencil size="18" color={COLORS.notif.warning} />} 
+                  onClick={() => editProduct(productId, producIndex, producData)}> Edit </MenuItem>
+
+            <MenuItem color={COLORS.notif.error}
+                  icon={<BiTrash size="18" color={COLORS.notif.error} />} 
+                  onClick={() => deleteProduct(productId, producIndex)}> Delete </MenuItem>
+
+            <MenuItem color={COLORS.notif.black}
+                  icon={<BiDetail size="18" color={COLORS.notif.black} />} 
+                  onClick={() => detailsProduct(producData)}> Details </MenuItem>
+          </MenuList>
+        </Menu>
+};
+const ProductFilter = ({ filter, onFilter, setFilter }) => {
+  return (
+    <Flex flexDirection="column" border="1px solid" borderColor="gray.200" p="2rem 1rem" borderRadius="md" width="500px" justifyContent="center" m="2rem auto">
+      <Heading as="h3" size="md" mb="1rem" textAlign="center"> Products Filter </Heading>
+
+      <Flex>
+        <Input type="text" placeholder={`Filter by ${filter.filterType}`}
+          value={filter.queryString} ml=".5rem"
+          onChange={(e) => onFilter(e.target.value)} />
+
+        <Select value={filter.filterType} mr=".5rem" w="7rem"
+                onChange={(e) => setFilter({ ...filter, filterType: e.target.value })}>
+          <option value="name"> Name </option>
+        </Select>
+      </Flex>
+    </Flex>
+  );
 };
 
 export default Products;
