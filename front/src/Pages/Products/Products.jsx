@@ -17,7 +17,7 @@ import { FormControl, FormLabel, Input, Select, Checkbox, Image,
 
 import Layout from "../Layout.jsx"
 import Features from "./Features.jsx"
-// import { load_users, create_user, filter_user, block_user, delete_user, edit_user } from "../../api"
+import { load_products, create_product, edit_product, delete_product, filter_products } from "../../api"
 import { View } from "../../Components"
 
 const proxy = "http://localhost:5000"
@@ -81,121 +81,64 @@ const Products = () => {
   };
   const onLoad = async () => {
     setLoading(true);
-    try {
-      const url = `${proxy}/admin/products/getProducts`;
-      const res = await fetch(url);
+      const result = await load_products();
 
-      if (res.ok) {
-        const result = await res.json();
+      if (result.success) {
         setLoading(false);
         setProducts(result.data);
-        console.log(result.message);
         return;
       }
-      console.log("an Error occured while loading products !");
-    } catch (err) {
-      console.log("Error: ", err.message);
-    }
+      setLoading(false);
+      displayToast({ msg: "an Error occured while loading products !", status: "error" })
   };
   const onCreate = async () => {
-    try {
-      // data validation (yup)
-      const url = `${proxy}/admin/products/createProduct`;
-      const res = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(product)
-      });
-      // reset form
-      setProduct({ name: "", description: "", price: "", amount: "", features: [] });
+    const result = await create_product(product);
+    // reset form
+    setProduct({ name: "", description: "", price: "", amount: "", features: [] });
 
-      if (res.ok) {
-        const result = await res.json();
-        displayToast({ msg: result.message, status: "success" })
-        // update state
-        // setProducts((prevState) => {
-        //   return [result.data, ...prevState]
-        // })
-
-        setAction({value: "products"})
-        return;
-      }
-      displayToast({ msg: "an Error occured while adding a product !", status: "error" })
-
-    } catch (err) {
-      displayToast({ msg: err.message, status: "error" })
+    if (result.success) {
+      displayToast({ msg: result.message, status: "success" })
+      // update state
+      setAction({value: "products"})
+      return;
     }
+    displayToast({ msg: "an Error occured while adding a product !", status: "error" })
   };
   const onEdit = async (data) => {
-    try {
-      // data validation
-      const url = `${proxy}/admin/products/editProduct/${data.productId}`;
-      const res = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "PUT",
-        body: JSON.stringify(product)
-      });
+    const result = await edit_product(data.productId, product);
 
-      if (res.ok) {
-        const result = await res.json();
-        console.log("edited product data: ", result.data);
-        // update products state
-        displayToast({ msg: result.message, status: "success" })
-        setAction({ value: "products" })
-        return;
-      }
-      displayToast({ msg: "an Error occured while editing product !", status: "error" })
-    } catch (err) {
-      displayToast({ msg: err.message, status: "error" })
+    if (result.success) {
+      // update products state
+      displayToast({ msg: result.message, status: "success" })
+      setAction({ value: "products" })
+      return;
     }
+    displayToast({ msg: "an Error occured while editing product !", status: "error" })
   };
   const onDelete = async (data) => {
-    try {
-      const url = `${proxy}/admin/products/deleteProduct/${data.productId}`;
-      const res = await fetch(url, {
-        method: "DELETE"
-      });
+    const result = await delete_product(data.productId);
 
-      if (res.ok) {
-        const result = await res.json();
-
-        // remove product data from products
-        // const new_products_list = products.filter((el) => el._id !== product);
-        // setProducts(new_products_list);
-
-        displayToast({ msg: result.message, status: "success" })
-        setAction({ value: "products" })
-        return;
-      }
-      displayToast({ msg: "an Error occured while deleting product !", status: "error" })
-
-    } catch (err) {
-      displayToast({ msg: err.message, status: "error" })
+    if (result.success) {
+      // update state
+      displayToast({ msg: result.message, status: "success" })
+      setAction({ value: "products" })
+      return;
     }
+    displayToast({ msg: "an Error occured while deleting product !", status: "error" })
   };
   const onFilter = async (value) => {
     setFilter({ ...filter, queryString: value });
     setLoading(true);
 
-    try {
-      const url = `${proxy}/admin/products/filterProducts?queryString=${value}&filterType=${filter.filterType}`;
-      const res = await fetch(url);
+    const result = await filter_products(value, filter.filterType);
 
-      if (res.ok) {
-        const result = await res.json();
-        setProducts(result.data);
-        setLoading(false);
-        return;
-      }
-      displayToast({ msg: "an Error occured while filtering users !", status: "error" })
-
-    } catch (err) {
-      displayToast({ msg: err.message, status: "error" })
+    if (result.success) {
+      setProducts(result.data);
+      setLoading(false);
+      return;
     }
+    setLoading(false);
+    displayToast({ msg: "an Error occured while filtering users !", status: "error" })
   };
 
   // functions
