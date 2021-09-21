@@ -222,103 +222,6 @@ const Users = () => {
       isClosable: true,
     })
   };
-  const displayAddUser = () => {
-    return (
-      <>
-        <Box display="flex" flexDirection="row" justifyContent="center" >
-        {displayUserDetails()}
-
-        <Box border="1px" borderColor="gray.200" borderStyle="solid" p="1rem" borderRadius="md" width="500px" ml="1rem">
-          <Heading as="h3" size="md" my="1rem" textAlign="left"> Add new User </Heading>
-
-          <Stack>
-            <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={user.username} fallbackSrc="https://via.placeholder.com/150"
-                    src={user.avatar} />
-            <Input type="file" id="file" onChange={(e) => uploadImage(e)} value={user.avatar} />
-
-            <FormControl id="fullName" mb="1rem">
-              <FormLabel> Full Name </FormLabel>
-              <Input type="text" placeholder="Full Name" name="fullName"
-                  id="fullName" value={user.fullName} onChange={(e) => setUser({ ...user, fullName: e.target.value })} />
-            </FormControl>
-
-            <FormControl id="email" mb="1rem">
-              <FormLabel> Email </FormLabel>
-              <Input type="email" placeholder="Email" name="email"
-                  id="email" value={user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
-            </FormControl>
-
-            <FormControl id="phone" mb="1rem">
-              <FormLabel> Phone </FormLabel>
-              <Input type="text" placeholder="Phone" name="phone"
-                  id="phone" value={user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} />
-            </FormControl>
-
-            <FormControl id="phone" mb="1rem">
-              <FormLabel> gender </FormLabel> 
-              <RadioGroup id="gender" name="gender" value={user.gender}
-                          onChange={(e) => setUser({ ...user, gender: e })}>
-                <Stack direction="row">
-                  <Radio value="male"> Male </Radio>
-                  <Radio value="female"> Female </Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-
-            <FormControl id="active" mb="1rem">
-              <FormLabel> Active </FormLabel>
-              <RadioGroup id="active" name="active" value={user.active}
-                          onChange={(e) => setUser({ ...user, active: e })}>
-                <Stack direction="row">
-                  <Radio value="false"> No </Radio>
-                  <Radio value="true"> Yes </Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-
-            <FormControl id="address" mb="1rem">
-              <FormLabel> Address </FormLabel>
-              <Textarea placeholder="Address" name="address" id="address"
-                        value={user.address} onChange={(e) => setUser({ ...user, address: e.target.value })} />
-            </FormControl>
-
-            <FormControl id="password" mb="1rem">
-              <FormLabel> Password </FormLabel>
-              <InputGroup>
-                <Input type={showPwd.pass ? "text" : "password"} placeholder="Password" name="password" id="password"
-                        value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
-                <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={() => setShowPwd({...showPwd, pass: !showPwd.pass })}>
-                      {showPwd.pass ? "Hide" : "Show"}
-                    </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-
-            <FormControl id="role" mb="1rem">
-              <FormLabel> Role </FormLabel>
-              <Select name="role" id="role" 
-                      value={user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
-                <option value="moderator"> Moderator </option>
-                <option value="admin"> Admin </option>
-              </Select>
-            </FormControl>
-          </Stack>
-        </Box>
-
-        </Box>
-
-        <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
-          <Button leftIcon={<AiOutlineUserAdd size="20" />} colorScheme="blue" variant="solid" w="10rem" onClick={() => onCreate()}>
-            New User
-          </Button>
-          <Button colorScheme="blue" variant="outline" w="10rem" onClick={() => backToUsers()}>
-            Back to Users
-          </Button>
-        </ButtonGroup>
-      </>
-    );
-  };
   const displayEditUser = (data) => {
     const { fullName, email, username, password, role, address, active, gender, phone, avatar } = data;
 
@@ -548,16 +451,24 @@ const Users = () => {
           <Heading as="h2" size="lg" textAlign="left" my="2rem"> Users Management </Heading>
 
           <View if={action.value === "create"}>
-            { displayAddUser() }
+            <FormUser uploadImage={uploadImage} backToUsers={backToUsers} user={user} setUser={setUser} action={action} 
+              setShowPwd={setShowPwd} showPwd={showPwd} onCreate={onCreate}>
+                <UserDetails backToUsers={backToUsers} deleteUser={deleteUser} onDelete={onDelete} onOpen={onOpen} hidePassword={hidePassword}
+                  user={user} action={action} setAction={setAction} setShowPwd={setShowPwd} showPwd={showPwd} />
+            </FormUser>
           </View>
 
           <View if={action.value === "edit" && Object.keys(user).length > 0 }>
-            { displayEditUser(user) }
+            <FormUser uploadImage={uploadImage} backToUsers={backToUsers} user={user} setUser={setUser} action={action} 
+              setShowPwd={setShowPwd} showPwd={showPwd} onEdit={onEdit}>
+                <UserDetails backToUsers={backToUsers} deleteUser={deleteUser} onDelete={onDelete} onOpen={onOpen} hidePassword={hidePassword}
+                  user={user} action={action} setAction={setAction} setShowPwd={setShowPwd} showPwd={showPwd} />
+            </FormUser>
           </View>
 
           <View if={action.value === "details"}>
             <UserDetails backToUsers={backToUsers} deleteUser={deleteUser} onDelete={onDelete} onOpen={onOpen} hidePassword={hidePassword}
-                  user={user} action={action} setAction={setAction} />
+                  user={user} action={action} setAction={setAction} setShowPwd={setShowPwd} showPwd={showPwd} />
           </View>
 
           <View if={action.value === "users"}>
@@ -830,6 +741,129 @@ const SubMenu = ({ userId, userIndex, userData, editUser, deleteUser, blockUser,
         </Menu>
 };
 
+const FormUser = ({ uploadImage, user, setUser, action, backToUsers, onCreate, displayUserDetails, setShowPwd, showPwd, onEdit, children }) => {
+  let fullName, email, username, password, role, address, active, gender, phone, avatar;
+  if (action.value === "edit") {
+    fullName = user.fullName;
+    email = user.email;
+    username = user.username;
+    password = user.password;
+    role = user.role;
+    address = user.address;
+    active = user.active;
+    gender = user.gender;
+    phone = user.phone;
+    avatar = user.avatar;
+  }
 
+  return (
+    <>
+      <Flex justifyContent="center">
+        {/* {displayUserDetails()} */}
+        {children}
+
+        <Box border="1px solid" borderColor="gray.200" p="1rem" borderRadius="md" width="500px" ml="1rem">
+          <Heading as="h3" size="md" my="1rem" textAlign="left">        
+            {action.value === "edit" ? "Edit User" : "Add User"}
+          </Heading>
+
+          <Stack>
+          <Image boxSize="150px" borderRadius="md" mb="1rem" mr="auto" alt={user.username} fallbackSrc="https://via.placeholder.com/150"
+                    src={avatar ? avatar : user.avatar} />
+            <Input type="file" id="file" onChange={(e) => uploadImage(e)} value={user.avatar} />
+
+            <FormControl id="fullName" mb="1rem">
+              <FormLabel> Full Name </FormLabel>
+              <Input type="text" placeholder="Full Name" name="fullName"
+                  id="fullName" value={fullName ? fullName : user.fullName} onChange={(e) => setUser({ ...user, fullName: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="username" mb="1rem">
+              <FormLabel> Username </FormLabel>
+              <Input type="text" placeholder="Username" name="username"
+                  id="username" value={username ? username : user.username} onChange={(e) => setUser({ ...user, username: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="email" mb="1rem">
+              <FormLabel> Email </FormLabel>
+              <Input type="email" placeholder="Email" name="email"
+                  id="email" value={email ? email : user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="phone" mb="1rem">
+              <FormLabel> Phone </FormLabel>
+              <Input type="text" placeholder="Phone" name="phone"
+                  id="phone" value={phone ? phone : user.phone} onChange={(e) => setUser({ ...user, phone: e.target.value })} />
+            </FormControl>
+
+            <FormControl id="phone" mb="1rem">
+              <FormLabel> gender </FormLabel> 
+              <RadioGroup id="gender" name="gender" value={gender ? gender :user.gender}
+                          onChange={(e) => setUser({ ...user, gender: e })}>
+                <Stack direction="row">
+                  <Radio value="male"> Male </Radio>
+                  <Radio value="female"> Female </Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl id="active" mb="1rem">
+              <FormLabel> Active </FormLabel>
+              <RadioGroup id="active" name="active" value={active ? active : user.active}
+                          onChange={(e) => setUser({ ...user, active: e })}>
+                <Stack direction="row">
+                  <Radio value="false"> No </Radio>
+                  <Radio value="true"> Yes </Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl id="address" mb="1rem">
+              <FormLabel> Address </FormLabel>
+              <Textarea placeholder="Address" name="address" id="address"
+                        value={address ? address : user.address} onChange={(e) => setUser({ ...user, address: e.target.value })} />
+            </FormControl>
+
+            <FormControl FormControl id="password" mb="1rem">
+              <FormLabel> Password </FormLabel>
+              <InputGroup>
+                <Input type={showPwd.pass ? "text" : "password"} placeholder="Password" name="password" id="password"
+                        value={password ? password :user.password} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+                <InputRightElement width="4.5rem">
+                    <Button h="1.75rem" size="sm" onClick={() => setShowPwd({ pass: !showPwd })}>
+                      {showPwd ? "Hide" : "Show"}
+                    </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            
+            <FormControl id="role" mb="1rem">
+              <FormLabel> Role </FormLabel>
+              <Select name="role" id="role" value={role ? role :user.role} onChange={(e) => setUser({ ...user, role: e.target.value })}>
+                <option value="moderator"> Moderator </option>
+                <option value="admin"> Admin </option>
+              </Select>
+            </FormControl>
+          </Stack>
+        </Box>
+
+      </Flex>
+
+      <ButtonGroup mt="2rem" display="flex" flexDirection="row" justifyContent="center">
+        { action.value ===  "edit" ?
+          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onEdit(action.data)}>
+            Edit User
+          </Button> : 
+          <Button leftIcon={<AiOutlineUserAdd size="20" />} w="150px" colorScheme="blue" variant="solid" onClick={() => onCreate()}>
+            Create User
+          </Button>
+        }
+        <Button colorScheme="blue" variant="outline" onClick={() => backToUsers()}>
+          Back to Users
+        </Button>
+      </ButtonGroup>
+    </>
+  );
+};
 
 export default Users;
