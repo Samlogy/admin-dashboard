@@ -5,13 +5,10 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel,
         Heading, Button, Box, Text, Container } from "@chakra-ui/react"
 import Parser from 'html-react-parser'
 
-
- import { MyEditor } from "../../Components"
- import Layout from "../Layout.jsx"
-
+import { MyEditor } from "../../Components"
+import Layout from "../Layout.jsx"
+import { send_newsletter } from "../../api"
 import "./style.css";
-
-const proxy = "http://localhost:5000";
 
 const WriteNewsletter = () => {
   const [newsletter, setNewsletter] = useState({ subject: "", message: "" });
@@ -23,40 +20,24 @@ const WriteNewsletter = () => {
 
   const onEditorChange = (value) => {
     setNewsletter({ ...newsletter, message: value });
-  //   console.log(newsletter.message);
   };
   const onFilesChange = (files) => {
     setFiles(files);
   };
-  const sendNewsletter = async () => {
-    const url = `${proxy}/admin/newsletter/write`;
-
-    // newsletter data validation --> schema
+  const sendNewsletter = async () => {   
     const variables = {
       newsletterData: newsletter,
       files: files,
       authorID: authStore.userData._id
     };
 
-    try {
-      const res = await fetch(url, {
-        headers: {
-          "content-type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(variables)
-      });
+    const result = await send_newsletter(variables);
 
-      if (res.ok) {
-        const result = await res.json();
-        displayToast({ msg: result.message, status: "success" })
-        return;
-      }
-      displayToast({ msg: "an Error occured while sending newsletter !", status: "error" })
-
-    } catch (err) {
-      displayToast({ msg: err.message, status: "error" })
+    if (result.success) {
+      displayToast({ msg: result.message, status: "success" })
+      return;
     }
+    displayToast({ msg: "an Error occured while sending newsletter !", status: "error" })
   };
 
   // Components
@@ -113,28 +94,28 @@ const WriteNewsletter = () => {
 
   return (
       <Layout isFixedNav isVisible>
-          <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
+        <Container maxW="80em" py="39px" px={["16px","","","40px"]} m="0 auto" borderRadius="4px">
           <Heading as="h2" size="md" my="2rem" textAlign="left">
             { action === 0 ? "Write Newsletter" : "Preview Newsletter" }
           </Heading>
   
-        <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
-              onChange={(idx) => setAction(idx)}>
-          <TabList>
-            <Tab> Write </Tab>
-            <Tab> Preview </Tab>
-          </TabList>
-          
-          <TabPanels>
-            <TabPanel>
-              { displayWrite() }
-            </TabPanel>
+          <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
+                onChange={(idx) => setAction(idx)}>
+            <TabList>
+              <Tab> Write </Tab>
+              <Tab> Preview </Tab>
+            </TabList>
+            
+            <TabPanels>
+              <TabPanel>
+                { displayWrite() }
+              </TabPanel>
 
-            <TabPanel>
-              { displayPreview() }
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+              <TabPanel>
+                { displayPreview() }
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Container>
       </Layout>
   );
