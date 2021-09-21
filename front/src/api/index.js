@@ -217,7 +217,20 @@ export const filter_products = async (value, filterType) => {
     }
 };
 
-
 /* Newsletters */
+export const send_newsletter = async (data) => {
+    try {
+        const res = await request("post", `/newsletter/write`, {}, data);
+        if (res.success) return res
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
+
 /* Home */
 /* Contacts */
