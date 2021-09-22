@@ -31,9 +31,15 @@ const WriteNewsletter = () => {
   const onFilesChange = (files) => {
     setFiles(files);
   };
+
+  // funcitons 
   const convertDate = (date) => {
     const new_date = new Date(date).toLocaleDateString("en-US").split(/:| /)[0];
     return new_date;
+  };
+  const backToNewsletters = () => {
+    setAction({ value: "newsletters" })
+    setNewsletter({ subject: "", message: "" })
   };
 
   // API
@@ -92,15 +98,13 @@ const WriteNewsletter = () => {
                 { actionTab === 0 ? "Write Newsletter" : "Preview Newsletter" }
               </Heading>
 
-              <SwitchViews setActionTab={setActionTab} newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
+              <SwitchViews setActionTab={setActionTab} newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} backToNewsletters={backToNewsletters} />
           </View>
 
           <View if={action.value === "newsletters" && newsletters}>
             <Flex flexDirection="column" justifyContent="center" alignItems="center">
                 <Button colorScheme="blue" variant="outline" w="6rem" alignSelf="flex-end" rightIcon={<AiOutlineUserAdd size="20" />} 
                         onClick={() => setAction({value: "create"})}> Create </Button>
-
-                {/* <UserFilter filter={filter} onFilter={onFilter} setFilter={setFilter} /> */}
                 
                 { loading ? 
                     <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="lg" /> : 
@@ -139,7 +143,7 @@ const ModalBox = ({ data, isOpen, onClose }) => {
     </Modal>
   )
 };
-const SwitchViews = ({ setActionTab, newsletter, setNewsletter, sendNewsletter, onEditorChange, onFilesChange }) => {
+const SwitchViews = ({ setActionTab, newsletter, setNewsletter, sendNewsletter, onEditorChange, onFilesChange, backToNewsletters }) => {
   return(
     <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
           onChange={(idx) => setActionTab(idx)}>
@@ -157,6 +161,10 @@ const SwitchViews = ({ setActionTab, newsletter, setNewsletter, sendNewsletter, 
           <Preview newsletter={newsletter} />
         </TabPanel>
       </TabPanels>
+
+      <Button colorScheme="blue" variant="outline" onClick={() => backToNewsletters()}>
+        Back to Newsletters
+      </Button>
     </Tabs>
   )
 }

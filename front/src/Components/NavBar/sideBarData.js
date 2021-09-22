@@ -77,12 +77,12 @@ export const sideBarData = [
       id: 3,
       subMenu: [
         {
-          url: "/newsletters",
+          url: "/newsletter",
           icon: BsListUl,
           label: "Newsletter List",
         },
         {
-          url: "/newsletters",
+          url: "/newsletter",
           icon: RiMailAddFill,
           label: "Write Newsletter",
         },

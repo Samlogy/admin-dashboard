@@ -759,7 +759,6 @@ const FormUser = ({ uploadImage, user, setUser, action, backToUsers, onCreate, s
   return (
     <>
       <Flex justifyContent="center">
-        {/* {displayUserDetails()} */}
         {children}
 
         <Box border="1px solid" borderColor="gray.200" p="1rem" borderRadius="md" width="500px" ml="1rem">
