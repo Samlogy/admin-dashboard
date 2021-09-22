@@ -231,6 +231,19 @@ export const send_newsletter = async (data) => {
         }
     }
 };
+export const load_newsletters = async () => {
+    try {
+        const res = await request("get", `/newsletter/getNewsletters`, {});
+        if (res.success) return res
+
+    } catch (err) {
+        console.log('Operation Error occured --> : ', err);
+        return {
+            success: false,
+            error: err.message
+        }
+    }
+};
 
 /* Home */
 /* Contacts */
