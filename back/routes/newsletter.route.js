@@ -27,7 +27,7 @@ router.post("/write", async (req, res) => {
         const subscribers = await Subscribe.find()
 
         if (subscribers.length === 0) {
-            res.status(500).send("an Error occured !")
+            res.status(500).send({ success: false, error: "an error occured !" })
             return;
         }
 
@@ -53,6 +53,21 @@ router.post("/write", async (req, res) => {
             success: true,
             message: 'Newsletter sent !',
             data: result
+        })
+        
+    } catch (err) {
+        res.status(500).send({ success: false, error: err.message })
+    }
+});
+router.get("/getNewsletters", async (req, res) => {
+    try {
+        // get newsletters
+        const newsletters = await NewsLetterTrace.find();
+
+        res.status(201).send({
+            success: true,
+            message: 'Newsletters loaded !',
+            data: newsletters
         })
         
     } catch (err) {

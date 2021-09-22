@@ -40,11 +40,11 @@ const proxy = "http://localhost:5000"
 const Users = () => {
   const [user, setUser] = useState({ 
       fullName: "", username: "", phone: "", address: "", active: "false", gender: "male", email: "", password: "", role: "moderator" 
-    });
+  });
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({ queryString: "", filterType: "role" });
   const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState({ value: "users", data: null })
+  const [action, setAction] = useState({ value: "users", data: null });
   const [showPwd, setShowPwd] = useState(false);
 
   const toast = useToast();
@@ -741,7 +741,7 @@ const SubMenu = ({ userId, userIndex, userData, editUser, deleteUser, blockUser,
         </Menu>
 };
 
-const FormUser = ({ uploadImage, user, setUser, action, backToUsers, onCreate, displayUserDetails, setShowPwd, showPwd, onEdit, children }) => {
+const FormUser = ({ uploadImage, user, setUser, action, backToUsers, onCreate, setShowPwd, showPwd, onEdit, children }) => {
   let fullName, email, username, password, role, address, active, gender, phone, avatar;
   if (action.value === "edit") {
     fullName = user.fullName;
