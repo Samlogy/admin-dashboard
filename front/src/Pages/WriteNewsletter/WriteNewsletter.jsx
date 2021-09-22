@@ -52,45 +52,6 @@ const WriteNewsletter = () => {
       isClosable: true,
     })
   }; 
-  const displayWrite = () => {
-    return(
-      <Flex border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="35rem" my="2rem" mx="auto"
-            flexDirection="column" justifyContent="center" alignItems="center" boxShadow="md">
-        <FormControl id="email" mb="1rem">
-          <FormLabel> Subject </FormLabel>
-          <Input type="text" id="subject"  placeholder="Subject" name="subject" value={newsletter.subject}
-                onChange={(e) => setNewsletter({ ...newsletter, subject: e.target.value }) } />
-        </FormControl>
-
-        <FormControl id="newsletter" mb="1rem">
-          <FormLabel> Newsletter Content </FormLabel>
-          <MyEditor placeholder="Newsletter Content"
-                    onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
-        </FormControl>
-
-        <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => sendNewsletter()}>
-          Send
-        </Button> 
-      </Flex>
-  )
-  };
-  const displayPreview = () => {
-    return(
-      <Flex border="1px" borderColor="gray.200" borderStyle="solid" p="2rem" borderRadius="md" width="35rem" my="2rem" mx="auto"
-            flexDirection="column"  boxShadow="md">
-        <Box display="flex" flexDirection="column"> 
-          <Text mb="1rem" fontWeight="bold" textAlign="left"> Subject: </Text>
-          <Text mb="2rem" p=".5rem"> {newsletter.subject && newsletter.subject} </Text> 
-        </Box>
-
-        <Box>
-          <Text mb="1rem" fontWeight="bold" textAlign="left"> Message: </Text>
-          <Text p=".5rem"> {newsletter.message && Parser(newsletter.message)} </Text>  
-        </Box>
-      </Flex>
-    )
-  };
-
 
   return (
       <Layout isFixedNav isVisible>
@@ -98,27 +59,71 @@ const WriteNewsletter = () => {
           <Heading as="h2" size="md" my="2rem" textAlign="left">
             { action === 0 ? "Write Newsletter" : "Preview Newsletter" }
           </Heading>
-  
-          <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
-                onChange={(idx) => setAction(idx)}>
-            <TabList>
-              <Tab> Write </Tab>
-              <Tab> Preview </Tab>
-            </TabList>
-            
-            <TabPanels>
-              <TabPanel>
-                { displayWrite() }
-              </TabPanel>
 
-              <TabPanel>
-                { displayPreview() }
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+          <SwitchViews setAction={setAction} newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
         </Container>
       </Layout>
   );
+};
+
+const SwitchViews = ({ setAction, newsletter, setNewsletter, sendNewsletter, onEditorChange, onFilesChange }) => {
+  return(
+    <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
+          onChange={(idx) => setAction(idx)}>
+      <TabList w="10rem">
+        <Tab mx=".25rem"> Write </Tab>
+        <Tab mx=".25rem"> Preview </Tab>
+      </TabList>
+      
+      <TabPanels>
+        <TabPanel>
+          <Write newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
+        </TabPanel>
+
+        <TabPanel>
+          <Preview newsletter={newsletter} />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  )
+}
+const Preview = ({ newsletter }) => {
+  return(
+    <Flex border="1px solid" borderColor="gray.200" p="2rem" borderRadius="md" width="35rem" m="2rem auto"
+          flexDirection="column"  boxShadow="md">
+      <Box display="flex" flexDirection="column"> 
+        <Text mb="1rem" fontWeight="bold" textAlign="left"> Subject: </Text>
+        <Text mb="2rem" p=".5rem"> {newsletter.subject && newsletter.subject} </Text> 
+      </Box>
+
+      <Box>
+        <Text mb="1rem" fontWeight="bold" textAlign="left"> Message: </Text>
+        <Text p=".5rem"> {newsletter.message && Parser(newsletter.message)} </Text>  
+      </Box>
+    </Flex>
+  )
+};
+const Write = ({ newsletter, setNewsletter, sendNewsletter, onEditorChange, onFilesChange }) => {
+  return(
+    <Flex border="1px solid" borderColor="gray.200" p="2rem" borderRadius="md" width="35rem" m="2rem auto"
+          flexDirection="column" justifyContent="center" alignItems="center" boxShadow="md">
+      <FormControl id="email" mb="1rem">
+        <FormLabel> Subject </FormLabel>
+        <Input type="text" id="subject"  placeholder="Subject" name="subject" value={newsletter.subject}
+              onChange={(e) => setNewsletter({ ...newsletter, subject: e.target.value }) } />
+      </FormControl>
+
+      <FormControl id="newsletter" mb="1rem">
+        <FormLabel> Newsletter Content </FormLabel>
+        <MyEditor placeholder="Newsletter Content"
+                  onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
+      </FormControl>
+
+      <Button mt="1rem" colorScheme="blue" variant="solid" onClick={() => sendNewsletter()}>
+        Send
+      </Button> 
+    </Flex>
+)
 };
 
 export default WriteNewsletter;
