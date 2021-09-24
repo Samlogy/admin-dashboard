@@ -98,7 +98,14 @@ const WriteNewsletter = () => {
                 { actionTab === 0 ? "Write Newsletter" : "Preview Newsletter" }
               </Heading>
 
-              <SwitchViews setActionTab={setActionTab} newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} backToNewsletters={backToNewsletters} />
+              <SwitchViews setActionTab={setActionTab} backToNewsletters={backToNewsletters} 
+                write={
+                  <Write newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} /> 
+                } 
+                preview={
+                  <Preview newsletter={newsletter} />
+                } 
+              />
           </View>
 
           <View if={action.value === "newsletters" && newsletters}>
@@ -143,7 +150,8 @@ const ModalBox = ({ data, isOpen, onClose }) => {
     </Modal>
   )
 };
-const SwitchViews = ({ setActionTab, newsletter, setNewsletter, sendNewsletter, onEditorChange, onFilesChange, backToNewsletters }) => {
+// , newsletter, setNewsletter, sendNewsletter, onEditorChange, onFilesChange, backToNewsletters
+const SwitchViews = ({ setActionTab, backToNewsletters, write, preview }) => {
   return(
     <Tabs align="center" isFitted variant="soft-rounded" colorScheme="blue"
           onChange={(idx) => setActionTab(idx)}>
@@ -154,11 +162,11 @@ const SwitchViews = ({ setActionTab, newsletter, setNewsletter, sendNewsletter, 
       
       <TabPanels>
         <TabPanel>
-          <Write newsletter={newsletter} setNewsletter={setNewsletter} sendNewsletter={sendNewsletter} onEditorChange={onEditorChange} onFilesChange={onFilesChange} />
+          {write}
         </TabPanel>
 
         <TabPanel>
-          <Preview newsletter={newsletter} />
+          {preview}
         </TabPanel>
       </TabPanels>
 
