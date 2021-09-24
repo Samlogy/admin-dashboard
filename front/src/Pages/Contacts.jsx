@@ -70,7 +70,7 @@ const Contacts = () => {
   };
 
   // API calls
-  const getContacts = async () => {
+  const onLoad = async () => {
     setLoading(true);
     try {
       const url = `${proxy}/admin/contacts/getContacts`;
@@ -319,7 +319,7 @@ const Contacts = () => {
   };
   
   useEffect(() => {
-    getContacts();
+    onLoad();
   }, []);
 
   return (

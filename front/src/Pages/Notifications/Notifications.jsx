@@ -202,7 +202,7 @@ const RenderByType = ({ notif, convertDate, deleteNotif, hideNotif }) => {
 };
 
 const RenderNotifications = ({ label, data, convertDate, deleteNotif, hideNotif }) => {
-  return  <Box maxW="45rem" p="1rem" mb="1rem" border="1px" borderColor="gray.200" borderStyle="solid" borderRadius="md"
+  return  <Box maxW="45rem" p="1rem" mb="1rem" border="1px solid" borderColor="gray.200" borderRadius="md"
                 boxShadow="md">
             <Heading as="h3" size="md" mt="0" mb="1rem"> {label} </Heading>
 
